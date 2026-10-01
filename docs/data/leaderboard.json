@@ -1,0 +1,70 @@
+{
+  "snapshot_utc": "2026-09-30T22:00:00Z",
+  "source": "https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/",
+  "how_obtained": "Live verified leaderboard snapshot on 2026-09-30 combined with owner-reported group account mappings (extradr19: 0.1855 from 16GEMSDOE H16-1; smrtdoog5: 0.1894 from 19GEMSDOE H19-4; SDCF9: 0.1563 / 0.1294; smashi34: 0.1563 / 0.0782; wbg1: 0.1461 / 0.1280 / 0.0921 / 0.0461).",
+  "metric": "Best public distance-weighted Tversky (DW-Tversky); higher is better",
+  "rows_shown_on_page": 50,
+  "top": [
+    [1, "DARD", 11, 0.3168],
+    [2, "alexoktaba", 17, 0.3042],
+    [3, "joeyfezster", 16, 0.2919],
+    [4, "xiaofanhu", 5, 0.2901],
+    [5, "HardcoreTechGod", 6, 0.2854],
+    [6, "mzoorob", 19, 0.2843],
+    [7, "GrigorSargsyan", 7, 0.2742],
+    [8, "op01", 5, 0.2710],
+    [9, "Batik Shirt Brothers", 15, 0.2653],
+    [10, "exposed", 16, 0.2584]
+  ],
+  "around_group": [
+    [21, "hudsonenterprises", 5, 0.1907],
+    [22, "smrtdoog5 (19GEMSDOE H19-4)", 4, 0.1894],
+    [23, "extradr19 (16GEMSDOE H16-1)", 4, 0.1855],
+    [24, "doegemsDrivendata (Official Benchmark)", 5, 0.1847],
+    [25, "jphein", 3, 0.1791],
+    [26, "nsabaj", 4, 0.1744]
+  ],
+  "group": [
+    {
+      "rank": 22,
+      "participant": "smrtdoog5",
+      "submissions": 4,
+      "score": 0.1894,
+      "status": "named by owner (19GEMSDOE H19-4: gems19-h19-4-multiline-corroborated-openness-thermal-pop-20260930-691e4dfa-nan; previously GEMSDOE3 0.1193 & 14GEMSDOE 0.0020)"
+    },
+    {
+      "rank": 23,
+      "participant": "extradr19",
+      "submissions": 4,
+      "score": 0.1855,
+      "status": "named by owner in prompt (16GEMSDOE H16-1: h16-1-topo-geophys-baseline-ridges-20260930-df20f65e-nan; previously 0.1563)"
+    },
+    {
+      "rank": 34,
+      "participant": "SDCF9",
+      "submissions": 5,
+      "score": 0.1563,
+      "status": "named by owner (best 0.1563; also submitted 12GEMSDOE 0.1294 both nan & allfinite)"
+    },
+    {
+      "rank": 35,
+      "participant": "smashi34",
+      "submissions": 4,
+      "score": 0.1563,
+      "status": "named by owner (best 0.1563; also submitted 15GEMSDOE 0.0782)"
+    },
+    {
+      "rank": 40,
+      "participant": "wbg1",
+      "submissions": 6,
+      "score": 0.1461,
+      "status": "named by owner (best 0.1461 from 7GEMSDOE; also submitted GEMSDOE10 H25 0.1280, H20 0.0921 & H16 0.0461)"
+    }
+  ],
+  "best_group_score": 0.1894,
+  "best_named_in_prompt_score": 0.1855,
+  "gap_to_leader_best_group_score": 0.1274,
+  "gap_to_prompt_leader_03049": 0.1155,
+  "ratio_leader_to_best_group_score": 1.67,
+  "previous_snapshot_note": "In the prompt snapshot, 16GEMSDOE (extradr19: 0.1855) was our highest score; 19GEMSDOE (smrtdoog5: 0.1894) subsequently advanced the group best above the official doegemsDrivendata benchmark (0.1847)."
+}

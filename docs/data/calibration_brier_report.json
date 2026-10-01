@@ -1,0 +1,461 @@
+{
+  "generated_utc": "2026-09-30T23:58:24+00:00",
+  "evaluation_protocol": "Strictly out-of-fold evaluation across the 4 spatially blocked geographic quadrants on 466,731 directional ridge-NMS candidate pixels (zero training-set evaluation; isotonic calibration for fold f is fit strictly on folds != f).",
+  "murphy_1973_identity": "Brier_partition = Reliability (REL) - Resolution (RES) + Uncertainty (UNC)",
+  "key_findings": {
+    "naive_pn_underconfidence": "Under PU contamination (c = 0.3134), naive PN models compress probabilities downward on hidden faults: in the [0.65, 0.75) window, stated 0.6799 corresponds to an empirical hidden-fault hit rate of 0.7564 (underconfidence bias = +0.0765).",
+    "oof_pu_isotonic_calibration_improvement": "Out-of-fold PU-Isotonic calibration (H20-5) reduces Murphy Reliability error REL by 99.3% (0.019674 -> 0.000143), reduces ECE by 96.9% (0.13277 -> 0.00405), and aligns the [0.65, 0.75) stated ~0.70 bin (0.6896) with an empirical hidden-fault hit rate of 0.6714 (bias = -0.0183)."
+  },
+  "models": {
+    "Naive_PN_Uncalibrated_Underconfident": {
+      "n_evaluated_pixels": 1211155,
+      "base_hit_rate_o_bar": 0.33809,
+      "brier_score_exact": 0.212137,
+      "brier_score_murphy_partition": 0.213248,
+      "reliability_REL": 0.007305,
+      "resolution_RES": 0.017843,
+      "uncertainty_UNC": 0.223786,
+      "expected_calibration_error_ECE": 0.080262,
+      "maximum_calibration_error_MCE": 0.134314,
+      "stated_0_70_audit": {
+        "window": "[0.65, 0.75)",
+        "count": 2315,
+        "mean_stated_probability": 0.67987,
+        "empirical_hidden_fault_hit_rate": 0.75637,
+        "calibration_bias_obs_minus_stated": 0.0765
+      },
+      "reliability_diagram_bins": [
+        {
+          "bin_index": 0,
+          "range": [
+            0.0,
+            0.1
+          ],
+          "bin_midpoint": 0.05,
+          "count": 90457,
+          "fraction_of_eval": 0.07469,
+          "mean_predicted_prob": 0.07865,
+          "empirical_hit_rate": 0.10624,
+          "underconfidence_gap_obs_minus_pred": 0.02759
+        },
+        {
+          "bin_index": 1,
+          "range": [
+            0.1,
+            0.2
+          ],
+          "bin_midpoint": 0.15,
+          "count": 307755,
+          "fraction_of_eval": 0.2541,
+          "mean_predicted_prob": 0.15791,
+          "empirical_hit_rate": 0.20798,
+          "underconfidence_gap_obs_minus_pred": 0.05007
+        },
+        {
+          "bin_index": 2,
+          "range": [
+            0.2,
+            0.3
+          ],
+          "bin_midpoint": 0.25,
+          "count": 402076,
+          "fraction_of_eval": 0.33198,
+          "mean_predicted_prob": 0.25359,
+          "empirical_hit_rate": 0.33485,
+          "underconfidence_gap_obs_minus_pred": 0.08126
+        },
+        {
+          "bin_index": 3,
+          "range": [
+            0.3,
+            0.4
+          ],
+          "bin_midpoint": 0.35,
+          "count": 294867,
+          "fraction_of_eval": 0.24346,
+          "mean_predicted_prob": 0.34086,
+          "empirical_hit_rate": 0.44834,
+          "underconfidence_gap_obs_minus_pred": 0.10748
+        },
+        {
+          "bin_index": 4,
+          "range": [
+            0.4,
+            0.5
+          ],
+          "bin_midpoint": 0.45,
+          "count": 90826,
+          "fraction_of_eval": 0.07499,
+          "mean_predicted_prob": 0.4377,
+          "empirical_hit_rate": 0.56951,
+          "underconfidence_gap_obs_minus_pred": 0.1318
+        },
+        {
+          "bin_index": 5,
+          "range": [
+            0.5,
+            0.6
+          ],
+          "bin_midpoint": 0.55,
+          "count": 18194,
+          "fraction_of_eval": 0.01502,
+          "mean_predicted_prob": 0.54173,
+          "empirical_hit_rate": 0.67605,
+          "underconfidence_gap_obs_minus_pred": 0.13431
+        },
+        {
+          "bin_index": 6,
+          "range": [
+            0.6,
+            0.7
+          ],
+          "bin_midpoint": 0.65,
+          "count": 6513,
+          "fraction_of_eval": 0.00538,
+          "mean_predicted_prob": 0.63591,
+          "empirical_hit_rate": 0.70966,
+          "underconfidence_gap_obs_minus_pred": 0.07375
+        },
+        {
+          "bin_index": 7,
+          "range": [
+            0.7,
+            0.8
+          ],
+          "bin_midpoint": 0.75,
+          "count": 467,
+          "fraction_of_eval": 0.00039,
+          "mean_predicted_prob": 0.72143,
+          "empirical_hit_rate": 0.82013,
+          "underconfidence_gap_obs_minus_pred": 0.0987
+        },
+        {
+          "bin_index": 8,
+          "range": [
+            0.8,
+            0.9
+          ],
+          "bin_midpoint": 0.85,
+          "count": 0,
+          "fraction_of_eval": 0.0,
+          "mean_predicted_prob": 0.85,
+          "empirical_hit_rate": 0.0,
+          "underconfidence_gap_obs_minus_pred": 0.0
+        },
+        {
+          "bin_index": 9,
+          "range": [
+            0.9,
+            1.0
+          ],
+          "bin_midpoint": 0.95,
+          "count": 0,
+          "fraction_of_eval": 0.0,
+          "mean_predicted_prob": 0.95,
+          "empirical_hit_rate": 0.0,
+          "underconfidence_gap_obs_minus_pred": 0.0
+        }
+      ]
+    },
+    "Raw_MultiLine_Corroborated_PreCalibration": {
+      "n_evaluated_pixels": 1211155,
+      "base_hit_rate_o_bar": 0.33809,
+      "brier_score_exact": 0.224016,
+      "brier_score_murphy_partition": 0.224501,
+      "reliability_REL": 0.019674,
+      "resolution_RES": 0.018959,
+      "uncertainty_UNC": 0.223786,
+      "expected_calibration_error_ECE": 0.132771,
+      "maximum_calibration_error_MCE": 0.183022,
+      "stated_0_70_audit": {
+        "window": "[0.65, 0.75)",
+        "count": 158554,
+        "mean_stated_probability": 0.69317,
+        "empirical_hidden_fault_hit_rate": 0.51587,
+        "calibration_bias_obs_minus_stated": -0.1773
+      },
+      "reliability_diagram_bins": [
+        {
+          "bin_index": 0,
+          "range": [
+            0.0,
+            0.1
+          ],
+          "bin_midpoint": 0.05,
+          "count": 17666,
+          "fraction_of_eval": 0.01459,
+          "mean_predicted_prob": 0.0728,
+          "empirical_hit_rate": 0.08004,
+          "underconfidence_gap_obs_minus_pred": 0.00724
+        },
+        {
+          "bin_index": 1,
+          "range": [
+            0.1,
+            0.2
+          ],
+          "bin_midpoint": 0.15,
+          "count": 84270,
+          "fraction_of_eval": 0.06958,
+          "mean_predicted_prob": 0.15418,
+          "empirical_hit_rate": 0.11264,
+          "underconfidence_gap_obs_minus_pred": -0.04154
+        },
+        {
+          "bin_index": 2,
+          "range": [
+            0.2,
+            0.3
+          ],
+          "bin_midpoint": 0.25,
+          "count": 135114,
+          "fraction_of_eval": 0.11156,
+          "mean_predicted_prob": 0.25305,
+          "empirical_hit_rate": 0.1797,
+          "underconfidence_gap_obs_minus_pred": -0.07335
+        },
+        {
+          "bin_index": 3,
+          "range": [
+            0.3,
+            0.4
+          ],
+          "bin_midpoint": 0.35,
+          "count": 188008,
+          "fraction_of_eval": 0.15523,
+          "mean_predicted_prob": 0.35233,
+          "empirical_hit_rate": 0.24253,
+          "underconfidence_gap_obs_minus_pred": -0.1098
+        },
+        {
+          "bin_index": 4,
+          "range": [
+            0.4,
+            0.5
+          ],
+          "bin_midpoint": 0.45,
+          "count": 216487,
+          "fraction_of_eval": 0.17874,
+          "mean_predicted_prob": 0.4505,
+          "empirical_hit_rate": 0.31321,
+          "underconfidence_gap_obs_minus_pred": -0.13729
+        },
+        {
+          "bin_index": 5,
+          "range": [
+            0.5,
+            0.6
+          ],
+          "bin_midpoint": 0.55,
+          "count": 240944,
+          "fraction_of_eval": 0.19894,
+          "mean_predicted_prob": 0.55096,
+          "empirical_hit_rate": 0.38445,
+          "underconfidence_gap_obs_minus_pred": -0.16651
+        },
+        {
+          "bin_index": 6,
+          "range": [
+            0.6,
+            0.7
+          ],
+          "bin_midpoint": 0.65,
+          "count": 213627,
+          "fraction_of_eval": 0.17638,
+          "mean_predicted_prob": 0.64656,
+          "empirical_hit_rate": 0.46354,
+          "underconfidence_gap_obs_minus_pred": -0.18302
+        },
+        {
+          "bin_index": 7,
+          "range": [
+            0.7,
+            0.8
+          ],
+          "bin_midpoint": 0.75,
+          "count": 95702,
+          "fraction_of_eval": 0.07902,
+          "mean_predicted_prob": 0.73964,
+          "empirical_hit_rate": 0.57623,
+          "underconfidence_gap_obs_minus_pred": -0.16341
+        },
+        {
+          "bin_index": 8,
+          "range": [
+            0.8,
+            0.9
+          ],
+          "bin_midpoint": 0.85,
+          "count": 18872,
+          "fraction_of_eval": 0.01558,
+          "mean_predicted_prob": 0.83251,
+          "empirical_hit_rate": 0.7261,
+          "underconfidence_gap_obs_minus_pred": -0.10641
+        },
+        {
+          "bin_index": 9,
+          "range": [
+            0.9,
+            1.0
+          ],
+          "bin_midpoint": 0.95,
+          "count": 465,
+          "fraction_of_eval": 0.00038,
+          "mean_predicted_prob": 0.91338,
+          "empirical_hit_rate": 0.83441,
+          "underconfidence_gap_obs_minus_pred": -0.07897
+        }
+      ]
+    },
+    "OOF_PU_Isotonic_Calibrated_SAR_nnPU_H20_5": {
+      "n_evaluated_pixels": 1211155,
+      "base_hit_rate_o_bar": 0.33809,
+      "brier_score_exact": 0.204901,
+      "brier_score_murphy_partition": 0.205752,
+      "reliability_REL": 0.000143,
+      "resolution_RES": 0.018177,
+      "uncertainty_UNC": 0.223786,
+      "expected_calibration_error_ECE": 0.00405,
+      "maximum_calibration_error_MCE": 0.13864,
+      "stated_0_70_audit": {
+        "window": "[0.65, 0.75)",
+        "count": 16455,
+        "mean_stated_probability": 0.68965,
+        "empirical_hidden_fault_hit_rate": 0.67135,
+        "calibration_bias_obs_minus_stated": -0.0183
+      },
+      "reliability_diagram_bins": [
+        {
+          "bin_index": 0,
+          "range": [
+            0.0,
+            0.1
+          ],
+          "bin_midpoint": 0.05,
+          "count": 23549,
+          "fraction_of_eval": 0.01944,
+          "mean_predicted_prob": 0.0727,
+          "empirical_hit_rate": 0.09805,
+          "underconfidence_gap_obs_minus_pred": 0.02535
+        },
+        {
+          "bin_index": 1,
+          "range": [
+            0.1,
+            0.2
+          ],
+          "bin_midpoint": 0.15,
+          "count": 186291,
+          "fraction_of_eval": 0.15381,
+          "mean_predicted_prob": 0.14966,
+          "empirical_hit_rate": 0.14698,
+          "underconfidence_gap_obs_minus_pred": -0.00268
+        },
+        {
+          "bin_index": 2,
+          "range": [
+            0.2,
+            0.3
+          ],
+          "bin_midpoint": 0.25,
+          "count": 297066,
+          "fraction_of_eval": 0.24527,
+          "mean_predicted_prob": 0.25151,
+          "empirical_hit_rate": 0.25354,
+          "underconfidence_gap_obs_minus_pred": 0.00203
+        },
+        {
+          "bin_index": 3,
+          "range": [
+            0.3,
+            0.4
+          ],
+          "bin_midpoint": 0.35,
+          "count": 311203,
+          "fraction_of_eval": 0.25695,
+          "mean_predicted_prob": 0.35427,
+          "empirical_hit_rate": 0.35582,
+          "underconfidence_gap_obs_minus_pred": 0.00156
+        },
+        {
+          "bin_index": 4,
+          "range": [
+            0.4,
+            0.5
+          ],
+          "bin_midpoint": 0.45,
+          "count": 247559,
+          "fraction_of_eval": 0.2044,
+          "mean_predicted_prob": 0.4447,
+          "empirical_hit_rate": 0.44143,
+          "underconfidence_gap_obs_minus_pred": -0.00327
+        },
+        {
+          "bin_index": 5,
+          "range": [
+            0.5,
+            0.6
+          ],
+          "bin_midpoint": 0.55,
+          "count": 96552,
+          "fraction_of_eval": 0.07972,
+          "mean_predicted_prob": 0.54376,
+          "empirical_hit_rate": 0.54446,
+          "underconfidence_gap_obs_minus_pred": 0.0007
+        },
+        {
+          "bin_index": 6,
+          "range": [
+            0.6,
+            0.7
+          ],
+          "bin_midpoint": 0.65,
+          "count": 31944,
+          "fraction_of_eval": 0.02637,
+          "mean_predicted_prob": 0.63884,
+          "empirical_hit_rate": 0.62813,
+          "underconfidence_gap_obs_minus_pred": -0.01071
+        },
+        {
+          "bin_index": 7,
+          "range": [
+            0.7,
+            0.8
+          ],
+          "bin_midpoint": 0.75,
+          "count": 10998,
+          "fraction_of_eval": 0.00908,
+          "mean_predicted_prob": 0.74758,
+          "empirical_hit_rate": 0.68121,
+          "underconfidence_gap_obs_minus_pred": -0.06636
+        },
+        {
+          "bin_index": 8,
+          "range": [
+            0.8,
+            0.9
+          ],
+          "bin_midpoint": 0.85,
+          "count": 5130,
+          "fraction_of_eval": 0.00424,
+          "mean_predicted_prob": 0.83918,
+          "empirical_hit_rate": 0.7117,
+          "underconfidence_gap_obs_minus_pred": -0.12748
+        },
+        {
+          "bin_index": 9,
+          "range": [
+            0.9,
+            1.0
+          ],
+          "bin_midpoint": 0.95,
+          "count": 863,
+          "fraction_of_eval": 0.00071,
+          "mean_predicted_prob": 0.93122,
+          "empirical_hit_rate": 0.79258,
+          "underconfidence_gap_obs_minus_pred": -0.13864
+        }
+      ]
+    }
+  }
+}
