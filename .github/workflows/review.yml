@@ -1,0 +1,50 @@
+name: Repository review
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [arena/01a0f59e-20gemsdoe]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: review-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q
+      - run: python scripts/check_site.py
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy rasterio playwright
+      - run: python -m playwright install --with-deps chromium
+      - run: python scripts/check_browser.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-review
+          path: |
+            .cache/browser_review.json
+            .cache/browser-review/*-home.png
+          if-no-files-found: warn

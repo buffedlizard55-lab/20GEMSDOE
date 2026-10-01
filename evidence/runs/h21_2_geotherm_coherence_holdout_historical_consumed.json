@@ -1,0 +1,8 @@
+{
+  "state": "consumed",
+  "recorded_at": "2026-10-01",
+  "retrospective_record_not_original_preregistration": true,
+  "outcome_path": "evidence/h21_2_geotherm_coherence_holdout.json",
+  "outcome_sha256": "e5a96bd357affff18617729f90b03b739971f1fa6b054df92db4da7189575324",
+  "decision": "REJECT_NO_RERUN_NO_RETUNING"
+}

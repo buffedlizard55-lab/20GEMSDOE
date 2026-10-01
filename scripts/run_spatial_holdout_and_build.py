@@ -503,8 +503,8 @@ if __name__ == "__main__":
             pred_f = np.zeros(footprint.shape, dtype=bool)
             pred_f.ravel()[top_sel] = True
 
-            r_dense = dti_score_fast(pred_f[sl], td, valid_mask=fm)
-            r_sparse = dti_score_fast(pred_f[sl], ts, valid_mask=fm, catalogue_mask=kc)
+            r_dense = dti_score_fast(pred_f[sl], td, valid_mask=fm, mask_predictions=False)
+            r_sparse = dti_score_fast(pred_f[sl], ts, valid_mask=fm, catalogue_mask=kc, mask_predictions=False)
             dense_dtis.append(r_dense["dti"])
             sparse_dtis.append(r_sparse["dti"])
             fold_detail[fname] = {
@@ -530,8 +530,8 @@ if __name__ == "__main__":
         g7_detail = {}
         for f_id, fname, f_mask, sl, td, ts, kc, fm in quads:
             pred_f = sib_g7_2d & f_mask
-            r_d = dti_score_fast(pred_f[sl], td, valid_mask=fm)
-            r_s = dti_score_fast(pred_f[sl], ts, valid_mask=fm, catalogue_mask=kc)
+            r_d = dti_score_fast(pred_f[sl], td, valid_mask=fm, mask_predictions=False)
+            r_s = dti_score_fast(pred_f[sl], ts, valid_mask=fm, catalogue_mask=kc, mask_predictions=False)
             g7_dense.append(r_d["dti"])
             g7_sparse.append(r_s["dti"])
             g7_detail[fname] = {
@@ -557,12 +557,12 @@ if __name__ == "__main__":
     results["reproduction_note"] = "Fixed historical models, no retuning. Unused context-raster dependency removed; historical result preserved."
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(results, indent=2) + "\n")
-    np.savez(
-        DATA_DIR / "cache" / "oof_probs_h16_1.npz",
+    save_bundle(
+        DATA_DIR / "cache" / "oof_probs_h16_1.npz", dict(
         h16_1=oof_probs["H16_1_SeamFree_MultiScale_Synthesis"],
         h16_3_pure=oof_probs["H16_3_ScarpPure_1m_10m"],
         h16_3=oof_probs["H16_3_Antislope_Piedmont_Scarp_1m_10m"],
         h16_2=oof_probs["H16_2_Geopotential_Strike_Worm"],
         h16_4=oof_probs["H16_4_Hydrothermal_Conduit"],
-    )
+    ), oof_fingerprint)
     print(f"  Saved {args.output} and data/cache/oof_probs_h16_1.npz; historical H16/H20 reports preserved.")

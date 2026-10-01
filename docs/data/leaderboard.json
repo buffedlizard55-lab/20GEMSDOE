@@ -18,45 +18,45 @@
     ],
     [
       3,
+      "Batik Shirt Brothers",
+      16,
+      0.2998
+    ],
+    [
+      4,
       "joeyfezster",
       16,
       0.2919
     ],
     [
-      4,
+      5,
       "xiaofanhu",
       5,
       0.2901
     ],
     [
-      5,
+      6,
       "HardcoreTechGod",
       6,
       0.2854
     ],
     [
-      6,
+      7,
       "mzoorob",
       20,
       0.2843
     ],
     [
-      7,
+      8,
       "GrigorSargsyan",
       7,
       0.2742
     ],
     [
-      8,
+      9,
       "op01",
       5,
       0.271
-    ],
-    [
-      9,
-      "Batik Shirt Brothers",
-      15,
-      0.2653
     ],
     [
       10,
@@ -68,48 +68,60 @@
   "around_group": [
     [
       21,
+      "nsabaj",
+      5,
+      0.2102
+    ],
+    [
+      22,
       "hall4jm",
       10,
       0.201
     ],
     [
-      22,
+      23,
       "hudsonenterprises",
       6,
       0.1907
     ],
     [
-      23,
+      24,
       "smrtdoog5 (owner-reported: 19GEMSDOE H19-4)",
       4,
       0.1894
     ],
     [
-      24,
+      25,
       "Ehimen777",
       6,
       0.1886
     ],
     [
-      25,
+      26,
+      "SOLAPEO",
+      3,
+      0.1869
+    ],
+    [
+      27,
       "extradr19 (owner-reported: 16GEMSDOE H16-1)",
       4,
       0.1855
     ],
     [
-      26,
+      28,
       "doegemsDrivendata (official benchmark)",
       5,
       0.1847
     ],
     [
-      27,
+      29,
       "Ehimenathan",
       8,
       0.182
     ],
     [
-      28,
+      30,
       "jphein",
       3,
       0.1791
@@ -117,35 +129,35 @@
   ],
   "group": [
     {
-      "rank": 23,
+      "rank": 24,
       "participant": "smrtdoog5",
       "submissions": 4,
       "score": 0.1894,
       "status": "owner-reported mapping to 19GEMSDOE H19-4; current leaderboard account score verified, file-to-score mapping not visible on leaderboard"
     },
     {
-      "rank": 25,
+      "rank": 27,
       "participant": "extradr19",
       "submissions": 4,
       "score": 0.1855,
       "status": "owner-reported mapping to 16GEMSDOE H16-1; current leaderboard account score verified, file-to-score mapping not visible on leaderboard"
     },
     {
-      "rank": 34,
+      "rank": 35,
       "participant": "SDCF9",
       "submissions": 5,
       "score": 0.1563,
       "status": "current leaderboard best score verified; historic artifact mapping is owner-reported"
     },
     {
-      "rank": 35,
+      "rank": 36,
       "participant": "smashi34",
       "submissions": 4,
       "score": 0.1563,
       "status": "current leaderboard best score verified; historic artifact mapping is owner-reported"
     },
     {
-      "rank": 41,
+      "rank": 42,
       "participant": "wbg1",
       "submissions": 6,
       "score": 0.1461,
@@ -156,6 +168,6 @@
   "best_named_in_prompt_score": 0.1855,
   "gap_to_leader_best_group_score": 0.1274,
   "ratio_leader_to_best_group_score": 1.67,
-  "previous_snapshot_note": "The prompt value DARD 0.3049 is stale. The 2026-10-01 manual official-page fetch shows DARD 0.3168, 19GEMSDOE-associated account smrtdoog5 at 0.1894 (rank 23), and 16GEMSDOE-associated account extradr19 at 0.1855 (rank 25). The account/file associations are owner-reported, not explicit in the leaderboard.",
+  "previous_snapshot_note": "The prompt value DARD 0.3049 is stale. The 2026-10-01 manual official-page fetch shows DARD 0.3168, 19GEMSDOE-associated account smrtdoog5 at 0.1894 (rank 24), and 16GEMSDOE-associated account extradr19 at 0.1855 (rank 27). The account/file associations are owner-reported, not explicit in the leaderboard.",
   "snapshot_date_utc": "2026-10-01"
 }

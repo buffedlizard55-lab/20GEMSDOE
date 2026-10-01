@@ -67,14 +67,10 @@ def load_inputs() -> tuple[np.ndarray, np.ndarray, int, object]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--force",
-        action="store_true",
-        help="rerun for audit/debug; existing result is preserved in a timestamped backup",
-    )
-    args = parser.parse_args()
-    if RESULT_PATH.exists() and not args.force:
-        parser.error(f"{RESULT_PATH} already exists; refusing a second test without --force")
+    parser.parse_args()
+    ledger = EVIDENCE_DIR / "runs/h21_2_geotherm_coherence_holdout_historical_consumed.json"
+    if RESULT_PATH.exists() or ledger.exists():
+        parser.error("historical one-shot test consumed; no rerun, force, or retuning allowed")
     for path in (PREREG_PATH, AUDIT_PATH, CSV_PATH, TEMPLATE_PATH, LABELS_PATH):
         if not path.is_file():
             raise FileNotFoundError(path)
@@ -234,11 +230,6 @@ def main() -> int:
         "submission_artifact_created": False,
     }
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
-    if RESULT_PATH.exists():
-        backup = RESULT_PATH.with_name(f"{RESULT_PATH.stem}.rerun-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}{RESULT_PATH.suffix}")
-        RESULT_PATH.replace(backup)
-        report["rerun_backup"] = str(backup.relative_to(ROOT))
-        report["rerun_note"] = "Rerun requested with --force; this is not a second confirmatory test."
     RESULT_PATH.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({
         "candidate": report["candidate_id"],

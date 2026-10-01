@@ -1,4 +1,4 @@
-/* 16GEMSDOE site - clean, accessible, responsive. Light by default, dark via prefers-color-scheme. */
+/* 20GEMSDOE site - clean, accessible, responsive. Light by default, dark via prefers-color-scheme. */
 :root{--bg:#f6f8fb;--panel:#fff;--ink:#14202e;--muted:#56657a;--line:#d8e0ea;--brand:#0b5cad;--brand-ink:#fff;--ok:#0a7a3d;--ok-bg:#e7f6ee;--warn:#8a5a00;--warn-bg:#fff4dc;--bad:#a4202f;--bad-bg:#fdecee;--code:#eef2f7;--radius:12px;--shadow:0 1px 2px rgba(20,32,46,.06),0 4px 16px rgba(20,32,46,.06)}
 @media (prefers-color-scheme:dark){:root{--bg:#0d1420;--panel:#141d2c;--ink:#e8eef7;--muted:#9bacc2;--line:#27354a;--brand:#5aa9ff;--brand-ink:#04121f;--ok:#46d391;--ok-bg:#0f2a1f;--warn:#ffc266;--warn-bg:#2c2208;--bad:#ff8b98;--bad-bg:#2f1219;--code:#1b2738;--shadow:none}}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
@@ -53,3 +53,14 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:24px 0;color:var
 @media (max-width:640px){nav.main{margin-left:0}.kv{grid-template-columns:1fr}.kv dt{margin-top:6px}}
 @media print{header.top,.strip,.btn,nav{display:none}.card{box-shadow:none}}
 .tick{display:inline-block;width:1em;height:1em;vertical-align:-.15em;background:var(--ok);-webkit-mask:var(--ico-ok) center/contain no-repeat;mask:var(--ico-ok) center/contain no-repeat;margin-right:.4em}
+
+/* Advanced export stays secondary; long hashes/filenames never widen mobile pages. */
+.advanced-export{margin:1rem 0;padding:1rem;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+.advanced-export summary{cursor:pointer;font-weight:600}
+.kv dd,code.note,.btn{overflow-wrap:anywhere}
+.kv dd{min-width:0}
+[hidden]{display:none!important}
+@media(max-width:600px){.row>.btn{max-width:100%;white-space:normal}.advanced-export{padding:.65rem}}
+
+.grid>*{min-width:0}.tw{max-width:100%}.md table{table-layout:fixed}.md td,.md th{overflow-wrap:anywhere}
+@media(max-width:360px){.g2,.g3{grid-template-columns:minmax(0,1fr)}}

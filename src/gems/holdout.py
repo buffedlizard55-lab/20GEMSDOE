@@ -6,7 +6,7 @@ from typing import Any
 import numpy as np
 from scipy.ndimage import label as ndi_label
 
-from .metric import dti_score_fast, ridge_nms
+from .metric import dti_components_exact, dti_score_fast, ridge_nms
 
 BUDGET_FRAC = 0.025
 FOLD_NAMES = ["NW", "NE_LidarGapHeavy", "SW", "SE"]
@@ -108,8 +108,12 @@ class Holdout:
         binary = bool(np.isin(pred[self.footprint], [0,1]).all())
         dense, sparse, detail = [], [], {}
         for _f, name, _m, sl, td, ts, kc, fm in self.quads:
-            rd = dti_score_fast(pred[sl], td, valid_mask=fm)
-            rs = dti_score_fast(pred[sl], ts, valid_mask=fm, catalogue_mask=kc)
+            scorer = dti_score_fast if binary else dti_components_exact
+            # Historical proxy comparability: FP-only neutrality for other
+            # catalogue components. Official wrappers exclude BOTH predictions
+            # and truth on known pixels; this reused proxy is not official truth.
+            rd = scorer(pred[sl], td, valid_mask=fm, mask_predictions=False)
+            rs = scorer(pred[sl], ts, valid_mask=fm, catalogue_mask=kc, mask_predictions=False)
             dense.append(rd["dti"])
             sparse.append(rs["dti"])
             detail[name] = {
@@ -128,7 +132,9 @@ class Holdout:
             "fold_sparse": [round(x, 5) for x in sparse],
             "folds": detail,
             "prediction_kind": "binary_mask" if binary else "continuous_scores",
-            "schema_version": 2,
+            "schema_version": 3,
+            "continuous_scores_thresholded": False,
+            "catalogue_masking_policy": "historical proxy FP-only neutral catalogue; official strict wrapper masks predictions and truth",
         }
 
     def evaluate(self, p_fp: np.ndarray, *, ridge: bool = True) -> dict[str, Any]:
@@ -154,7 +160,7 @@ class Holdout:
     def score_quadrant(self, pred: np.ndarray, f_id: int, mode: str, mask_predictions: bool = False) -> float:
         _f, _n, _m, sl, td, ts, kc, fm = self.quads[f_id]
         if mode == "dense":
-            return dti_score_fast(pred[sl], td, valid_mask=fm)["dti"]
+            return dti_score_fast(pred[sl], td, valid_mask=fm, mask_predictions=False)["dti"]
         return dti_score_fast(pred[sl], ts, valid_mask=fm, catalogue_mask=kc, mask_predictions=mask_predictions)["dti"]
 
     def known_for(self, f_id: int, mode: str) -> np.ndarray:

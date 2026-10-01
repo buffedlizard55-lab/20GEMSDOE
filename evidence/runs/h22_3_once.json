@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "candidate_id": "H22-3",
+  "consumed_utc": "2026-10-01T04:36:52+00:00",
+  "status": "CONSUMED_COMPLETED",
+  "bindings": {
+    "protocol": {
+      "commit_before_results": "4d728ba4e6122361fc4be976fe8e0dccbb61d715",
+      "branch": "arena/01a0f59e-20gemsdoe",
+      "sha256": {
+        "docs/research/preregistration_h22_3.md": "fe6b19b8b19bff9a11555e5cd2dbe370825c60d659eb9a707cebf1020def8894",
+        "scripts/evaluate_h22_3_marker_displacement.py": "732c10d9efffa1fdb12275412791a4e130d7761d407783aa616a2d32b19f7c4f",
+        "scripts/evaluate_h22_2_magnetic_low.py": "fcbd635f8b4910e1c728ac88ec6dd98fd271f843138796e3c6a49ae94f55b71d",
+        "src/gems/marker_matching.py": "0a4759483616e810f43d99d1d88f2b3793f921d3cd4f57ab07f1b142f3a0fb41",
+        "src/gems/holdout.py": "adde44df6dad1deb85ac9a0ae473cdccc6487c5fef9c6b3e337bed41d0dcd610",
+        "src/gems/metric.py": "5caecbd265c5bc3d20aada5997f0dae64f9fc655d7beb5e9ed3d3f9c30ab893d",
+        "src/gems/multiple_testing.py": "ce8e99c3c79c3354dd5e9be3115ec02b397f9f279a289a71d6644615dd6ff998",
+        "src/gems/research_gate.py": "b600edbe25122b9c290511a60b26fa2e6dc3e5e5d343cb828f405e9bf4b1b4a4"
+      }
+    },
+    "inputs": {
+      "training_features.tif": "4371c82e3b8339b807bdffcf4ef59a225520fe2988d521be208ae33743123bc5",
+      "labels.tif": "7ba308ccdc4418b31a178f4f1ef21aaa6e152e4028f2f6f64b01f7eb25ae4093",
+      "sample_submission.tif": "2176d08e485aa2cd2860ce8df539db4faf4d76163b38a4dd8c30a40454d35cbc",
+      "external/geodawn_rad_u8.tif": "c22420f75999030d7cc65c9e31e50d232ea6158423bca051613a18a8b20ba682",
+      "external/geodawn_rad.json": "d917fd08f89c160d2a0ba91af9c3321c8c8b5677fcdba39b10e684384cbc7488"
+    },
+    "comparator_hashes": {
+      "spatial_holdout_h16_results.json": "c681ef8d3eca77cc1579c7f74ea608ed8a046f665a2965ba51d856831ee67897",
+      "spatial_holdout_results.json": "45913754a58b9eb772dbba62005699c8cff8252599f6e3030cb38a72efae4a99"
+    },
+    "previous_family_result_sha256": "d743694cd4bdd98dd1f24a9574bdb0155639111c0255d56b1b8f031a1b7bc32b"
+  },
+  "warning": "Software reuse guard only; not proof of independently unseen labels.",
+  "finished_utc": "2026-10-01T04:37:13+00:00"
+}

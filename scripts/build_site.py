@@ -121,6 +121,23 @@ ADVISORY_NOTE = {
 }
 
 
+def git_branch() -> str:
+    r=subprocess.run(["git","branch","--show-current"],cwd=ROOT,capture_output=True,text=True,check=True)
+    return r.stdout.strip() or "detached CI checkout"
+
+
+def scientific_status() -> str:
+    rows=[]
+    for label,file in [("H22-2 magnetic-low geometry","h22_2_magnetic_low_holdout.json"),("H22-3 marker matching","h22_3_marker_displacement_holdout.json")]:
+        r=J(EVI/file);ev=r["evaluation"]["candidate"]
+        rows.append([esc(label),f"{ev['mean_dense_dti']:.5f} / {ev['mean_sparse_dti']:.5f}","REJECT_NO_RETUNING",f'<a href="{BLOB}evidence/{file}">Frozen report</a>'])
+    return f"""<section class="card" id="scientific-status"><h2>Scientific decision: no weekly slot recommended</h2>
+    {table(["One-shot binary proxy test","Dense / Sparse DTI","Decision","Evidence"],rows)}
+    <p>Reproduced H16-1 comparator: <strong>0.21269 / 0.08554</strong> (known-catalogue proxy only). Both H22 tests ran once after pushed preregistration and lost; no rerun, retuning or packaging. H21-1/H21-2 also failed. Fixed H22 family=5, pending p=1; fourfold exact minimum p=.0625 cannot clear Holm FWER .05.</p>
+    <p><strong>Still blocked:</strong> real hidden-fault calibration, identified geological class prior, validated catalogue selection/positive accuracy and new untouched final confirmation. Numerical nnPU/Brier corrections are not empirical validation or a trained confirmed candidate. Continuous DTI is not a proper calibration scoring rule.</p>
+    <p><a href="research/scientific_audit.md">Scientific audit</a> · <a href="{BLOB}evidence/calibration_status.json">Calibration blockers</a> · <a href="{BLOB}evidence/pu_vector_prior_study.json">Vector prior scenario (fit rejected)</a> · <a href="{BLOB}evidence/h22_metric_schema_annotations.json">Archived continuous-diagnostic correction</a> · <a href="research/literature_notes.md">Geological literature notes</a></p></section>"""
+
+
 def shell(title: str, active: str, body: str, *, scripts: str = "", desc: str = "") -> str:
     nav = "".join(
         f'<a href="{h}"' + (' aria-current="page"' if h == active else "") + f">{t}</a>"
@@ -135,9 +152,9 @@ def shell(title: str, active: str, body: str, *, scripts: str = "", desc: str = 
 <link rel="stylesheet" href="assets/site.css"></head><body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="top"><div class="in"><a class="brand" href="index.html">20GEMSDOE</a><nav class="main" aria-label="Main">{nav}<a href="{REPO_URL}" rel="noopener">GitHub</a></nav></div></header>
-<div class="strip"><div class="in"><span>DOE GEMS Prize · DrivenData #306</span><span>Ends <strong>Dec 3, 2026 23:59 UTC</strong> · <strong id="countdown" data-end="{DEADLINE_ISO}"></strong></span><span>Limit: <strong>3 uploads / rolling 7 days</strong></span><span>Manual snapshot 2026-10-01: leader <strong>{top[3]:.4f}</strong> · group-linked best <strong>{group_best['score']:.4f}</strong></span><a href="{COMP}" rel="noopener">Competition</a></div></div>
+<div class="strip"><div class="in"><span>DOE GEMS Prize · DrivenData #306</span><span>Website close <strong>Dec 3, 2026 23:59 UTC</strong> (PDF differs; safety target 22:00 UTC, <a href="audit.html#F45">F45</a>) · <strong id="countdown" data-end="{DEADLINE_ISO}"></strong></span><span>Limit: <strong>3 uploads / rolling 7 days</strong></span><span>Manual snapshot 2026-10-01: leader <strong>{top[3]:.4f}</strong> · group-linked best <strong>{group_best['score']:.4f}</strong></span><a href="{COMP}" rel="noopener">Competition</a></div></div>
 <main id="main" class="wrap">{body}
-<footer><p>Built {built} from commit <code>{git_short()}</code> on branch <code>arena/01a0f564-20gemsdoe</code>. Snapshot and claim limitations are stated in <a href="audit.html">Sources &amp; Irregularities</a>. Project brief &amp; Arena Core Values: <a href="{BLOB}README.md">README.md</a>.</p></footer></main>
+<footer><p>Built {built} from commit <code>{git_short()}</code> on checkout <code>{esc(git_branch())}</code> (base commit; generation may include working-tree changes). Snapshot and claim limitations are stated in <a href="audit.html">Sources &amp; Irregularities</a>. Project brief &amp; Arena Core Values: <a href="{BLOB}README.md">README.md</a>.</p></footer></main>
 {candidates_js_payload()}<script src="js/gems-tiff.js"></script><script src="js/site.js"></script>{scripts}</body></html>
 """
 
@@ -165,12 +182,12 @@ def build_interactive_builder_widget() -> str:
     return f"""<section class="card cand" id="interactive-submission-builder" style="border-width:2px;margin-bottom:1.25rem">
 <span class="badge b-warn">FORMAT-CHECKED RESEARCH ARTIFACTS · NO SCORE RECOMMENDATION</span>
 <h2 style="margin-top:.35rem">Download and pre-flight existing GeoTIFF artifacts</h2>
-<p class="muted" style="margin-top:0">This browser tool packages and checks files already in <code>docs/downloads/</code>; it does not train a model or create predictions. Local checks confirm the current file's structure and <code>[0, 1]</code> values inside the template footprint. Stored H20 holdout values are unreproduced known-fault proxies; H20-5's calibration target is synthetic. <strong>Neither artifact is recommended for a weekly submission.</strong></p>
+<p class="muted" style="margin-top:0">This browser tool checks and can re-export files already in <code>docs/downloads/</code>; it does not train a model or create predictions. Local checks confirm the current file's structure and <code>[0, 1]</code> values inside the template footprint. Stored H20 holdout values are unreproduced known-fault proxies; H20-5's calibration target is synthetic. <strong>Neither artifact is recommended for a weekly submission.</strong></p>
 <div class="grid g2" style="margin:.75rem 0">
   <div>
     <label for="sb-cand-select"><strong>1. Select a format-checked research artifact:</strong></label><br>
     <select id="sb-cand-select" style="width:100%;padding:.5rem;margin-top:.25rem;border-radius:6px;border:1px solid #cbd5e1;font-size:.95rem">
-      <option value="h20-1">H20-1 — stored SAR-nnPU/multi-line raster (not recommended)</option>
+      <option value="h20-1">H20-1 — legacy multi-line raster (not Kiryo nnPU) (not recommended)</option>
       <option value="h20-5">H20-5 — continuous proxy raster; calibration unverified (not recommended)</option>
     </select>
   </div>
@@ -194,6 +211,11 @@ def build_interactive_builder_widget() -> str:
   <dt>Pasteable note</dt><dd><code class="note" id="sb-note">{esc(c1['note'])}</code> <button class="btn" type="button" data-copy="sb-note">Copy note</button></dd>
   <dt>SHA-256</dt><dd><code id="sb-sha">{esc(f1['sha256'])}</code> <button class="btn" type="button" data-copy="sb-sha">Copy checksum</button></dd>
 </dl>
+<details class="advanced-export"><summary>Advanced: export a uniquely named TIFF container (same predictions)</summary>
+<p>This does <strong>not</strong> train a model or create a distinct candidate. It writes the selected artifact's unchanged in-footprint scores as a template-matched single-band float32 GeoTIFF, with NaN outside, then checks its roundtrip. The ~49 MB uncompressed file is an effective duplicate and is <strong>not recommended for upload</strong>.</p>
+<button id="sb-export-btn" class="btn" type="button">Export format-only GeoTIFF copy (.tif)</button>
+<div id="sb-export-info" hidden><dl class="kv"><dt>Export filename</dt><dd><code id="sb-export-name"></code> <button class="btn" type="button" data-copy="sb-export-name">Copy filename</button></dd><dt>Short note</dt><dd><code id="sb-export-note"></code> <button class="btn" type="button" data-copy="sb-export-note">Copy note</button></dd><dt>Export SHA-256</dt><dd><code id="sb-export-sha"></code></dd></dl></div>
+</details>
 <p id="sb-stats" class="small muted" style="margin-bottom:0"><strong>Footprint range check:</strong> finite values in <code>[0.0, 1.0]</code> on <code>{foot['footprint_pixels']:,}</code> template cells; outside cells follow the selected packaging. This is a file-format check, not a model-quality or score validation.</p>
 </section>"""
 
@@ -229,15 +251,17 @@ def build_index() -> str:
     group_best = lb["group"][0]
     body = f"""
 <h1>20GEMSDOE — DOE GEMS research and GeoTIFF download hub</h1>
-<p class="lead">A source-audited research log and simple downloader for existing, format-checked raster artifacts. <strong>No current candidate is recommended for upload.</strong> Holdout evidence is proxy-based and unreproduced; H20-5's stated calibration uses a synthetic target. These artifacts are not hidden-fault validation.</p>
+<p class="row"><a class="btn primary" href="{esc(cs['h20-1']['files']['tif']['href'])}" download>{DL_ICON}Download single-band float32 .tif (research only)</a><a class="btn" href="executive_summary.html">Upload guide &amp; checker</a></p>
+<p class="lead">A source-audited research log and simple downloader for existing, format-checked raster artifacts. <strong>No current candidate is recommended for upload.</strong> H20 holdout evidence is proxy-based and unreproduced; H20-5's stated calibration uses a synthetic target. These artifacts are not hidden-fault validation.</p>
 <div class="alert warn"><strong>Evidence correction:</strong> Earlier site copy overstated H20 calibration, pre-registration, vault and upload eligibility. The old “hidden-fault hit rate” was computed against a synthetic target; the same stored vault was evaluated for two candidates. See <a href="audit.html#F25">F25–F29</a>. No hidden-fault score or reliability claim is established.</div>
 {build_interactive_builder_widget()}
+{scientific_status()}
 <div class="grid g2">{cand_card(cs['h20-1'], 'H20-1 · format-checked research raster · not recommended', '', 'b-warn')}{cand_card(cs['h20-5'], 'H20-5 · format-checked continuous raster · calibration claim withdrawn', '', 'b-warn')}</div>
 <h2>Where the public leaderboard stands</h2>
 <div class="grid g3">
 <div class="card"><span class="muted small">Manual official snapshot · 2026-10-01</span><p style="font-size:2rem;margin:.1em 0"><strong>{top[3]:.4f}</strong></p><p class="small">Leader <code>{esc(top[1])}</code> (rank {top[0]}). The starting value 0.3049 is stale.</p></div>
 <div class="card"><span class="muted small">Highest group-associated account snapshot</span><p style="font-size:2rem;margin:.1em 0"><strong>{group_best['score']:.4f}</strong></p><p class="small"><code>{esc(group_best['participant'])}</code>, rank {group_best['rank']}; repository mapping is owner-reported.</p></div>
-<div class="card"><span class="muted small">Submission status</span><p style="font-size:1.25rem;margin:.2em 0"><strong>No recommendation</strong></p><p class="small">H20 values are historical known-catalogue proxy reports, not reproduced hidden-fault evidence. No H21 slot is authorized.</p></div>
+<div class="card"><span class="muted small">Submission status</span><p style="font-size:1.25rem;margin:.2em 0"><strong>No recommendation</strong></p><p class="small">H20 values are historical known-catalogue proxy reports, not reproduced hidden-fault evidence. H21/H22 tests failed; no slot is authorized.</p></div>
 </div>
 <h2>Why the historical 0.1563 score repeated</h2>
 <p>The archived <code>GEMSDOE1</code> and <code>5GEMSDOE</code> rasters are byte-identical; <code>8GEMSDOE</code> has a different file hash but matches their predictions at all official scored pixels after the pixel-exact known-fault mask. The archived <code>17GEMSDOE</code> raster also matches on scored pixels, but is distinct from <code>17GEMSDOE-F</code> (reported 0.0187). <code>GEMSDOE2</code> is a 0.9464-Jaccard near-duplicate with a reported 0.1560. This is an artifact-level explanation, not proof of model lineage or account attribution. <a href="results.html#duplicates">See the scored-pixel comparison</a>.</p>
@@ -246,7 +270,7 @@ def build_index() -> str:
 <div class="card"><h3>Established locally</h3><ul><li>Current downloadable TIFFs match the template grid and pass recorded footprint range/format checks.</li><li>All 13 DEM10 channels were verified; `prepare_data.py` completed.</li><li>Official staff clarified exact known-fault masking, new-fault definition and rolling submission allowance.</li></ul></div>
 <div class="card"><h3>Not established</h3><ul><li>H20 holdout numbers are not reproduced; their target is known-catalogue transfer, not hidden new faults.</li><li>H20-5 calibration is to a synthetic target and is not evidence of hidden-fault probability calibration.</li><li>The H20 “Vault” is not untouched; H20-1 and H20-5 share its stored evaluation.</li><li>The cause of a historical server-side [0,1] error is unknown.</li></ul></div>
 </div>
-<p class="small muted">Leaderboard snapshots are manual: DrivenData Terms of Use prohibit robots/spiders and other automatic website access. See the <a href="executive_summary.html">Executive Summary</a>, <a href="research.html">H21 hypotheses</a>, <a href="results.html">forensics</a>, and <a href="audit.html">source/irregularity ledger</a>.</p>
+<p class="small muted">Leaderboard snapshots are manual: DrivenData Terms of Use prohibit robots/spiders and other automatic website access. See the <a href="executive_summary.html">Executive Summary</a>, <a href="research.html">H22 hypotheses</a>, <a href="results.html">forensics</a>, and <a href="audit.html">source/irregularity ledger</a>.</p>
 """
     return shell(
         "Research & GeoTIFF Download Hub",
@@ -261,11 +285,14 @@ def build_submit() -> str:
     c2 = next(c for c in subs["candidates"] if c["key"] == "h20-5")
     body = f"""
 <h1>Executive Summary — GeoTIFF download and upload guide</h1>
+<p class="row"><a class="btn primary" href="{esc(c1['files']['tif']['href'])}" download>{DL_ICON}Download single-band float32 .tif (research only)</a></p>
 <div class="alert warn"><strong>Decision first:</strong> the listed H20 files pass local format checks, but neither is currently recommended for a submission slot. Stored H20 holdout numbers are unreproduced known-catalogue proxies; H20-5's Brier target is synthetic; the stored Vault was used for two candidates. See <a href="audit.html#F17">F17 and F25–F29</a>.</div>
-<p class="lead">This page makes the existing files easy to inspect and, if you independently decide to use one, explains the upload steps. The web tool does not train a model, generate a new surface or prove a contest score.</p>
+<p class="lead">This page makes the existing files easy to inspect and, if you independently decide to use one, explains the upload steps. The web tool does not train a model, generate a new prediction surface or prove a contest score.</p>
 {build_interactive_builder_widget()}
+{scientific_status()}
 <div class="grid g2">{cand_card(c1, 'H20-1 · format-checked research raster · no upload recommendation', '', 'b-warn')}{cand_card(c2, 'H20-5 · format-checked continuous proxy raster · no upload recommendation', '', 'b-warn')}</div>
 
+<div class="alert warn"><strong>Compliance:</strong> submit before the earlier project safety target, Dec 3 22:00 UTC (website/PDF discrepancy: <a href="audit.html#F45">F45</a>). Select only one final submission across both prize rounds. Required prize narratives must disclose the extent/how generative AI was used; see the <a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">rules, §3.2</a> and <a href="{BLOB}README.md">AI-use disclosure</a>. Entry eligibility and authorship remain entrant responsibilities.</div>
 <div class="card"><h2 style="margin-top:0">Upload steps (only if you independently elect to proceed)</h2><ol class="steps">
 <li><strong>Choose the NaN-outside GeoTIFF.</strong> The contest file specification says pixels outside the bounds should be null/NaN. Use the individual <code>.tif</code>, not a screenshot or the diagnostic all-finite twin.</li>
 <li><strong>Run the local pre-flight.</strong> Click <strong>Run browser-side GeoTIFF pre-flight</strong> or use the checker below. It verifies the template grid and finite values in <code>[0,1]</code> within the footprint; it does not reproduce the server's hidden validator or establish prediction quality.</li>
@@ -343,10 +370,12 @@ def build_research() -> str:
 
     md = (DOCS / "research" / "hypothesis_register.md").read_text()
     md_html = markdown.markdown(md, extensions=["tables", "toc", "fenced_code", "sane_lists", "md_in_html"])
+    md_html = md_html.replace("<table>",'<div class="tw"><table>').replace("</table>","</table></div>")
     # The register is authored beside research/*.md, while this HTML page is one level up.
     md_html = md_html.replace('href="../../', 'href="../')
     md_html = md_html.replace('href="../audit.html', 'href="audit.html')
     md_html = md_html.replace('href="../research/', 'href="research/')
+    md_html = re.sub(r'href="((?:preregistration_|scientific_audit|literature_notes)[^"]*\.md)"', r'href="research/\1"', md_html)
     md_html = md_html.replace('href="preregistration_h21.md', 'href="research/preregistration_h21.md')
     md_html = md_html.replace('href="preregistration_h21_2.md', 'href="research/preregistration_h21_2.md')
     signal_min_p = min(r["p_uncorrected"] for r in signal_attribution["top_by_abs_rho"])
@@ -357,13 +386,14 @@ def build_research() -> str:
 <h1>Research — hypotheses, PU framing and validation limits</h1>
 <p class="lead">This page separates geological reasoning from observed evidence. The competition's hidden new-fault labels are not available for pre-submission calibration; known-fault spatial holdouts are proxies only.</p>
 <div class="alert warn"><strong>Correction to earlier copy:</strong> the H20 “hidden-fault calibration” used a synthetic outcome generated from catalogue/SGMC proximity and model-based Bernoulli probabilities. Its REL/ECE values are not empirical hidden-fault calibration. The stored “untouched Vault” was evaluated for H20-1 and H20-5. Prior result chronology is not independently proven by this checkout. See <a href="audit.html#F25">F25–F29</a>.</div>
+{scientific_status()}
 <h2>Stored H20 spatial-transfer results (not reproduced)</h2>
 <p>The values below are copied from <code>evidence/spatial_holdout_results.json</code>. They score withheld portions of the known-fault raster and a synthetic sparse-component proxy; official staff says those known-fault pixels are excluded from competition scoring. Do not interpret these as hidden-fault DTI or a leaderboard forecast.</p>
 {stored_tbl}
-<p class="small muted">Source: <a href="{BLOB}evidence/spatial_holdout_results.json">evidence/spatial_holdout_results.json</a>. OOF caches required to regenerate the values are incomplete in this checkout.</p>
+<p class="small muted">Source: <a href="{BLOB}evidence/spatial_holdout_results.json">evidence/spatial_holdout_results.json</a>. H20 OOF caches have not been reproduced. The separate H16 baseline and required external inputs were restored and verified (F38 resolved).</p>
 <h2>Why consider positive-unlabeled learning?</h2>
 <p><strong>Inference:</strong> an incomplete catalogue makes it plausible that pixels outside known traces include both background and unlabelled faults. That motivates testing PU methods. Kiryo et al.'s nnPU estimator addresses PU risk under mixture assumptions and a specified or estimated class prior; the method does not validate those assumptions for this dataset.</p>
-<p>The frequently cited <code>π = 0.0363</code> is a power-law extrapolation below a selected trace-completeness cutoff, not an observed hidden-pixel prevalence. Treat it as a prior scenario. The local implementation is in <code>src/gems/pu_learning.py</code>; see <a href="https://proceedings.neurips.cc/paper/2017/file/7cce53cf90577442771720a370c3c723-Paper.pdf" rel="noopener">Kiryo et al. (2017)</a>.</p>
+<p>The legacy heuristic <code>π = 0.0363</code> is a power-law extrapolation below a selected trace-completeness cutoff, not an observed hidden-pixel prevalence. Treat it as a prior scenario. The corrected actual nnPU numerical head/risk is in <code>src/gems/pu_learning.py</code>; H16 PN and legacy H20 losses are not Kiryo nnPU. The new vector-tail scenario gives π=.0124163671 but its primary KS bootstrap rejects the fit (p=.0025); this is not identified prevalence. No corrected competition candidate was trained with an identified prior; see <a href="https://proceedings.neurips.cc/paper/2017/file/7cce53cf90577442771720a370c3c723-Paper.pdf" rel="noopener">Kiryo et al. (2017)</a>.</p>
 <h2>Calibration report status</h2>
 <p>The previous report constructs <code>s_hit</code> from distance to known catalogue/SGMC features, computes a selected-prior-based <code>p_hidden_u</code>, then samples <code>y_pu_hidden_truth = s_hit OR Bernoulli(p_hidden_u)</code>. Its Brier score, Murphy REL/ECE and “0.70-bin hit rate” therefore measure agreement with a synthetic proxy target. They do <strong>not</strong> verify calibrated probabilities on recovered or observed hidden faults. We withdraw the phrase “Brier-verified.” No independent hidden-fault reliability diagram is available.</p>
 <h2>H21-1 preregistered test</h2>
@@ -380,7 +410,7 @@ def build_research() -> str:
         "Hypotheses & Evidence Status",
         "research.html",
         body,
-        desc="Ranked H21 hypotheses, conditional PU rationale, synthetic calibration correction, and known-catalogue spatial holdout limitations.",
+        desc="Ranked H22 hypotheses, conditional PU rationale, synthetic calibration correction, and known-catalogue spatial holdout limitations.",
     )
 
 
@@ -553,7 +583,7 @@ def build_audit() -> str:
     body = f"""
 <h1>Audit — source registry and irregularities</h1>
 <p class="lead">This page separates verified source statements, repository computations and flagged claims. A populated source table is not a guarantee that every statement in the repository is correct. As of the 2026-10-01 review, the registry contains {len(sources['rows'])} source/computation records and {len(flags['flags'])} flags; {open_high} high-severity items remain open.</p>
-<div class="alert warn"><strong>Priority open flags:</strong> synthetic H20 calibration target (F25), unvalidated power-law class prior (F26), reused stored Vault (F27), incomplete H20 OOF caches (F28), unverified preregistration chronology (F29), bridge-copy data provenance (F30), unknown historical range-error cause (F31), and previously overstated site copy (F32).</div>
+<div class="alert warn"><strong>Priority open flags:</strong> catalogue selection/positive inaccuracies (F39), rejected prior fit (F40), blocked untouched confirmation/power (F41), continuous diagnostic correction (F43), actual browser verification pending (F44),  synthetic H20 calibration target (F25), unvalidated power-law class prior (F26), reused stored Vault (F27), incomplete H20 OOF caches (F28), unverified preregistration chronology (F29), bridge-copy data provenance (F30), unknown historical range-error cause (F31), and previously overstated site copy (F32).</div>
 <h2>Flagged irregularities</h2>{table(["ID", "Severity / Status", "Evidence and issue", "Action and links"], flag_rows)}
 <h2>Source and computed-evidence registry</h2>
 <p>Rows marked <code>flagged</code> intentionally retain claims only to explain why they are not currently supported. For all competition scores, check the timestamped leaderboard snapshot and the official live page manually. Automatic scraping is not used.</p>

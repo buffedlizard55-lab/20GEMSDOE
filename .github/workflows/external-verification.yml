@@ -1,11 +1,10 @@
 name: external-verification
-# Verifies data provenance, extracts GDR 1391 thermal/geochemical & fault trace tables,
-# and computes 1 m USGS 3DEP DEM Openness & Local Relief Model on high-prior tiles.
-# Runs on GitHub-hosted runners and commits results back to the triggering branch.
+# Manual official-source refresh, not DrivenData polling. No automatic Git pushes:
+# results are review artifacts and must not silently change frozen experiments.
 on:
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 concurrency:
   group: data-refresh
   cancel-in-progress: false
@@ -17,23 +16,23 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.11'
       - name: Install geospatial stack
-        run: pip install numpy scipy rasterio geopandas pyogrio shapely pyproj pandas
-      - name: Run verification & 1m DEM Openness/LRM extraction
+        run: pip install -r requirements.txt geopandas pyogrio
+      - name: Verify official data and extract local DEM context
         run: python scripts/ci_external_verify.py
-      - name: Rebuild site if build_site.py exists
+      - name: Validate site and run source health (contest hosts skipped)
         run: |
-          if [ -f scripts/build_site.py ]; then
-            pip install markdown || true
-            python scripts/build_site.py || true
-          fi
-      - name: Commit results back to this branch
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add evidence/ci/
-          if [ -d docs ]; then git add docs/ index.html || true; fi
-          git commit -m "ci: external verification, GDR tables & 1m DEM openness/LRM [skip ci]" || echo "nothing to commit"
-          git pull --rebase origin "${GITHUB_REF_NAME}" || true
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          python scripts/build_site.py
+          python scripts/check_site.py
+          python scripts/source_health.py
+      - name: Preserve verification reports even on failure
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: external-verification-reports
+          path: |
+            evidence/ci/*.json
+            evidence/ci/*.csv
+            docs/data/source_health.json
+          if-no-files-found: error

@@ -1,0 +1,353 @@
+{
+  "generated_utc": "2026-10-01T05:21:44+00:00",
+  "evaluation_scope": "Spatial-transfer proxy on held-out portions of the known fault catalogue; sparse scores use a deterministic 20%-of-components simulation. Not the hidden competition test set.",
+  "methodology": {
+    "split": "four contiguous NW/NE/SW/SE geographic quadrants from footprint row/column medians",
+    "buffer_pixels": 15,
+    "training_sampling": "Historical PN heuristic: up to 40,000 catalogue positives and 120,000 UNLABELED samples outside a 3-pixel collar, treated as negatives in this baseline only",
+    "classifier": "HistGradientBoostingClassifier; max_iter=150, max_leaf_nodes=31, min_samples_leaf=80, learning_rate=0.06, l2_regularization=2.0",
+    "prediction_budget_per_fold": 0.025,
+    "sparse_proxy": "deterministic 20% subset of connected held-out catalogue components; remaining held-out components treated as neutral for sparse false-positive calculation",
+    "random_seed": 20260929,
+    "note": "The holdout does not reproduce private test geography, hidden faults, or leaderboard scoring conditions. Scores are not predictions of competition DTI."
+  },
+  "input_sha256": {
+    "training_features.tif": "4371c82e3b8339b807bdffcf4ef59a225520fe2988d521be208ae33743123bc5",
+    "labels.tif": "7ba308ccdc4418b31a178f4f1ef21aaa6e152e4028f2f6f64b01f7eb25ae4093",
+    "sample_submission.tif": "2176d08e485aa2cd2860ce8df539db4faf4d76163b38a4dd8c30a40454d35cbc"
+  },
+  "submission_slot_spent": false,
+  "folds": {
+    "Baseline_Bands19_DeReg": {
+      "NW": {
+        "dense_dti": 0.13725,
+        "sparse_dti": 0.06077,
+        "dense_coverage": 0.1872,
+        "sparse_coverage": 0.2111,
+        "emitted_px": 28868
+      },
+      "NE_LidarGapHeavy": {
+        "dense_dti": 0.17788,
+        "sparse_dti": 0.05823,
+        "dense_coverage": 0.2431,
+        "sparse_coverage": 0.2163,
+        "emitted_px": 35693
+      },
+      "SW": {
+        "dense_dti": 0.12947,
+        "sparse_dti": 0.0622,
+        "dense_coverage": 0.1486,
+        "sparse_coverage": 0.1686,
+        "emitted_px": 35716
+      },
+      "SE": {
+        "dense_dti": 0.19088,
+        "sparse_dti": 0.06975,
+        "dense_coverage": 0.2154,
+        "sparse_coverage": 0.1732,
+        "emitted_px": 28907
+      }
+    },
+    "H16_5_Strain_Seismic_Completeness": {
+      "NW": {
+        "dense_dti": 0.12529,
+        "sparse_dti": 0.05812,
+        "dense_coverage": 0.1708,
+        "sparse_coverage": 0.2018,
+        "emitted_px": 28868
+      },
+      "NE_LidarGapHeavy": {
+        "dense_dti": 0.16415,
+        "sparse_dti": 0.05455,
+        "dense_coverage": 0.2241,
+        "sparse_coverage": 0.2027,
+        "emitted_px": 35693
+      },
+      "SW": {
+        "dense_dti": 0.12351,
+        "sparse_dti": 0.05134,
+        "dense_coverage": 0.1416,
+        "sparse_coverage": 0.139,
+        "emitted_px": 35716
+      },
+      "SE": {
+        "dense_dti": 0.16571,
+        "sparse_dti": 0.06052,
+        "dense_coverage": 0.1866,
+        "sparse_coverage": 0.1508,
+        "emitted_px": 28907
+      }
+    },
+    "H16_4_Hydrothermal_Conduit": {
+      "NW": {
+        "dense_dti": 0.13963,
+        "sparse_dti": 0.06231,
+        "dense_coverage": 0.1905,
+        "sparse_coverage": 0.2163,
+        "emitted_px": 28868
+      },
+      "NE_LidarGapHeavy": {
+        "dense_dti": 0.17909,
+        "sparse_dti": 0.05523,
+        "dense_coverage": 0.2449,
+        "sparse_coverage": 0.205,
+        "emitted_px": 35693
+      },
+      "SW": {
+        "dense_dti": 0.13169,
+        "sparse_dti": 0.06431,
+        "dense_coverage": 0.1511,
+        "sparse_coverage": 0.1743,
+        "emitted_px": 35716
+      },
+      "SE": {
+        "dense_dti": 0.18941,
+        "sparse_dti": 0.07011,
+        "dense_coverage": 0.2136,
+        "sparse_coverage": 0.1742,
+        "emitted_px": 28907
+      }
+    },
+    "H16_2_Geopotential_Strike_Worm": {
+      "NW": {
+        "dense_dti": 0.1359,
+        "sparse_dti": 0.06018,
+        "dense_coverage": 0.1853,
+        "sparse_coverage": 0.2089,
+        "emitted_px": 28868
+      },
+      "NE_LidarGapHeavy": {
+        "dense_dti": 0.18793,
+        "sparse_dti": 0.05969,
+        "dense_coverage": 0.2569,
+        "sparse_coverage": 0.2214,
+        "emitted_px": 35693
+      },
+      "SW": {
+        "dense_dti": 0.1304,
+        "sparse_dti": 0.06417,
+        "dense_coverage": 0.1496,
+        "sparse_coverage": 0.174,
+        "emitted_px": 35716
+      },
+      "SE": {
+        "dense_dti": 0.19595,
+        "sparse_dti": 0.0723,
+        "dense_coverage": 0.221,
+        "sparse_coverage": 0.1794,
+        "emitted_px": 28907
+      }
+    },
+    "H16_3_ScarpPure_1m_10m": {
+      "NW": {
+        "dense_dti": 0.21069,
+        "sparse_dti": 0.08899,
+        "dense_coverage": 0.2885,
+        "sparse_coverage": 0.3072,
+        "emitted_px": 28868
+      },
+      "NE_LidarGapHeavy": {
+        "dense_dti": 0.20448,
+        "sparse_dti": 0.0654,
+        "dense_coverage": 0.2796,
+        "sparse_coverage": 0.2425,
+        "emitted_px": 35693
+      },
+      "SW": {
+        "dense_dti": 0.15552,
+        "sparse_dti": 0.06533,
+        "dense_coverage": 0.1792,
+        "sparse_coverage": 0.1773,
+        "emitted_px": 35716
+      },
+      "SE": {
+        "dense_dti": 0.23629,
+        "sparse_dti": 0.10895,
+        "dense_coverage": 0.2672,
+        "sparse_coverage": 0.2699,
+        "emitted_px": 28907
+      }
+    },
+    "H16_3_Antislope_Piedmont_Scarp_1m_10m": {
+      "NW": {
+        "dense_dti": 0.19911,
+        "sparse_dti": 0.08477,
+        "dense_coverage": 0.2714,
+        "sparse_coverage": 0.2919,
+        "emitted_px": 28868
+      },
+      "NE_LidarGapHeavy": {
+        "dense_dti": 0.2281,
+        "sparse_dti": 0.07157,
+        "dense_coverage": 0.3107,
+        "sparse_coverage": 0.2632,
+        "emitted_px": 35693
+      },
+      "SW": {
+        "dense_dti": 0.14234,
+        "sparse_dti": 0.05984,
+        "dense_coverage": 0.1634,
+        "sparse_coverage": 0.1619,
+        "emitted_px": 35716
+      },
+      "SE": {
+        "dense_dti": 0.24288,
+        "sparse_dti": 0.10174,
+        "dense_coverage": 0.2735,
+        "sparse_coverage": 0.2504,
+        "emitted_px": 28907
+      }
+    },
+    "H16_1_SeamFree_MultiScale_Synthesis": {
+      "NW": {
+        "dense_dti": 0.20774,
+        "sparse_dti": 0.089,
+        "dense_coverage": 0.2832,
+        "sparse_coverage": 0.3061,
+        "emitted_px": 28868
+      },
+      "NE_LidarGapHeavy": {
+        "dense_dti": 0.23898,
+        "sparse_dti": 0.07794,
+        "dense_coverage": 0.3261,
+        "sparse_coverage": 0.2873,
+        "emitted_px": 35693
+      },
+      "SW": {
+        "dense_dti": 0.15453,
+        "sparse_dti": 0.06675,
+        "dense_coverage": 0.1777,
+        "sparse_coverage": 0.1807,
+        "emitted_px": 35716
+      },
+      "SE": {
+        "dense_dti": 0.24951,
+        "sparse_dti": 0.10847,
+        "dense_coverage": 0.2812,
+        "sparse_coverage": 0.2671,
+        "emitted_px": 28907
+      }
+    }
+  },
+  "summary": {
+    "Baseline_Bands19_DeReg": {
+      "mean_dense_dti": 0.15887,
+      "mean_sparse_dti": 0.06274,
+      "fold_dense": [
+        0.13725,
+        0.17788,
+        0.12947,
+        0.19088
+      ],
+      "fold_sparse": [
+        0.06077,
+        0.05823,
+        0.0622,
+        0.06975
+      ]
+    },
+    "H16_5_Strain_Seismic_Completeness": {
+      "mean_dense_dti": 0.14466,
+      "mean_sparse_dti": 0.05613,
+      "fold_dense": [
+        0.12529,
+        0.16415,
+        0.12351,
+        0.16571
+      ],
+      "fold_sparse": [
+        0.05812,
+        0.05455,
+        0.05134,
+        0.06052
+      ]
+    },
+    "H16_4_Hydrothermal_Conduit": {
+      "mean_dense_dti": 0.15996,
+      "mean_sparse_dti": 0.06299,
+      "fold_dense": [
+        0.13963,
+        0.17909,
+        0.13169,
+        0.18941
+      ],
+      "fold_sparse": [
+        0.06231,
+        0.05523,
+        0.06431,
+        0.07011
+      ]
+    },
+    "H16_2_Geopotential_Strike_Worm": {
+      "mean_dense_dti": 0.16254,
+      "mean_sparse_dti": 0.06408,
+      "fold_dense": [
+        0.1359,
+        0.18793,
+        0.1304,
+        0.19595
+      ],
+      "fold_sparse": [
+        0.06018,
+        0.05969,
+        0.06417,
+        0.0723
+      ]
+    },
+    "H16_3_ScarpPure_1m_10m": {
+      "mean_dense_dti": 0.20175,
+      "mean_sparse_dti": 0.08217,
+      "fold_dense": [
+        0.21069,
+        0.20448,
+        0.15552,
+        0.23629
+      ],
+      "fold_sparse": [
+        0.08899,
+        0.0654,
+        0.06533,
+        0.10895
+      ]
+    },
+    "H16_3_Antislope_Piedmont_Scarp_1m_10m": {
+      "mean_dense_dti": 0.20311,
+      "mean_sparse_dti": 0.07948,
+      "fold_dense": [
+        0.19911,
+        0.2281,
+        0.14234,
+        0.24288
+      ],
+      "fold_sparse": [
+        0.08477,
+        0.07157,
+        0.05984,
+        0.10174
+      ]
+    },
+    "H16_1_SeamFree_MultiScale_Synthesis": {
+      "mean_dense_dti": 0.21269,
+      "mean_sparse_dti": 0.08554,
+      "fold_dense": [
+        0.20774,
+        0.23898,
+        0.15453,
+        0.24951
+      ],
+      "fold_sparse": [
+        0.089,
+        0.07794,
+        0.06675,
+        0.10847
+      ]
+    }
+  },
+  "software_versions": {
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "scikit-learn": "1.9.1",
+    "rasterio": "1.4.4"
+  },
+  "reproduction_note": "Fixed historical models, no retuning. Unused context-raster dependency removed; historical result preserved."
+}

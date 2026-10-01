@@ -154,6 +154,7 @@ def test_continuous_scores_report_mass_not_truncated_pixel_count():
     lab=np.zeros_like(fp);lab[5,5]=1;lab[5,15]=1;lab[15,5]=1;lab[15,15]=1
     r=Holdout(fp,lab).score_mask(np.full(fp.shape,.1))
     assert r["prediction_kind"]=="continuous_scores"
+    assert r["mean_dense_dti"]>0 and r["continuous_scores_thresholded"] is False
     for fold in r["folds"].values():
         assert fold["emitted_px"] is None
         assert fold["prediction_mass"]==pytest.approx(.1*fold["nonzero_prediction_pixels"])

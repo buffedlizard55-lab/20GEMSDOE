@@ -11,7 +11,7 @@
     {
       "key": "h20-1",
       "hid": "H20-1",
-      "title": "H20-1 SAR-nnPU Multi-Line Research Raster (format-verified; not recommended for upload)",
+      "title": "H20-1 Legacy Multi-Line Research Raster (not Kiryo nnPU; not recommended for upload)",
       "one_liner": "A stored H20-1 probability raster combining the reported SAR-nnPU and multi-line features. Its format checks pass, but the H20 holdout is unreproduced and only measures transfer to known-catalogue labels; no hidden-fault score is established.",
       "content_id": "be0e8f6b",
       "lines_satisfied": [

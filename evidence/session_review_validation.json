@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "generated_utc": "2026-10-01T05:37:51+00:00",
+  "branch": "arena/01a0f59e-20gemsdoe",
+  "main_content_commit": "5d7b84559f75fa3fed407c88fd4111be60646fc2",
+  "full_data_suite": {
+    "passed": 169,
+    "skipped": 1,
+    "warnings": 1,
+    "elapsed_seconds": 51.25,
+    "skip_reason": "Legacy H18 preregistration commit unavailable; chronology not verified"
+  },
+  "site": {
+    "pages": 8,
+    "links": 361,
+    "errors": 0,
+    "node_syntax_checked": true
+  },
+  "cold_H16_cache_rebuild": {
+    "all_seven_summary_pairs_match_prior_reproduction_exactly": true,
+    "evidence": "evidence/spatial_holdout_h16_cache_review.json",
+    "new_candidate_or_retuning": false
+  },
+  "real_browser_validation_completed": false,
+  "browser_blocker": "Official Playwright binary TLS ECONNRESET; apt repository access/package lookup failed; committed CI harness unexecuted because GitHub authentication failed",
+  "source_health": {
+    "passed": false,
+    "reachable": 11,
+    "checked_unique": 41,
+    "contest_entries_skipped": 18,
+    "TLS_network_failures": 23,
+    "new_main_links_pending_merge_404": 7,
+    "report": "evidence/source_health_review.json"
+  },
+  "github_delivery": {
+    "push_succeeded": false,
+    "PR_created_this_review": false,
+    "PR_merged": false,
+    "new_Pages_deployment_verified": false,
+    "blocker": "GitHub API HTTP 401 Bad credentials; git push failed (no username/terminal prompts disabled). Arena GitHub reconnection required."
+  },
+  "competition": {
+    "new_submission_artifact_published": false,
+    "submission_slot_spent": false,
+    "candidate_recommended": false,
+    "H22_2_and_H22_3_rejected_once": true,
+    "real_hidden_calibration_available": false,
+    "identified_prior_available": false,
+    "independent_untouched_final_confirmation_available": false
+  }
+}

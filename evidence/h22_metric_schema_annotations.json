@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-01",
+  "frozen_reports_preserved": true,
+  "one_shot_results_not_rerun": true,
+  "primary_binary_decisions_unchanged": true,
+  "correction": "Historical Holdout.score_mask dispatched continuous arrays to the >0.5 binary scorer. Those archived descriptive confidence DTI values are NOT unthresholded continuous DTI. Original fixed-budget binary primary values and both REJECT_NO_RETUNING decisions remain preserved. No replacement scores are computed from the reused holdout. New code dispatches continuous fields to dti_components_exact and makes the fast API reject soft values. Historical proxy catalogue masking is explicitly FP-only for comparability; official wrappers now exclude known pixels from both predictions and truth.",
+  "reports": [
+    {
+      "path": "evidence/h22_2_magnetic_low_holdout.json",
+      "sha256": "d743694cd4bdd98dd1f24a9574bdb0155639111c0255d56b1b8f031a1b7bc32b",
+      "invalid_interpretation": "Unthresholded continuous confidence DTI; archived numbers actually score >0.5 masks"
+    },
+    {
+      "path": "evidence/h22_3_marker_displacement_holdout.json",
+      "sha256": "233e1db121a50d293bc207461585f1f90eaa150a8602b473b00b0e63214c30fa",
+      "invalid_interpretation": "Unthresholded continuous confidence DTI; archived numbers actually score >0.5 masks"
+    }
+  ]
+}

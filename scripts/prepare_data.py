@@ -76,6 +76,8 @@ def main() -> None:
         "rasters": {},
         "dem10_channels": {},
         "irregularities_verified": [],
+        "provenance_scope": "Hash-verified pinned team bridge; not independent official archive verification",
+        "official_archive_independently_compared": False,
     }
 
     for rel, spec in EXPECTED.items():
@@ -153,9 +155,14 @@ def main() -> None:
     for ch in dem10_man["channels"]:
         p = DATA_DIR / "dem10" / f"{ch}.f32.npy"
         arr = np.load(p, mmap_mode="r")
+        actual_sha = sha256_file(p)
+        if actual_sha != dem10_man["channel_stats"][ch]["sha256"]:
+            raise ValueError(f"DEM10 checksum mismatch: {ch}")
+        if arr.dtype != np.float32 or not np.isfinite(arr).all():
+            raise ValueError(f"DEM10 dtype/finite-value mismatch: {ch}")
         assert arr.shape == (5167373,), f"Unexpected shape for dem10/{ch}: {arr.shape}"
         report["dem10_channels"][ch] = {
-            "sha256": dem10_man["channel_stats"][ch]["sha256"],
+            "sha256": actual_sha,
             "shape": [5167373],
             "finite_fraction": float(np.isfinite(arr).mean()),
         }

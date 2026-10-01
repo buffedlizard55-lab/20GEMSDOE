@@ -10,6 +10,7 @@ import json
 import os
 from pathlib import Path
 import tempfile
+import zipfile
 from typing import Any
 
 import numpy as np
@@ -47,7 +48,7 @@ def load_bundle(path: Path, expected: dict) -> dict[str, np.ndarray] | None:
             if list(a.shape)!=meta["arrays"][k]["shape"] or str(a.dtype)!=meta["arrays"][k]["dtype"]:
                 return None
         return data
-    except (OSError, ValueError, KeyError, TypeError, EOFError):
+    except (OSError, ValueError, KeyError, TypeError, EOFError, zipfile.BadZipFile):
         return None
 
 

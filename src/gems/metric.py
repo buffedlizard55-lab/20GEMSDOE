@@ -33,6 +33,22 @@ def _kernel_offsets(radius: float = RADIUS_PX) -> list[tuple[int, int, float]]:
 KERNEL_OFFSETS = _kernel_offsets(RADIUS_PX)
 
 
+def _validate_metric_inputs(pred,truth,valid_mask,catalogue_mask,*,binary=False):
+    pred,truth=np.asarray(pred),np.asarray(truth)
+    if truth.ndim!=2 or pred.shape!=truth.shape:
+        raise ValueError("matching 2D predictions and truth required")
+    valid=np.ones(truth.shape,bool) if valid_mask is None else np.asarray(valid_mask)
+    if valid.shape!=truth.shape or not np.isin(valid,[0,1]).all():
+        raise ValueError("matching binary evaluation mask required")
+    valid=valid.astype(bool)
+    if catalogue_mask is not None and (np.asarray(catalogue_mask).shape!=truth.shape or not np.isin(catalogue_mask,[0,1]).all()):
+        raise ValueError("matching binary catalogue mask required")
+    if not np.isfinite(pred[valid]).all() or np.any((pred[valid]<0)|(pred[valid]>1)) or not np.isin(truth[valid],[0,1]).all():
+        raise ValueError("finite [0,1] scores and binary truth required inside evaluation mask")
+    if binary and not np.isin(pred[valid],[0,1]).all():
+        raise ValueError("dti_score_fast requires binary scores; use dti_components_exact for continuous forecasts")
+
+
 def dti_components_exact(
     pred: np.ndarray,
     truth: np.ndarray,
@@ -40,9 +56,13 @@ def dti_components_exact(
     catalogue_mask: np.ndarray | None = None,
     alpha: float = ALPHA,
     beta: float = BETA,
-    mask_predictions: bool = False,
+    mask_predictions: bool = True,
 ) -> dict[str, float]:
     """Compute exact distance-weighted Tversky index components for arbitrary p(x) in [0, 1]."""
+    _validate_metric_inputs(pred,truth,valid_mask,catalogue_mask)
+    if not np.isfinite([alpha,beta]).all() or alpha<0 or beta<0 or alpha+beta<=0:
+        raise ValueError("finite nonnegative, nonzero penalty weights required")
+    truth=np.asarray(truth)
     H, W = truth.shape
     p = np.nan_to_num(pred, nan=0.0).astype(np.float64)
     if valid_mask is not None:
@@ -50,6 +70,8 @@ def dti_components_exact(
     if mask_predictions and catalogue_mask is not None:
         p = np.where(catalogue_mask, 0.0, p)
     g_mask = (truth > 0) if valid_mask is None else ((truth > 0) & valid_mask)
+    if mask_predictions and catalogue_mask is not None:
+        g_mask = g_mask & ~np.asarray(catalogue_mask,dtype=bool)
     yy, xx = np.nonzero(g_mask)
     n_truth = int(len(yy))
     if n_truth == 0:
@@ -106,13 +128,16 @@ def dti_score_fast(
     truth_binary: np.ndarray,
     valid_mask: np.ndarray | None = None,
     catalogue_mask: np.ndarray | None = None,
-    mask_predictions: bool = False,
+    mask_predictions: bool = True,
 ) -> dict[str, float]:
     """Fast exact DTI for binary {0, 1} predictions using exact kernel offsets."""
+    _validate_metric_inputs(pred_binary,truth_binary,valid_mask,catalogue_mask,binary=True)
     p = np.nan_to_num(pred_binary, nan=0.0) > 0.5
     if mask_predictions and catalogue_mask is not None:
         p = p & ~catalogue_mask
-    g = truth_binary > 0
+    g = np.asarray(truth_binary) > 0
+    if mask_predictions and catalogue_mask is not None:
+        g = g & ~np.asarray(catalogue_mask,dtype=bool)
     if valid_mask is not None:
         p = p & valid_mask
         g = g & valid_mask
@@ -177,8 +202,20 @@ def dti_score_masked(
     )
 
 
-def marginal_inclusion_threshold(current_dti: float, alpha: float = ALPHA) -> float:
-    return (alpha * current_dti) / (1.0 - alpha * current_dti)
+def marginal_inclusion_threshold(current_dti: float, alpha: float = ALPHA, beta: float = BETA) -> float:
+    """Stylized one-to-one pixel increment; NOT a spatial/hidden-label policy.
+
+    Adding TP=q, FP=1-q and removing FN=q increases denominator by
+    alpha+(1-beta-alpha)*q. Require q > alpha*s / (1-s*(1-beta-alpha)).
+    With official alpha+beta=1 the threshold is alpha*s. Spatial multi-truth
+    kernel credit/overlap violates the simple increment assumptions.
+    """
+    if not np.isfinite([current_dti,alpha,beta]).all() or not 0<=current_dti<=1 or alpha<0 or beta<0 or alpha+beta<=0:
+        raise ValueError("valid score and nonnegative penalty weights required")
+    den=1-current_dti*(1-beta-alpha)
+    if den<=0:
+        raise ValueError("undefined stylized marginal threshold")
+    return alpha*current_dti/den
 
 
 def verify_organizer_worked_example() -> dict[str, float | bool]:
