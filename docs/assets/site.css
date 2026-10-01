@@ -64,3 +64,7 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:24px 0;color:var
 
 .grid>*{min-width:0}.tw{max-width:100%}.md table{table-layout:fixed}.md td,.md th{overflow-wrap:anywhere}
 @media(max-width:360px){.g2,.g3{grid-template-columns:minmax(0,1fr)}}
+
+/* Native file controls and upload-guide URLs must stay inside mobile cards. */
+.drop input[type=file]{width:100%;max-width:100%;min-width:0}
+.drop,.steps{overflow-wrap:anywhere}

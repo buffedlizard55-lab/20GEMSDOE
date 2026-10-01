@@ -55,7 +55,10 @@ def main():
                 for name in ['index.html','executive_summary.html','research.html','results.html','knowledge.html','audit.html']:
                     page.goto(origin+'/'+name,wait_until='networkidle')
                     assert page.locator('h1').count()==1, (mode,name,'heading')
-                    assert page.evaluate('document.documentElement.scrollWidth<=window.innerWidth+1'),(mode,name,'horizontal overflow')
+                    fits=page.evaluate('document.documentElement.scrollWidth<=window.innerWidth+1')
+                    if not fits:
+                        overflow=page.evaluate("Array.from(document.querySelectorAll('body *')).map(e=>{const r=e.getBoundingClientRect();return {tag:e.tagName,id:e.id,cls:e.className,left:r.left,right:r.right,width:r.width}}).filter(e=>e.right>innerWidth+1||e.left< -1).slice(0,30)")
+                        raise AssertionError((mode,name,'horizontal overflow',overflow))
                     if name=='index.html':
                         assert page.locator('a[download]').first.is_visible()
                         page.screenshot(path=str(folder/(mode+'-home.png')),full_page=False)
