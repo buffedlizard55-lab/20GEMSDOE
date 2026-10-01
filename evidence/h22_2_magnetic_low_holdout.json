@@ -1,0 +1,393 @@
+{
+  "schema_version": 1,
+  "generated_utc": "2026-10-01T04:10:39+00:00",
+  "candidate_id": "H22-2",
+  "status": "EXPLORATORY_REUSED_KNOWN_CATALOGUE_SPATIAL_TRANSFER_PROXY",
+  "preregistration": {
+    "commit_before_results": "68dca59396a1f3a1536962ca0e30501a3853de80",
+    "branch": "arena/01a0f59e-20gemsdoe",
+    "sha256": {
+      "docs/research/preregistration_h22_2.md": "5ce2b0836d16d3f4a2eb24faf8b3a42af61455400af408f2ab30bf83f5835f56",
+      "scripts/evaluate_h22_2_magnetic_low.py": "fcbd635f8b4910e1c728ac88ec6dd98fd271f843138796e3c6a49ae94f55b71d",
+      "src/gems/lineaments.py": "bc33d75b9b6ed6da9425da8b9dd77087d1647ecc4e94d1ef397af1eb8ac82d8d",
+      "src/gems/holdout.py": "63de4569f410d38305ee110ee9513ae6737bf42e1794ed6ff74dcdb90b8d59b4",
+      "src/gems/metric.py": "5caecbd265c5bc3d20aada5997f0dae64f9fc655d7beb5e9ed3d3f9c30ab893d",
+      "src/gems/multiple_testing.py": "ce8e99c3c79c3354dd5e9be3115ec02b397f9f279a289a71d6644615dd6ff998",
+      "src/gems/research_gate.py": "b600edbe25122b9c290511a60b26fa2e6dc3e5e5d343cb828f405e9bf4b1b4a4"
+    }
+  },
+  "input_sha256": {
+    "training_features.tif": "4371c82e3b8339b807bdffcf4ef59a225520fe2988d521be208ae33743123bc5",
+    "labels.tif": "7ba308ccdc4418b31a178f4f1ef21aaa6e152e4028f2f6f64b01f7eb25ae4093",
+    "sample_submission.tif": "2176d08e485aa2cd2860ce8df539db4faf4d76163b38a4dd8c30a40454d35cbc"
+  },
+  "software_versions": {
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "rasterio": "1.4.4"
+  },
+  "layer": {
+    "band": 2,
+    "name": "rtp",
+    "description": "rtp - Reduced to pole magnetic data - magnetic anomaly corrected for latitude effects"
+  },
+  "transform_metadata": {
+    "invalid_inside_cells": 3061,
+    "interior_cells": 4746228,
+    "edge_guard_cells": 421145,
+    "fill": "nearest valid footprint value (labels not used)",
+    "scales": {
+      "2.0": {
+        "C_q90_strength": 35.63800048828125
+      },
+      "4.0": {
+        "C_q90_strength": 61.75786590576172
+      },
+      "8.0": {
+        "C_q90_strength": 81.45082092285156
+      }
+    },
+    "polarity": "trough",
+    "edge_guard_px": 32
+  },
+  "evaluation": {
+    "candidate": {
+      "mean_dense_dti": 0.06131,
+      "mean_sparse_dti": 0.02222,
+      "fold_dense": [
+        0.06514,
+        0.03429,
+        0.07313,
+        0.07269
+      ],
+      "fold_sparse": [
+        0.01879,
+        0.00938,
+        0.0279,
+        0.03279
+      ],
+      "folds": {
+        "NW": {
+          "dense_dti": 0.06514,
+          "sparse_dti": 0.01879,
+          "dense_coverage": 0.089,
+          "sparse_coverage": 0.0657,
+          "emitted_px": 28868
+        },
+        "NE_LidarGapHeavy": {
+          "dense_dti": 0.03429,
+          "sparse_dti": 0.00938,
+          "dense_coverage": 0.0469,
+          "sparse_coverage": 0.0354,
+          "emitted_px": 35693
+        },
+        "SW": {
+          "dense_dti": 0.07313,
+          "sparse_dti": 0.0279,
+          "dense_coverage": 0.0838,
+          "sparse_coverage": 0.0761,
+          "emitted_px": 35716
+        },
+        "SE": {
+          "dense_dti": 0.07269,
+          "sparse_dti": 0.03279,
+          "dense_coverage": 0.0817,
+          "sparse_coverage": 0.0827,
+          "emitted_px": 28907
+        }
+      }
+    },
+    "scalar_low_control": {
+      "mean_dense_dti": 0.0567,
+      "mean_sparse_dti": 0.02279,
+      "fold_dense": [
+        0.0562,
+        0.05514,
+        0.05615,
+        0.05932
+      ],
+      "fold_sparse": [
+        0.02093,
+        0.02257,
+        0.02069,
+        0.02696
+      ],
+      "folds": {
+        "NW": {
+          "dense_dti": 0.0562,
+          "sparse_dti": 0.02093,
+          "dense_coverage": 0.0767,
+          "sparse_coverage": 0.0732,
+          "emitted_px": 28868
+        },
+        "NE_LidarGapHeavy": {
+          "dense_dti": 0.05514,
+          "sparse_dti": 0.02257,
+          "dense_coverage": 0.0754,
+          "sparse_coverage": 0.085,
+          "emitted_px": 35693
+        },
+        "SW": {
+          "dense_dti": 0.05615,
+          "sparse_dti": 0.02069,
+          "dense_coverage": 0.0644,
+          "sparse_coverage": 0.0566,
+          "emitted_px": 35716
+        },
+        "SE": {
+          "dense_dti": 0.05932,
+          "sparse_dti": 0.02696,
+          "dense_coverage": 0.0667,
+          "sparse_coverage": 0.0681,
+          "emitted_px": 28907
+        }
+      }
+    },
+    "opposite_polarity_control": {
+      "mean_dense_dti": 0.05793,
+      "mean_sparse_dti": 0.0225,
+      "fold_dense": [
+        0.05767,
+        0.03367,
+        0.08087,
+        0.05952
+      ],
+      "fold_sparse": [
+        0.02288,
+        0.01254,
+        0.02924,
+        0.02534
+      ],
+      "folds": {
+        "NW": {
+          "dense_dti": 0.05767,
+          "sparse_dti": 0.02288,
+          "dense_coverage": 0.0787,
+          "sparse_coverage": 0.0801,
+          "emitted_px": 28868
+        },
+        "NE_LidarGapHeavy": {
+          "dense_dti": 0.03367,
+          "sparse_dti": 0.01254,
+          "dense_coverage": 0.0461,
+          "sparse_coverage": 0.0474,
+          "emitted_px": 35693
+        },
+        "SW": {
+          "dense_dti": 0.08087,
+          "sparse_dti": 0.02924,
+          "dense_coverage": 0.0926,
+          "sparse_coverage": 0.0797,
+          "emitted_px": 35716
+        },
+        "SE": {
+          "dense_dti": 0.05952,
+          "sparse_dti": 0.02534,
+          "dense_coverage": 0.0669,
+          "sparse_coverage": 0.064,
+          "emitted_px": 28907
+        }
+      }
+    },
+    "continuous_confidence_dti_descriptive_only": {
+      "mean_dense_dti": 0.04325,
+      "mean_sparse_dti": 0.01213,
+      "fold_dense": [
+        0.04261,
+        0.0107,
+        0.07122,
+        0.04846
+      ],
+      "fold_sparse": [
+        0.01103,
+        0.00128,
+        0.01659,
+        0.01961
+      ],
+      "folds": {
+        "NW": {
+          "dense_dti": 0.04261,
+          "sparse_dti": 0.01103,
+          "dense_coverage": 0.0711,
+          "sparse_coverage": 0.0552,
+          "emitted_px": 85556
+        },
+        "NE_LidarGapHeavy": {
+          "dense_dti": 0.0107,
+          "sparse_dti": 0.00128,
+          "dense_coverage": 0.0134,
+          "sparse_coverage": 0.004,
+          "emitted_px": 59454
+        },
+        "SW": {
+          "dense_dti": 0.07122,
+          "sparse_dti": 0.01659,
+          "dense_coverage": 0.1369,
+          "sparse_coverage": 0.1192,
+          "emitted_px": 184887
+        },
+        "SE": {
+          "dense_dti": 0.04846,
+          "sparse_dti": 0.01961,
+          "dense_coverage": 0.055,
+          "sparse_coverage": 0.0517,
+          "emitted_px": 70193
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "vs_h16": {
+      "passed": false,
+      "rules": {
+        "mean_dense_improves": false,
+        "mean_sparse_improves": false,
+        "sparse_fold_wins_ge_3_of_4": false,
+        "no_fold_loses_more_than_0_01": false
+      },
+      "sparse_fold_wins": 0,
+      "dense_fold_wins": 0,
+      "worst_fold_delta_dense": -0.20469,
+      "worst_fold_delta_sparse": -0.07568,
+      "delta_mean_dense": -0.15138,
+      "delta_mean_sparse": -0.06332
+    },
+    "vs_historical_h20_thresholds": {
+      "passed": false,
+      "rules": {
+        "mean_dense_improves": false,
+        "mean_sparse_improves": false,
+        "sparse_fold_wins_ge_3_of_4": false,
+        "no_fold_loses_more_than_0_01": false
+      },
+      "sparse_fold_wins": 0,
+      "dense_fold_wins": 0,
+      "worst_fold_delta_dense": -0.20904,
+      "worst_fold_delta_sparse": -0.07672,
+      "delta_mean_dense": -0.15311,
+      "delta_mean_sparse": -0.0657
+    },
+    "sparse_beats_scalar_low_control": false,
+    "practical_screen_passed": false
+  },
+  "multiplicity": {
+    "family_ids_frozen_before_test": [
+      "H22-2",
+      "H22-1",
+      "H22-3",
+      "H21-3",
+      "H21-4"
+    ],
+    "primary_endpoint": "Sparse proxy DTI vs H16-1",
+    "raw_exact_signflip_test": {
+      "n_blocks": 4,
+      "n_sign_patterns": 16,
+      "mean_delta": -0.06332499999999999,
+      "fold_deltas": [
+        -0.07021,
+        -0.06856,
+        -0.03885,
+        -0.07568
+      ],
+      "p_value_raw": 1.0,
+      "minimum_possible_p": 0.0625,
+      "assumptions": "Paired sign exchangeability and independent blocks; not verified for adjacent reused quadrants."
+    },
+    "holm_and_bh": [
+      {
+        "id": "H22-2",
+        "p_value_raw": 1.0,
+        "status": "evaluated",
+        "rank_by_p_value": 1,
+        "m_total_hypotheses_tested": 5,
+        "alpha": 0.05,
+        "pass_holm_fwer": false,
+        "pass_bh_fdr": false,
+        "holm_bonferroni_threshold": 0.01,
+        "p_value_holm_bonferroni": 1.0,
+        "pass_holm_bonferroni_fwer_0_05": false,
+        "q_value_benjamini_hochberg": 1.0,
+        "pass_benjamini_hochberg_fdr_0_05": false
+      },
+      {
+        "id": "H22-1",
+        "p_value_raw": 1.0,
+        "status": "pending; conservatively p=1",
+        "rank_by_p_value": 2,
+        "m_total_hypotheses_tested": 5,
+        "alpha": 0.05,
+        "pass_holm_fwer": false,
+        "pass_bh_fdr": false,
+        "holm_bonferroni_threshold": 0.0125,
+        "p_value_holm_bonferroni": 1.0,
+        "pass_holm_bonferroni_fwer_0_05": false,
+        "q_value_benjamini_hochberg": 1.0,
+        "pass_benjamini_hochberg_fdr_0_05": false
+      },
+      {
+        "id": "H22-3",
+        "p_value_raw": 1.0,
+        "status": "pending; conservatively p=1",
+        "rank_by_p_value": 3,
+        "m_total_hypotheses_tested": 5,
+        "alpha": 0.05,
+        "pass_holm_fwer": false,
+        "pass_bh_fdr": false,
+        "holm_bonferroni_threshold": 0.016667,
+        "p_value_holm_bonferroni": 1.0,
+        "pass_holm_bonferroni_fwer_0_05": false,
+        "q_value_benjamini_hochberg": 1.0,
+        "pass_benjamini_hochberg_fdr_0_05": false
+      },
+      {
+        "id": "H21-3",
+        "p_value_raw": 1.0,
+        "status": "pending; conservatively p=1",
+        "rank_by_p_value": 4,
+        "m_total_hypotheses_tested": 5,
+        "alpha": 0.05,
+        "pass_holm_fwer": false,
+        "pass_bh_fdr": false,
+        "holm_bonferroni_threshold": 0.025,
+        "p_value_holm_bonferroni": 1.0,
+        "pass_holm_bonferroni_fwer_0_05": false,
+        "q_value_benjamini_hochberg": 1.0,
+        "pass_benjamini_hochberg_fdr_0_05": false
+      },
+      {
+        "id": "H21-4",
+        "p_value_raw": 1.0,
+        "status": "pending; conservatively p=1",
+        "rank_by_p_value": 5,
+        "m_total_hypotheses_tested": 5,
+        "alpha": 0.05,
+        "pass_holm_fwer": false,
+        "pass_bh_fdr": false,
+        "holm_bonferroni_threshold": 0.05,
+        "p_value_holm_bonferroni": 1.0,
+        "pass_holm_bonferroni_fwer_0_05": false,
+        "q_value_benjamini_hochberg": 1.0,
+        "pass_benjamini_hochberg_fdr_0_05": false
+      }
+    ],
+    "passes_holm_fwer": false,
+    "future_missing_tests_not_dropped": true
+  },
+  "final_confirmation": {
+    "status": "BLOCKED_NO_NEW_INDEPENDENT_LABELS",
+    "touched": false,
+    "old_catalogue_and_H20_vault_not_untouched": true
+  },
+  "slot_recommendation": false,
+  "submission_artifact_created": false,
+  "submission_slot_spent": false,
+  "decision": "REJECT_NO_RETUNING",
+  "limitations": [
+    "Known-catalogue labels and synthetic sparse components, not hidden competition ground truth.",
+    "Adjacent spatial quadrants reused across experiments; exact sign-flip assumptions are unverified.",
+    "Holm controls the declared family under valid p-values; it cannot fix adaptive reuse or label bias.",
+    "H16 comparator is the hash-pinned prior reproduction; H20 is historical, unreproduced, mixed-track thresholds.",
+    "Continuous transform scores are confidence values, not calibrated probabilities.",
+    "Demagnetization mechanism already existed in H16-4 and family-adjacent 15GEMSDOE."
+  ]
+}

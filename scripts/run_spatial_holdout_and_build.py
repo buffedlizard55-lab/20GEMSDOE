@@ -31,8 +31,20 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from gems.paths import AUDIT_CLONES, DATA_DIR, EVIDENCE_DIR  # noqa: E402
 from gems.metric import dti_score_fast, ridge_nms  # noqa: E402
+from gems.cache import cache_fingerprint, load_bundle, save_bundle  # noqa: E402
 
 SEED = 20260929
+DEM_CHANNELS = ["slope_max", "slope_mean", "slope_std", "hgm20_max", "hgm50_max", "hgm200_mean",
+                "steep_ratio_max", "resid_std", "resid_range", "curv_absmax", "onesided", "onesided3"]
+
+
+def feature_cache_fingerprint():
+    inputs = {n: DATA_DIR/n for n in ("training_features.tif", "sample_submission.tif",
+              "external/geodawn_extensions_u8.tif", "external/geodawn_rad_u8.tif",
+              "external/lidar_scarp_features_u8.tif", "external/lidar_scarp_features.json")}
+    inputs.update({f"dem10/{c}": DATA_DIR/"dem10"/f"dem10_{c}.f32.npy" for c in DEM_CHANNELS})
+    sources = {n: ROOT/n for n in ("scripts/run_spatial_holdout_and_build.py", "src/gems/hypotheses.py", "src/gems/cache.py")}
+    return cache_fingerprint(inputs,sources,parameters={"feature_builder":"historical_H16_50_channels", "no_label_inputs":True})
 
 
 def dequant_lidar(band_name: str, q_arr: np.ndarray, q_meta: dict) -> np.ndarray:
@@ -61,10 +73,11 @@ def build_feature_matrix_on_footprint(footprint: np.ndarray) -> tuple[dict[str, 
     H, W = footprint.shape
     fp_idx = np.flatnonzero(footprint.ravel())
     cache_path = DATA_DIR / "cache" / "features_fp.npz"
-    if cache_path.exists():
-        print(f"  [Cache] Loading precomputed footprint features from {cache_path}...")
-        loaded = np.load(cache_path)
-        return {k: loaded[k] for k in loaded.files}, fp_idx
+    fingerprint = feature_cache_fingerprint()
+    loaded = load_bundle(cache_path, fingerprint)
+    if loaded is not None:
+        print(f"  [Cache] Loading hash-verified footprint features from {cache_path}...")
+        return loaded, fp_idx
     feats: dict[str, np.ndarray] = {}
 
     def to_fp(arr2d: np.ndarray) -> np.ndarray:
@@ -201,10 +214,7 @@ def build_feature_matrix_on_footprint(footprint: np.ndarray) -> tuple[dict[str, 
     gc.collect()
 
     # Load 10m USGS 3DEP DEM scarp channels (100% footprint coverage, bridging the 24.6% 1m-lidar gap!)
-    dem10_names = [
-        "slope_max", "slope_mean", "slope_std", "hgm20_max", "hgm50_max", "hgm200_mean",
-        "steep_ratio_max", "resid_std", "resid_range", "curv_absmax", "onesided", "onesided3",
-    ]
+    dem10_names = DEM_CHANNELS
     for ch in dem10_names:
         v = np.load(DATA_DIR / "dem10" / f"dem10_{ch}.f32.npy").astype(np.float32)
         v = np.nan_to_num(v, nan=0.0, posinf=0.0, neginf=0.0)
@@ -228,17 +238,13 @@ def build_feature_matrix_on_footprint(footprint: np.ndarray) -> tuple[dict[str, 
         lid_ok_fp, 0.70 * lid1m_scarp_raw + 0.30 * dem10_scarp_raw, dem10_scarp_raw
     ).astype(np.float32)
 
-    print("  [Features 4/4] Loading Out-of-Fold Spatial Context Probability fields...")
-    with rasterio.open(DATA_DIR / "derived" / "context_detector_prob_4fold_base.tif") as src:
-        feats["ctx_oof_base"] = to_fp(src.read(1).astype(np.float32) / 255.0)
-    with rasterio.open(DATA_DIR / "derived" / "context_detector_prob_topo.tif") as src:
-        feats["ctx_oof_topo"] = to_fp(src.read(1).astype(np.float32) / 255.0)
-    with rasterio.open(DATA_DIR / "derived" / "context_detector_prob_topo_rad.tif") as src:
-        feats["ctx_oof_topo_rad"] = to_fp(src.read(1).astype(np.float32) / 255.0)
+    # The old runner loaded three externally trained context rasters, but none
+    # entered any evaluated ARMS column list. Remove this unnecessary dependency;
+    # historical H16 input features and model parameters remain unchanged.
 
     print(f"  Built {len(feats)} footprint-indexed channels in {time.time() - t0:.1f}s.")
     cache_path.parent.mkdir(parents=True, exist_ok=True)
-    np.savez(cache_path, **feats)
+    save_bundle(cache_path, feats, fingerprint)
     return feats, fp_idx
 
 
@@ -267,7 +273,11 @@ def thin_components(truth_2d: np.ndarray, keep_frac: float, seed: int) -> np.nda
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.parse_args()  # Make --help side-effect-free before any data/model work.
+    parser.add_argument("--output", type=Path, default=EVIDENCE_DIR / "spatial_holdout_h16_reproduction.json",
+                        help="Fresh report path; never overwrite a historical comparator")
+    args = parser.parse_args()  # --help has no side effects.
+    if args.output.exists():
+        parser.error(f"Report already exists: {args.output}; use a new audit output path")
     with rasterio.open(DATA_DIR / "sample_submission.tif") as src:
         footprint = np.isfinite(src.read(1))
     with rasterio.open(DATA_DIR / "labels.tif") as src:
@@ -278,7 +288,7 @@ if __name__ == "__main__":
     fold_fp = fold_2d.ravel()[fp_idx]
     y_fp = labels.ravel()[fp_idx]
 
-    # PU collar: exclude pixels within 300m (3 px) of known catalogue traces from negative sampling
+    # Historical PN heuristic (not an nnPU estimator): exclude pixels within 300m (3 px) of known catalogue traces from negative sampling
     near_cat_2d = binary_dilation(labels, iterations=3)
     near_cat_fp = near_cat_2d.ravel()[fp_idx]
 
@@ -298,11 +308,14 @@ if __name__ == "__main__":
     # Compute 100% unsupervised multi-scale physical spatial context features once on the 2D grid
     # (zero label usage -> zero cross-fold leakage, bridging fragmented scarp/geopotential segments)
     ctx_cache = DATA_DIR / "cache" / "unsupervised_scarp_ctx_fp.npz"
-    if ctx_cache.exists():
-        print(f"  [Cache] Loading unsupervised multi-scale scarp context from {ctx_cache}...")
-        loaded_ctx = np.load(ctx_cache)
-        for k in loaded_ctx.files:
-            feats[k] = loaded_ctx[k]
+    ctx_fingerprint = cache_fingerprint(
+        {"features":DATA_DIR/"cache/features_fp.npz", "template":DATA_DIR/"sample_submission.tif"},
+        {"runner":Path(__file__),"cache":ROOT/"src/gems/cache.py"},
+        parameters={"context":"historical_H16_unsupervised_scarp_worms_v1"})
+    loaded_ctx = load_bundle(ctx_cache,ctx_fingerprint)
+    if loaded_ctx is not None:
+        print(f"  [Cache] Loading hash-verified unsupervised scarp context from {ctx_cache}...")
+        feats.update(loaded_ctx)
     else:
         print("  Computing unsupervised multi-scale scarp & worm spatial context channels...")
         scarp_2d = np.zeros(footprint.shape, dtype=np.float32)
@@ -320,7 +333,7 @@ if __name__ == "__main__":
             "scarp_gauss_800m": gaussian_filter(scarp_2d, sigma=8.0).ravel()[fp_idx].astype(np.float32),
             "scarp_max_500m": maximum_filter(scarp_2d, size=5).ravel()[fp_idx].astype(np.float32),
         }
-        np.savez(ctx_cache, **ctx_dict)
+        save_bundle(ctx_cache, ctx_dict, ctx_fingerprint)
         feats.update(ctx_dict)
         del scarp_2d, dem10_s_2d, lid_s_2d, ctx_dict
 
@@ -346,10 +359,15 @@ if __name__ == "__main__":
     }
 
     oof_all_cache = DATA_DIR / "cache" / "oof_probs_all_arms.npz"
-    if oof_all_cache.exists():
-        print(f"  [Cache] Loading 4-quadrant OOF probabilities from {oof_all_cache}...")
-        loaded_oof = np.load(oof_all_cache)
-        oof_probs = {k: loaded_oof[k] for k in loaded_oof.files}
+    oof_fingerprint = cache_fingerprint(
+        {"features":DATA_DIR/"cache/features_fp.npz", "labels":DATA_DIR/"labels.tif", "template":DATA_DIR/"sample_submission.tif"},
+        {"runner":Path(__file__),"metric":ROOT/"src/gems/metric.py", "cache":ROOT/"src/gems/cache.py"},
+        parameters={"seed":SEED,"arms":ARMS,"buffer_pixels":15,"catalogue_collar":3,
+                    "training_label_semantics":"historical PN heuristic; zeros unlabeled"})
+    loaded_oof = load_bundle(oof_all_cache,oof_fingerprint)
+    if loaded_oof is not None:
+        print(f"  [Cache] Loading hash-verified 4-quadrant OOF scores from {oof_all_cache}...")
+        oof_probs = loaded_oof
     else:
         oof_probs = {arm: np.zeros(len(fp_idx), dtype=np.float32) for arm in ARMS}
         rng = np.random.default_rng(SEED)
@@ -384,7 +402,7 @@ if __name__ == "__main__":
                 oof_probs[arm][te_idx] = clf.predict_proba(X_te)[:, 1].astype(np.float32)
                 del X_tr, X_te, clf
             print(f"  Completed fold {f_id} ({fold_names[f_id]}) training & OOF inference.")
-        np.savez(oof_all_cache, **oof_probs)
+        save_bundle(oof_all_cache, oof_probs, oof_fingerprint)
 
     # H16-1 Seam-Free Multi-Scale Synthesis:
     # Regime-conditional modular synthesis of pure scarp expert + GeoDAWN-scarp expert +
@@ -411,9 +429,12 @@ if __name__ == "__main__":
         )
     oof_probs["H16_1_SeamFree_MultiScale_Synthesis"] = p_h16_1
 
-    # Also evaluate sibling comparators on the exact same 4 geographic folds:
-    with rasterio.open(AUDIT_CLONES / "7GEMSDOE/downloads/gems7-lidarscarp-ridge-top2pct-36c3a3f341c8.tif") as src:
-        sib_g7_2d = (np.nan_to_num(src.read(1), nan=0.0) > 0.5) & footprint
+    # Optional archived sibling comparator; not needed to reproduce H16-1.
+    sibling_path = AUDIT_CLONES / "7GEMSDOE/downloads/gems7-lidarscarp-ridge-top2pct-36c3a3f341c8.tif"
+    sib_g7_2d = None
+    if sibling_path.exists():
+        with rasterio.open(sibling_path) as src:
+            sib_g7_2d = (np.nan_to_num(src.read(1), nan=0.0) > 0.5) & footprint
 
     BUDGET_FRAC = 0.025
     data_ver = json.loads((EVIDENCE_DIR / "data_verification.json").read_text())
@@ -426,7 +447,7 @@ if __name__ == "__main__":
         "methodology": {
             "split": "four contiguous NW/NE/SW/SE geographic quadrants from footprint row/column medians",
             "buffer_pixels": 15,
-            "training_sampling": "up to 40,000 known-catalogue positives and 120,000 negatives outside a 3-pixel known-catalogue collar per fold",
+            "training_sampling": "Historical PN heuristic: up to 40,000 catalogue positives and 120,000 UNLABELED samples outside a 3-pixel collar, treated as negatives in this baseline only",
             "classifier": "HistGradientBoostingClassifier; max_iter=150, max_leaf_nodes=31, min_samples_leaf=80, learning_rate=0.06, l2_regularization=2.0",
             "prediction_budget_per_fold": BUDGET_FRAC,
             "sparse_proxy": "deterministic 20% subset of connected held-out catalogue components; remaining held-out components treated as neutral for sparse false-positive calculation",
@@ -504,33 +525,38 @@ if __name__ == "__main__":
             f"  {arm:40s} | Mean Dense DTI: {np.mean(dense_dtis):.5f} | Mean Sparse DTI: {np.mean(sparse_dtis):.5f}"
         )
 
-    g7_dense, g7_sparse = [], []
-    g7_detail = {}
-    for f_id, fname, f_mask, sl, td, ts, kc, fm in quads:
-        pred_f = sib_g7_2d & f_mask
-        r_d = dti_score_fast(pred_f[sl], td, valid_mask=fm)
-        r_s = dti_score_fast(pred_f[sl], ts, valid_mask=fm, catalogue_mask=kc)
-        g7_dense.append(r_d["dti"])
-        g7_sparse.append(r_s["dti"])
-        g7_detail[fname] = {
-            "dense_dti": round(r_d["dti"], 5),
-            "sparse_dti": round(r_s["dti"], 5),
-            "dense_coverage": round(r_d["coverage"], 4),
-            "sparse_coverage": round(r_s["coverage"], 4),
-            "emitted_px": int(pred_f[sl].sum()),
+    if sib_g7_2d is not None:
+        g7_dense, g7_sparse = [], []
+        g7_detail = {}
+        for f_id, fname, f_mask, sl, td, ts, kc, fm in quads:
+            pred_f = sib_g7_2d & f_mask
+            r_d = dti_score_fast(pred_f[sl], td, valid_mask=fm)
+            r_s = dti_score_fast(pred_f[sl], ts, valid_mask=fm, catalogue_mask=kc)
+            g7_dense.append(r_d["dti"])
+            g7_sparse.append(r_s["dti"])
+            g7_detail[fname] = {
+                "dense_dti": round(r_d["dti"], 5),
+                "sparse_dti": round(r_s["dti"], 5),
+                "dense_coverage": round(r_d["coverage"], 4),
+                "sparse_coverage": round(r_s["coverage"], 4),
+                "emitted_px": int(pred_f[sl].sum()),
+            }
+        results["folds"]["Sibling_7GEMSDOE_LidarOnly_36c3a3f3"] = g7_detail
+        results["summary"]["Sibling_7GEMSDOE_LidarOnly_36c3a3f3"] = {
+            "mean_dense_dti": round(float(np.mean(g7_dense)), 5),
+            "mean_sparse_dti": round(float(np.mean(g7_sparse)), 5),
+            "fold_dense": [round(x, 5) for x in g7_dense],
+            "fold_sparse": [round(x, 5) for x in g7_sparse],
         }
-    results["folds"]["Sibling_7GEMSDOE_LidarOnly_36c3a3f3"] = g7_detail
-    results["summary"]["Sibling_7GEMSDOE_LidarOnly_36c3a3f3"] = {
-        "mean_dense_dti": round(float(np.mean(g7_dense)), 5),
-        "mean_sparse_dti": round(float(np.mean(g7_sparse)), 5),
-        "fold_dense": [round(x, 5) for x in g7_dense],
-        "fold_sparse": [round(x, 5) for x in g7_sparse],
-    }
-    print(
-        f"  {'Sibling_7GEMSDOE_LidarOnly_36c3a3f3':40s} | Mean Dense DTI: {np.mean(g7_dense):.5f} | Mean Sparse DTI: {np.mean(g7_sparse):.5f}"
-    )
+        print(
+            f"  {'Sibling_7GEMSDOE_LidarOnly_36c3a3f3':40s} | Mean Dense DTI: {np.mean(g7_dense):.5f} | Mean Sparse DTI: {np.mean(g7_sparse):.5f}"
+        )
 
-    (EVIDENCE_DIR / "spatial_holdout_h16_results.json").write_text(json.dumps(results, indent=2) + "\n")
+    import importlib.metadata
+    results["software_versions"] = {k: importlib.metadata.version(k) for k in ("numpy", "scipy", "scikit-learn", "rasterio")}
+    results["reproduction_note"] = "Fixed historical models, no retuning. Unused context-raster dependency removed; historical result preserved."
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(results, indent=2) + "\n")
     np.savez(
         DATA_DIR / "cache" / "oof_probs_h16_1.npz",
         h16_1=oof_probs["H16_1_SeamFree_MultiScale_Synthesis"],
@@ -539,4 +565,4 @@ if __name__ == "__main__":
         h16_2=oof_probs["H16_2_Geopotential_Strike_Worm"],
         h16_4=oof_probs["H16_4_Hydrothermal_Conduit"],
     )
-    print("  Saved evidence/spatial_holdout_h16_results.json and data/cache/oof_probs_h16_1.npz; preserved the prior H20 summary.")
+    print(f"  Saved {args.output} and data/cache/oof_probs_h16_1.npz; historical H16/H20 reports preserved.")
