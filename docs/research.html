@@ -21,20 +21,23 @@
 <h2>H21-1 preregistered test</h2>
 <p>The frozen H21-1 transform uses multi-scale Hessian line ridges from band 16, <code>ieq_n100a15</code>, and compares against the scalar seismic-intensity feature at the same fixed budget. Its protocol is in <a href="research/preregistration_h21.md">research/preregistration_h21.md</a>. USGS Great Basin studies motivate a test of seismicity/structure relationships but do not show that this particular layer or transform improves contest DTI.</p>
 <p><strong>H21-1 proxy result:</strong> Dense <code>0.06207</code>, Sparse <code>0.02511</code>; raw scalar control Dense <code>0.07977</code>, Sparse <code>0.02849</code>. It did not pass both comparator screens. The H20 comparator remains historical and unreproduced; H16-1 is the current reproduced known-catalogue baseline. Even passing both would be only a necessary proxy screen, not hidden-fault validation or automatic upload authorization. Full report: <a href="https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/evidence/h21_seismic_ridge_holdout.json">evidence/h21_seismic_ridge_holdout.json</a>.</p>
+<h2>H21-2 preregistered test</h2>
+<p>The frozen H21-2 candidate scores raster cells by agreement among up to three chemical solute geothermometers (quartz, chalcedony, Na–K–Ca cation) at GDR 1391 spring/well sites, requiring at least two concordant estimates of a hot (&ge; 120 &deg;C) reservoir. Its protocol is in <a href="research/preregistration_h21_2.md">research/preregistration_h21_2.md</a>; the pre-registered data QA audit is <a href="https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/evidence/h21_2_wellspring_audit.json">evidence/h21_2_wellspring_audit.json</a>. Geothermometer concordance is standard geothermal practice, but no published source shows it improves this competition's DTI.</p>
+<p><strong>H21-2 proxy result:</strong> Dense <code>0.03244</code>, Sparse <code>0.01388</code> from <code>67</code> eligible coherent-hot cells (of 1431 chemistry cells); it failed both preregistered comparator gates. Descriptive controls: unselected thermal points Dense <code>0.03857</code> (2059 cells), seeded random cells Dense <code>0.02901</code>, catalogue-proximity transfer ceiling Dense <code>0.04190</code>. Coherence selection scored below the unselected thermal-anchor control, so the idea is rejected without retuning; no submission artifact was created. Full report: <a href="https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/evidence/h21_2_geotherm_coherence_holdout.json">evidence/h21_2_geotherm_coherence_holdout.json</a>.</p>
 <h2>Exploratory archived-raster signal attribution</h2>
 <p>This cross-file screen is exploratory hypothesis generation across 19 archived rasters, not an independent hidden-fault test or model-selection rule. Nothing is significant after correction among the reported feature associations: the smallest listed uncorrected p-value is <code>0.0059</code>, above the Bonferroni threshold <code>0.00098</code>. See <a href="https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/evidence/lb_signal_attribution.json">the preserved analysis</a>.</p>
 <h2>Ranked candidate hypotheses and source availability</h2>
-<div class="md"><h1 id="ranked-geological-hypotheses-h21-register-2026-10-01">Ranked geological hypotheses — H21 register (2026-10-01)</h1>
-<p><strong>Status labels:</strong> OBSERVED = official/trusted source statement; COMPUTED = result from a named local artifact; INFERENCE = a testable geological/modeling idea. No candidate has demonstrated improvement on hidden-fault leaderboard DTI. Expected-gain ranges for untested ideas are <strong>subjective planning priors</strong>, not measured estimates, confidence intervals or forecasts. H21-1 has now been tested on a known-catalogue transfer proxy; its measured proxy result is reported separately and replaces its former planning prior.</p>
+<div class="md"><h1 id="ranked-geological-hypotheses-h22-register-2026-10-01">Ranked geological hypotheses — H22 register (2026-10-01)</h1>
+<p><strong>Status labels:</strong> OBSERVED = official/trusted source statement; COMPUTED = result from a named local artifact; INFERENCE = a testable geological/modeling idea. No candidate has demonstrated improvement on hidden-fault leaderboard DTI. Expected-gain ranges for untested ideas are <strong>subjective planning priors</strong>, not measured estimates, confidence intervals or forecasts. H21-1 and H21-2 have each completed exactly one preregistered known-catalogue transfer test; their measured proxy results are reported separately below and replace their former planning priors.</p>
 <h2 id="rules-that-constrain-the-hypotheses">Rules that constrain the hypotheses</h2>
 <ol>
 <li>DrivenData staff defines a new fault as a pixel not already captured by USGS/INGENIOUS; it may be an extension/splay of a known system. <a href="https://community.drivendata.org/t/where-do-you-draw-the-line/11536/2">Staff definition</a></li>
 <li>The known-fault exclusion is pixel-exact. A prediction near a known trace is not automatically exempt from FP penalty, and a new fault can lie within 300 m of a known trace. <a href="https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516/4">Staff clarification</a></li>
 <li>The organizers do not disclose the hidden labels' source/fault type. Geological plausibility is not evidence of leaderboard utility.</li>
 <li>The stored H20 holdout results are not reproduced, use known-catalogue labels and a synthetic sparse proxy; H20 calibration labels are synthetic; the stored spatial slice was used for two candidates. See <a href="audit.html#F17">F17 and F25–F29</a>.</li>
-<li>A candidate slot requires a better result than the reproducible current holdout best under the predeclared comparison rule. Passing a known-catalogue proxy remains necessary evidence only, not hidden-fault validation or automatic authorization.</li>
+<li>A candidate slot requires a better result than the reproducible current holdout best (H16-1: Dense <code>0.21269</code>, Sparse <code>0.08554</code>) under the predeclared comparison rule. Passing a known-catalogue proxy remains necessary evidence only, not hidden-fault validation or automatic authorization.</li>
 </ol>
-<h2 id="hypothesis-ranking">Hypothesis ranking</h2>
+<h2 id="hypothesis-ranking-untested-candidates-first">Hypothesis ranking (untested candidates first)</h2>
 <table>
 <thead>
 <tr>
@@ -51,13 +54,13 @@
 <tbody>
 <tr>
 <td>1</td>
-<td><strong>H21-2: multigeothermometer coherence</strong> — proposed; next candidate for preregistration, not tested</td>
-<td>GDR 1391 <code>spring_chemistry_20220808</code> / <code>well_chemistry_20220808</code> (<code>temp_c</code>, <code>geothermquartz_c</code>, <code>geothermchalc_c</code>, <code>geothermcat_c</code>), <code>spring_temperature_20220808</code> (<code>measuredtemp_c</code>), <code>well_temperature_20220808</code> (<code>surfacemeasuredtemp_c</code>, <code>bottommeasuredtemp_c</code>, <code>correctedbottomtemp_c</code>); linked feature coordinates and location uncertainty</td>
-<td>Test whether independent chemistry/temperature indicators agree on elevated reservoir temperature; use a predeclared robust anomaly score and compare clustered/concordant sites with incongruent/cold controls before creating any spatial field</td>
-<td><strong>INFERENCE:</strong> consistent deep-fluid geothermometer signals may separate upflow/conduit systems from ordinary springs and locate faults not represented by fault vectors. Point anomalies can also be mislocated, sampled unevenly or hydraulically displaced from source.</td>
-<td>H20-4 used thresholded thermal/geochemical anomalies as anchors. This candidate's distinct element is cross-indicator agreement and uncertainty-aware filtering, not a new Gaussian around the same points. CI-extracted schemas identify temperature/geothermometer fields, but field semantics, units, missingness, sample-date comparability and sampling/location biases must be audited before feature construction.</td>
-<td><strong>+0.000–0.003</strong> subjective upside; medium cost (GDB extraction, units/missingness review, spatial uncertainty).</td>
-<td>The recorded CI run fetched <code>wellspringdata.gdb.zip</code> from the official GDR URL (20,810,222 bytes; SHA-256 recorded in <code>evidence/ci/external_verification.json</code>) and extracted the named chemistry tables/columns. The raw GDB is not in current local <code>data/</code>; the landing page returned HTTP 502 during this audit. Recheck the direct official download and field semantics before implementing H21-2. <a href="https://gdr.openei.org/submissions/1391">GDR 1391</a>, <a href="https://doi.org/10.15121/1881483">DOI</a>.</td>
+<td><strong>H22-2: magnetic hydrothermal-destruction low lineaments</strong> — proposed, next preregistration candidate</td>
+<td><code>training_features.tif</code> band 2 <code>rtp</code> (reduced-to-pole magnetics), cross-checked against band 1 <code>mag_anom</code> and band 14 <code>tmi</code></td>
+<td>Dark-ridge (trough) detection: the H21-1 scale-normalized Hessian machinery applied to the <em>negative</em> field, i.e. tracking linear magnetic <em>lows</em> at fixed scales, with a scalar-control ablation</td>
+<td><strong>INFERENCE:</strong> sustained hydrothermal fluid flow oxidizes or dissolves magnetite, so fault-hosted upflow can appear as linear magnetic lows; alteration-driven demagnetization need not coincide with mapped fault traces, including in covered/blind settings. Note the poorly scoring 15GEMSDOE <code>conj_alteration_mag</code> attempt (0.0782) as a family-adjacent caution.</td>
+<td>Existing work uses magnetic <em>edges/gradients</em> (band 6 <code>tc</code>, band 3 <code>tmi_hg</code>) as positive ridge evidence. A trough-lineament transform on <code>rtp</code> targets a different physical signature (mineral destruction, not contacts). H21-1's frozen Hessian machine makes implementation cheap and the comparison clean.</td>
+<td><strong>+0.000–0.003</strong> subjective upside; <strong>low</strong> cost (inputs local, evaluator pattern exists).</td>
+<td>No new data needed; bands are local, hash-pinned and band-verified. Underlying magnetic survey provenance is part of the competition stack, not independently re-established.</td>
 </tr>
 <tr>
 <td>2</td>
@@ -65,8 +68,8 @@
 <td>Landsat Collection 2 Level-2 <code>SR_B2</code>–<code>SR_B7</code>, <code>QA_PIXEL</code>; optional NDVI/vegetation mask; multi-date dry-season scenes</td>
 <td>Atmospheric-corrected ferric-iron/clay-sensitive ratios and robust multi-date persistence, with terrain/illumination and vegetation screening; retain only coherent lineament-like boundaries for evaluation</td>
 <td><strong>INFERENCE:</strong> hydrothermal mineral alteration may mark permeable structures or geothermal systems absent from the fault catalogue. Alteration may also be unrelated to faults; albedo, transported minerals, shadows and topographic illumination can mimic it.</td>
-<td>Adds visible/NIR/SWIR spectral information not represented by the existing GeoDAWN radiometric K/Th/U bands. It is not another rescaling of existing magnetic/topographic features.</td>
-<td><strong>+0.000–0.004</strong> subjective upside; high cost (scene screening, atmospheric/terrain controls, mosaicking, masking).</td>
+<td>Adds visible/NIR/SWIR spectral information not represented by the existing GeoDAWN radiometric K/Th/U bands or magnetic/topographic channels. It is not another rescaling of existing features.</td>
+<td><strong>+0.000–0.004</strong> subjective upside; <strong>high</strong> cost (scene screening, atmospheric/terrain controls, mosaicking, masking).</td>
 <td>USGS documents free Landsat Collection 2 Level-2 surface reflectance. No scene, cloud/shadow or date-coverage check for this footprint has yet been performed. <a href="https://www.usgs.gov/landsat-missions/landsat-collection-2">USGS source</a>.</td>
 </tr>
 <tr>
@@ -76,33 +79,60 @@
 <td>Measure abrupt drainage deflections, aligned channel offsets and knickpoint sequences; suppress patterns unsupported by independent terrain/scarp evidence</td>
 <td><strong>INFERENCE:</strong> fault motion may deflect/offset channels even where the fault trace itself is subtle. Similar forms arise from lithology, drainage capture, alluvial fans, roads, DEM artifacts and stream engineering.</td>
 <td>H17-2 previously listed drainage deflection/knickzones but was not run; this is a concrete 3DHP + conditioning operator rather than a general DEM blend. It is a first implementation of that parked idea, not a claim of a first-ever concept.</td>
-<td><strong>+0.000–0.003</strong> subjective upside; high cost (data coverage audit, hydrology conditioning, artifact controls and feature construction).</td>
+<td><strong>+0.000–0.003</strong> subjective upside; <strong>high</strong> cost (data coverage audit, hydrology conditioning, artifact controls and feature construction).</td>
 <td>USGS 3DHP is public/non-proprietary. National bounding coverage does not prove regional 3DHP/EDH completeness; check product tiles/attributes before use. NHD was retired in 2023 and is not maintained. <a href="https://catalog.data.gov/dataset/usgs-3d-hydrography-program-3dhp-downloadable-data-collection">3DHP collection</a>, <a href="https://www.usgs.gov/national-hydrography/national-hydrography-dataset">NHD status</a>.</td>
 </tr>
 <tr>
 <td>4</td>
-<td><strong>H21-1: multi-scale earthquake-intensity lineations</strong> — tested once; rejected by both proxy gates</td>
-<td><code>training_features.tif</code> band 16, <code>ieq_n100a15</code></td>
-<td>Frozen scale-normalized Hessian bright-ridge response from <code>log1p(max(ieq,0))</code> at 200/400/800 m, 1-pixel ridge-NMS, 32-cell edge guard and 2.5% budget</td>
-<td><strong>INFERENCE:</strong> linear seismicity clusters might reflect active/reactivated structures, but broad and induced clusters confound this relation.</td>
-<td>H16-5 uses a scalar <code>seismic_ieq_log</code>; H20-3's stored description uses seismic intensity as a gate. H21-1 tested multi-scale line geometry. H17-3 previously parked a related unrun seismic-lineament idea, so this was a first implementation here, not an unprecedented proposal.</td>
-<td><strong>COMPUTED proxy result:</strong> H21-1 Dense <code>0.06207</code>, Sparse <code>0.02511</code>; current reproduced H16-1 is <code>0.21269 / 0.08554</code>. Deltas <code>−0.15062 / −0.06043</code>; both comparison gates fail. Raw scalar control <code>0.07977 / 0.02849</code> also underperforms H16-1. No parameter retuning or follow-up submission is justified by this run. Low implementation cost; existing input.</td>
-<td>No new data: supplied layer is locally present and its band metadata is verified. Underlying event catalogue/provenance details are not independently established.</td>
+<td><strong>H22-1: Quaternary volcanic-vent alignment structural control</strong> — proposed, not implemented</td>
+<td><code>evidence/ci/gdr_volcanic_vents_in_footprint.csv</code> (21 vents in footprint, CI-extracted from official GDR 1391 <code>great_basin_q_volcanics.zip</code>); comparison catalogue <code>evidence/ci/gdr_qfaults_traces.csv</code></td>
+<td>Enumerate third-order vent alignments (≥ 3 vents on a common line within a fixed azimuth/deviation tolerance), score pixels by proximity to alignments; very small sample limits statistical power</td>
+<td><strong>INFERENCE:</strong> aligned vents can trace feeder-dike/fracture systems that tap deep permeability; some feeder structures may be unmapped at catalogue scale.</td>
+<td>No prior group artifact used vent geometry as lineament evidence (15GEMSDOE used an alteration–magnetics conjunction; H20-4 used thermal point anchors; neither used vent alignments).</td>
+<td><strong>+0.000–0.002</strong> subjective upside; <strong>low</strong> cost (data already committed; simple geometry). Power is weak (21 vents) — treat as a screening idea.</td>
+<td>Data already fetched and hash-pinned by CI (SHA-256 in <code>evidence/ci/external_verification.json</code>); no sandbox download needed.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="h21-1-preregistered-result-and-decision">H21-1 preregistered result and decision</h2>
-<p>The single frozen run used the preregistered transform and input hashes recorded in <a href="../evidence/h21_seismic_ridge_holdout.json"><code>evidence/h21_seismic_ridge_holdout.json</code></a>. It returned Dense <code>0.06207</code> and Sparse <code>0.02511</code> over four known-catalogue spatial folds. The raw scalar control scored Dense <code>0.07977</code> and Sparse <code>0.02849</code>. Both the historical H20 comparison and the newly reproduced H16-1 comparison failed every gate rule; H21-1 lost all four folds on both tracks and had a worst per-fold Dense delta of <code>−0.18618</code> and Sparse delta of <code>−0.07084</code> versus reproduced H16-1.</p>
-<p>This is a negative known-catalogue transfer result, not proof that seismicity is useless for hidden-fault detection. It is also not a basis to tune the scales/threshold after the fact: the preregistered test was run once with no sweep. H21-1 is rejected as a submission candidate. The next proposed idea (H21-2) requires its own data/schema audit and frozen spatial test before any recommendation; no slot is authorized.</p>
-<p>The H16-1 reference is reproduced separately at <a href="../evidence/spatial_holdout_h16_results.json"><code>evidence/spatial_holdout_h16_results.json</code></a>: Dense <code>0.21269</code>, Sparse <code>0.08554</code>, with folds recorded there. H20's stored thresholds are retained as conservative historical comparators but remain unreproduced. These are all known-catalogue proxies; none is hidden-fault ground truth.</p>
+<h2 id="tested-once-preregistered-single-shot-results-no-retuning">Tested once — preregistered single-shot results (no retuning)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Frozen transform</th>
+<th>Computed proxy result vs reproduced H16-1 (<code>0.21269 / 0.08554</code>)</th>
+<th>Descriptive controls</th>
+<th>Decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>H21-2: multi-geothermometer coherence</strong> (GDR 1391 spring/well chemistry; ≥ 2 concordant quartz/chalcedony/cation estimators ≥ 120 °C, agreement-weighted 500 m kernels; 67 eligible cells of 1,431 chemistry cells)</td>
+<td>Dense <code>0.03244</code>, Sparse <code>0.01388</code>; both gates failed (Δ mean Dense <code>−0.18025</code>, Δ Sparse <code>−0.07166</code> vs H16-1; 0/4 fold wins)</td>
+<td>C1 unselected thermal points (2,059 cells) Dense <code>0.03857</code> &gt; candidate; C2 seeded random cells Dense <code>0.02901</code> &lt; candidate; C3 catalogue-proximity transfer ceiling Dense <code>0.04190</code></td>
+<td><strong>Rejected as a submission candidate.</strong> Coherence <em>selection</em> performed worse than the unselected thermal control, and every point-anomaly field sits far below the ridge-synthesis baseline and below the pure catalogue-proximity ceiling. No retuning authorized; a materially different chemistry idea would need a new ID. Report: <a href="../evidence/h21_2_geotherm_coherence_holdout.json"><code>evidence/h21_2_geotherm_coherence_holdout.json</code></a>. Preregistration: <a href="research/preregistration_h21_2.md"><code>preregistration_h21_2.md</code></a>.</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>H21-1: multi-scale earthquake-intensity lineations</strong> (band 16 <code>ieq_n100a15</code>; fixed Hessian ridges 200/400/800 m)</td>
+<td>Dense <code>0.06207</code>, Sparse <code>0.02511</code>; both gates failed; raw scalar control <code>0.07977 / 0.02849</code> also underperformed H16-1</td>
+<td>—</td>
+<td><strong>Rejected as a submission candidate.</strong> Report: <a href="../evidence/h21_seismic_ridge_holdout.json"><code>evidence/h21_seismic_ridge_holdout.json</code></a>. Preregistration: <a href="research/preregistration_h21.md"><code>preregistration_h21.md</code></a>.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cross-test observation (INFERENCE, hypothesis-generating only):</strong> both preregistered single-mechanism tests (seismic lineations; chemistry-coherence points) lost the known-catalogue proxy to the H16-1 multi-feature ridge synthesis by wide margins, and the C3 control shows plain catalogue proximity yields only ~<code>0.042</code> mean Dense on this protocol. This weakens the family of "single sparse point/line co-occurrence" hypotheses and strengthens the case for multi-feature composed surfaces; it is not proof about hidden-fault utility.</p>
+<h2 id="pre-registration-gating-for-the-next-test-h22-2">Pre-registration gating for the next test (H22-2)</h2>
+<p>Before H22-2 runs: (1) commit its preregistration (frozen scales, dark-ridge polarity, budget, controls, gates) and the evaluator; (2) push; (3) run exactly once on the same <code>Holdout</code> protocol and both comparators; (4) report computed numbers regardless of outcome; (5) on failure, reject without retuning. A proxy pass would still require separate packaging review and would not authorize a slot by itself.</p>
 <h2 id="source-notes">Source notes</h2>
 <ul>
-<li><a href="https://www.usgs.gov/publications/seismicity-and-shear-strain-southern-great-basin-nevada-and-california">Gomberg (1991), “Seismicity and shear strain in the southern Great Basin” — USGS Publications Warehouse</a>. Supports a regional seismicity/strain investigation, not H21 performance.</li>
-<li><a href="https://pubs.usgs.gov/of/1996/0262/report.pdf">USGS Open-File Report 96-262: faults, lineaments and epicenters in Pahute Mesa</a>. Contains lineated clusters and cautions about induced seismicity; it is not the competition region's hidden truth.</li>
-<li><a href="https://www.usgs.gov/landsat-missions/landsat-collection-2">USGS Landsat Collection 2</a>. No-cost products are documented; footprint/date suitability is pending.</li>
-<li><a href="https://catalog.data.gov/dataset/usgs-3d-hydrography-program-3dhp-downloadable-data-collection">USGS 3DHP downloadable collection</a>. Public access is documented; regional product completeness is pending.</li>
-<li><a href="https://gdr.openei.org/submissions/1391">GDR 1391</a>, <a href="https://doi.org/10.15121/1881483">DOI 10.15121/1881483</a>. Public INGENIOUS compilation, including well/spring data; verify actual chemistry attributes before modeling.</li>
+<li><a href="https://gdr.openei.org/submissions/1391">GDR 1391</a>, <a href="https://doi.org/10.15121/1881483">DOI 10.15121/1881483</a>. Public INGENIOUS compilation; the wellspring/volcanics extracts are committed with CI hash records (<code>evidence/ci/external_verification.json</code>).</li>
+<li><a href="https://www.usgs.gov/publications/seismicity-and-shear-strain-southern-great-basin-nevada-and-california">Gomberg (1991), USGS</a> and <a href="https://pubs.usgs.gov/of/1996/0262/report.pdf">USGS OFR 96-262</a> for regional seismicity context (not performance evidence).</li>
+<li><a href="https://www.usgs.gov/landsat-missions/landsat-collection-2">USGS Landsat Collection 2</a>. No-cost products documented; footprint/date suitability pending.</li>
+<li><a href="https://catalog.data.gov/dataset/usgs-3d-hydrography-program-3dhp-downloadable-data-collection">USGS 3DHP downloadable collection</a>. Public access documented; regional product completeness pending.</li>
+<li>Geothermometer method references for H21-2 (Fournier 1973; Fournier 1977; Fournier &amp; Truesdell 1973; Giggenbach 1988) are given in <a href="research/preregistration_h21_2.md"><code>preregistration_h21_2.md</code></a> as bibliographic DOIs not re-fetched in this sandbox.</li>
 </ul></div>
 
-<footer><p>Built 2026-10-01 02:35 UTC from commit <code>7ad321e82</code> on branch <code>arena/01a0f501-20gemsdoe</code>. Snapshot and claim limitations are stated in <a href="audit.html">Sources &amp; Irregularities</a>. Project brief &amp; Arena Core Values: <a href="https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/README.md">README.md</a>.</p></footer></main>
+<footer><p>Built 2026-10-01 03:32 UTC from commit <code>5bbac82e6</code> on branch <code>arena/01a0f564-20gemsdoe</code>. Snapshot and claim limitations are stated in <a href="audit.html">Sources &amp; Irregularities</a>. Project brief &amp; Arena Core Values: <a href="https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/README.md">README.md</a>.</p></footer></main>
 <script>window.GEMS20_CANDIDATES = {"h20-1": {"key": "h20-1", "note": "20GEMSDOE H20-1 | Research raster; format-checked only, not live-scored; known-fault proxy unreproduced; no upload recommendation | id be0e8f6b", "scored_pixels_predicted": 123829, "share_of_footprint_pct": 2.396, "files": {"tif": {"name": "gems20-h20-1-sarnnpu-powerlaw-pi0363-tilt-wingcrack-20260930-be0e8f6b-nan.tif", "bytes": 1717074, "sha256": "defe590b944651552d7260237f79f309e3c089d03361e130db0e2dd7c87eb326", "href": "downloads/gems20-h20-1-sarnnpu-powerlaw-pi0363-tilt-wingcrack-20260930-be0e8f6b-nan.tif"}, "zip": {"name": "gems20-h20-1-sarnnpu-powerlaw-pi0363-tilt-wingcrack-20260930-be0e8f6b-nan.zip", "bytes": 501504, "sha256": "42871874909792daffeab11e192f861239755301cd196dca83266df41c4e8d4c", "href": "downloads/gems20-h20-1-sarnnpu-powerlaw-pi0363-tilt-wingcrack-20260930-be0e8f6b-nan.zip"}, "tif_allfinite": {"name": "gems20-h20-1-sarnnpu-powerlaw-pi0363-tilt-wingcrack-20260930-be0e8f6b-allfinite.tif", "bytes": 941988, "sha256": "10cd66f0e55fd419366ad90b9bd27b8164fc702e2ed0c2d471f92c1983708c1d", "href": "downloads/gems20-h20-1-sarnnpu-powerlaw-pi0363-tilt-wingcrack-20260930-be0e8f6b-allfinite.tif"}}}, "h20-5": {"key": "h20-5", "note": "20GEMSDOE H20-5 | Synthetic-target proxy raster; format-checked only, not live-scored; holdout unreproduced; no upload recommendation | id 824ce73a", "scored_pixels_predicted": 121258, "share_of_footprint_pct": 2.347, "files": {"tif": {"name": "gems20-h20-5-continuous-pu-proxy-unverified-20260930-824ce73a-nan.tif", "bytes": 2089626, "sha256": "4e199f0ce1bb7e6f6e5e42fbbe54fcd3714bbf1b4ee864fad262b95ebba464f7", "href": "downloads/gems20-h20-5-continuous-pu-proxy-unverified-20260930-824ce73a-nan.tif"}, "zip": {"name": "gems20-h20-5-continuous-pu-proxy-unverified-20260930-824ce73a-nan.zip", "bytes": 946618, "sha256": "e88a1d4d2c25eb1b238338f2a698ab2309c28517ba913c219f19bd3e71210242", "href": "downloads/gems20-h20-5-continuous-pu-proxy-unverified-20260930-824ce73a-nan.zip"}, "tif_allfinite": {"name": "gems20-h20-5-continuous-pu-proxy-unverified-20260930-824ce73a-allfinite.tif", "bytes": 1299868, "sha256": "80e2954801ae99b228612302ab0c37b2a4799aff074584a04c5fea174df65273", "href": "downloads/gems20-h20-5-continuous-pu-proxy-unverified-20260930-824ce73a-allfinite.tif"}}}};</script><script src="js/gems-tiff.js"></script><script src="js/site.js"></script></body></html>

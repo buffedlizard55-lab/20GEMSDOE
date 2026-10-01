@@ -1,0 +1,276 @@
+{
+  "generated_utc": "2026-10-01T03:23:03+00:00",
+  "candidate_id": "H21-2-multigeothermometer-coherence",
+  "status": "EXPLORATORY_KNOWN_CATALOGUE_SPATIAL_TRANSFER_PROXY",
+  "slot_recommendation": false,
+  "slot_reason": "The evaluator uses known-catalogue fault labels and a synthetic sparse-component proxy, not hidden competition ground truth. A proxy-screen pass would be necessary but not sufficient for a submission recommendation; sampling bias toward mapped faults (C3) further limits interpretation. The evaluator never writes a submission artifact.",
+  "preregistration": {
+    "path": "docs/research/preregistration_h21_2.md",
+    "sha256": "4395f79c7e07f3879f28a17aeb0262da20ae097a409733f790ec23e475d51a33",
+    "frozen_constants_module": "src/gems/geotherm.py",
+    "data_audit_path": "evidence/h21_2_wellspring_audit.json",
+    "data_audit_sha256": "987608f2f171d2d2ce16b1d659159bc2f5e96a0fc96ba54238c3bc9beecbc397",
+    "threshold_search": false
+  },
+  "input_sha256": {
+    "gdr_wellspring_in_footprint.csv": "122718e65bdf55aab0ee12ad20d80062f0deb1de957225a61ad880dd5dc196ea",
+    "labels.tif": "7ba308ccdc4418b31a178f4f1ef21aaa6e152e4028f2f6f64b01f7eb25ae4093",
+    "sample_submission.tif": "2176d08e485aa2cd2860ce8df539db4faf4d76163b38a4dd8c30a40454d35cbc"
+  },
+  "input_metadata": {
+    "footprint_pixels": 5167373,
+    "known_fault_pixels_in_footprint": 60988,
+    "csv_rows": 27092,
+    "chemistry_records": 3967,
+    "chemistry_cells": 1431,
+    "coord_qa_mismatch_rows": 0,
+    "eligible_coherent_hot_cells": 67,
+    "eligible_t_med_degC": {
+      "min": 120.12,
+      "median": 167.54,
+      "max": 258.46
+    },
+    "records_with_geothermometers_invalidated_by_bounds": 29
+  },
+  "evaluation": {
+    "protocol": "4 contiguous geographic quadrants; fixed 2.5% per-quadrant emission; deterministic 20%-of-connected-components sparse proxy; exact repository DTI implementation; ridge-NMS disabled (isotropic point-anomaly field, preregistered)",
+    "target_scope": "held-out portions of the supplied known-fault catalogue, not newly discovered/hidden fault labels",
+    "h21_2_coherence_candidate": {
+      "mean_dense_dti": 0.03244,
+      "mean_sparse_dti": 0.01388,
+      "fold_dense": [
+        0.04173,
+        0.02775,
+        0.02418,
+        0.03611
+      ],
+      "fold_sparse": [
+        0.0087,
+        0.01615,
+        0.01502,
+        0.01566
+      ],
+      "folds": {
+        "NW": {
+          "dense_dti": 0.04173,
+          "sparse_dti": 0.0087,
+          "dense_coverage": 0.0561,
+          "sparse_coverage": 0.0302,
+          "emitted_px": 28868
+        },
+        "NE_LidarGapHeavy": {
+          "dense_dti": 0.02775,
+          "sparse_dti": 0.01615,
+          "dense_coverage": 0.0376,
+          "sparse_coverage": 0.0605,
+          "emitted_px": 35693
+        },
+        "SW": {
+          "dense_dti": 0.02418,
+          "sparse_dti": 0.01502,
+          "dense_coverage": 0.0275,
+          "sparse_coverage": 0.0408,
+          "emitted_px": 35716
+        },
+        "SE": {
+          "dense_dti": 0.03611,
+          "sparse_dti": 0.01566,
+          "dense_coverage": 0.04,
+          "sparse_coverage": 0.0391,
+          "emitted_px": 28907
+        }
+      }
+    },
+    "controls_descriptive_only": {
+      "c1_thermal_points_no_coherence": {
+        "n_cells": 2059,
+        "mean_dense_dti": 0.03857,
+        "mean_sparse_dti": 0.01555,
+        "fold_dense": [
+          0.05143,
+          0.04531,
+          0.01873,
+          0.0388
+        ],
+        "fold_sparse": [
+          0.01396,
+          0.01934,
+          0.01447,
+          0.01444
+        ],
+        "folds": {
+          "NW": {
+            "dense_dti": 0.05143,
+            "sparse_dti": 0.01396,
+            "dense_coverage": 0.0689,
+            "sparse_coverage": 0.0482,
+            "emitted_px": 28868
+          },
+          "NE_LidarGapHeavy": {
+            "dense_dti": 0.04531,
+            "sparse_dti": 0.01934,
+            "dense_coverage": 0.061,
+            "sparse_coverage": 0.0719,
+            "emitted_px": 35693
+          },
+          "SW": {
+            "dense_dti": 0.01873,
+            "sparse_dti": 0.01447,
+            "dense_coverage": 0.0214,
+            "sparse_coverage": 0.0395,
+            "emitted_px": 35716
+          },
+          "SE": {
+            "dense_dti": 0.0388,
+            "sparse_dti": 0.01444,
+            "dense_coverage": 0.0431,
+            "sparse_coverage": 0.0361,
+            "emitted_px": 28907
+          }
+        }
+      },
+      "c2_random_pseudo_sites_seed4243": {
+        "n_cells": 67,
+        "mean_dense_dti": 0.02901,
+        "mean_sparse_dti": 0.01283,
+        "fold_dense": [
+          0.04341,
+          0.01943,
+          0.02564,
+          0.02756
+        ],
+        "fold_sparse": [
+          0.00888,
+          0.01875,
+          0.0108,
+          0.0129
+        ],
+        "folds": {
+          "NW": {
+            "dense_dti": 0.04341,
+            "sparse_dti": 0.00888,
+            "dense_coverage": 0.0585,
+            "sparse_coverage": 0.0308,
+            "emitted_px": 28868
+          },
+          "NE_LidarGapHeavy": {
+            "dense_dti": 0.01943,
+            "sparse_dti": 0.01875,
+            "dense_coverage": 0.0264,
+            "sparse_coverage": 0.0704,
+            "emitted_px": 35693
+          },
+          "SW": {
+            "dense_dti": 0.02564,
+            "sparse_dti": 0.0108,
+            "dense_coverage": 0.0291,
+            "sparse_coverage": 0.0294,
+            "emitted_px": 35716
+          },
+          "SE": {
+            "dense_dti": 0.02756,
+            "sparse_dti": 0.0129,
+            "dense_coverage": 0.0307,
+            "sparse_coverage": 0.0324,
+            "emitted_px": 28907
+          }
+        }
+      },
+      "c3_catalogue_proximity_transfer_ceiling": {
+        "mean_dense_dti": 0.0419,
+        "mean_sparse_dti": 0.01894,
+        "fold_dense": [
+          0.05273,
+          0.02926,
+          0.04237,
+          0.04324
+        ],
+        "fold_sparse": [
+          0.02615,
+          0.00526,
+          0.03227,
+          0.01209
+        ]
+      }
+    },
+    "comparison_to_stored_references": {
+      "stored_h20_reference_present": true,
+      "reproduced_h16_reference_present": true,
+      "gate_vs_stored_h20_best": {
+        "passed": false,
+        "rules": {
+          "mean_dense_improves": false,
+          "mean_sparse_improves": false,
+          "sparse_fold_wins_ge_3_of_4": false,
+          "no_fold_loses_more_than_0_01": false
+        },
+        "sparse_fold_wins": 0,
+        "dense_fold_wins": 0,
+        "worst_fold_delta_dense": -0.21558,
+        "worst_fold_delta_sparse": -0.09385,
+        "delta_mean_dense": -0.18198,
+        "delta_mean_sparse": -0.07404
+      },
+      "stored_h20_reference": {
+        "dense_candidate": "H20-1",
+        "dense_mean": 0.21442,
+        "dense_folds": [
+          0.20851,
+          0.24333,
+          0.1561,
+          0.24973
+        ],
+        "sparse_candidate": "H20-5",
+        "sparse_mean": 0.08792,
+        "sparse_folds": [
+          0.08959,
+          0.08486,
+          0.06774,
+          0.10951
+        ],
+        "reproduced_in_this_run": false,
+        "comparator_note": "historical, unreproduced; dense and sparse tracks are drawn from separate candidates"
+      },
+      "gate_vs_reproduced_h16_1": {
+        "passed": false,
+        "rules": {
+          "mean_dense_improves": false,
+          "mean_sparse_improves": false,
+          "sparse_fold_wins_ge_3_of_4": false,
+          "no_fold_loses_more_than_0_01": false
+        },
+        "sparse_fold_wins": 0,
+        "dense_fold_wins": 0,
+        "worst_fold_delta_dense": -0.2134,
+        "worst_fold_delta_sparse": -0.09281,
+        "delta_mean_dense": -0.18025,
+        "delta_mean_sparse": -0.07166
+      },
+      "reproduced_h16_1_reference": {
+        "source": "evidence/spatial_holdout_h16_results.json",
+        "mean_dense_dti": 0.21269,
+        "mean_sparse_dti": 0.08554,
+        "fold_dense": [
+          0.20774,
+          0.23898,
+          0.15453,
+          0.24951
+        ],
+        "fold_sparse": [
+          0.089,
+          0.07794,
+          0.06675,
+          0.10847
+        ]
+      },
+      "conservative_screen_passed": false
+    },
+    "primary_gate_passed_against_stored_h20_values": false,
+    "gate_passed_against_current_reproduced_h16_1": false,
+    "conservative_screen_passed_both_comparators": false,
+    "candidate_vs_c3_ceiling_mean_dense_delta": -0.00946,
+    "candidate_vs_c3_ceiling_mean_sparse_delta": -0.00506
+  },
+  "multiple_comparison_note": "Exactly one preregistered candidate was evaluated under one frozen protocol; controls are descriptive and incur no promotion multiplicity. No post-hoc parameter sweep or significance claim was made.",
+  "submission_artifact_created": false
+}

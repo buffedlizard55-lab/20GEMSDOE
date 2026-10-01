@@ -137,7 +137,7 @@ def shell(title: str, active: str, body: str, *, scripts: str = "", desc: str = 
 <header class="top"><div class="in"><a class="brand" href="index.html">20GEMSDOE</a><nav class="main" aria-label="Main">{nav}<a href="{REPO_URL}" rel="noopener">GitHub</a></nav></div></header>
 <div class="strip"><div class="in"><span>DOE GEMS Prize · DrivenData #306</span><span>Ends <strong>Dec 3, 2026 23:59 UTC</strong> · <strong id="countdown" data-end="{DEADLINE_ISO}"></strong></span><span>Limit: <strong>3 uploads / rolling 7 days</strong></span><span>Manual snapshot 2026-10-01: leader <strong>{top[3]:.4f}</strong> · group-linked best <strong>{group_best['score']:.4f}</strong></span><a href="{COMP}" rel="noopener">Competition</a></div></div>
 <main id="main" class="wrap">{body}
-<footer><p>Built {built} from commit <code>{git_short()}</code> on branch <code>arena/01a0f501-20gemsdoe</code>. Snapshot and claim limitations are stated in <a href="audit.html">Sources &amp; Irregularities</a>. Project brief &amp; Arena Core Values: <a href="{BLOB}README.md">README.md</a>.</p></footer></main>
+<footer><p>Built {built} from commit <code>{git_short()}</code> on branch <code>arena/01a0f564-20gemsdoe</code>. Snapshot and claim limitations are stated in <a href="audit.html">Sources &amp; Irregularities</a>. Project brief &amp; Arena Core Values: <a href="{BLOB}README.md">README.md</a>.</p></footer></main>
 {candidates_js_payload()}<script src="js/gems-tiff.js"></script><script src="js/site.js"></script>{scripts}</body></html>
 """
 
@@ -325,6 +325,22 @@ def build_research() -> str:
     else:
         h21_block = '<p><strong>H21-1 status:</strong> preregistered; no result file exists yet. The first run is a spatial-transfer proxy against known catalogue faults, not hidden-fault validation. No submission is authorized.</p>'
 
+    h21_2_path = EVI / "h21_2_geotherm_coherence_holdout.json"
+    if h21_2_path.exists():
+        h2 = J(h21_2_path)
+        ev2 = h2["evaluation"]["h21_2_coherence_candidate"]
+        ctr = h2["evaluation"]["controls_descriptive_only"]
+        cmp2 = h2["evaluation"]["comparison_to_stored_references"]
+        gate2_text = (
+            "failed both preregistered comparator gates"
+            if not cmp2.get("conservative_screen_passed")
+            else "passed both comparator screens"
+        )
+        meta2 = h2["input_metadata"]
+        h21_2_block = f"""<p><strong>H21-2 proxy result:</strong> Dense <code>{ev2['mean_dense_dti']:.5f}</code>, Sparse <code>{ev2['mean_sparse_dti']:.5f}</code> from <code>{meta2['eligible_coherent_hot_cells']}</code> eligible coherent-hot cells (of {meta2['chemistry_cells']} chemistry cells); it {gate2_text}. Descriptive controls: unselected thermal points Dense <code>{ctr['c1_thermal_points_no_coherence']['mean_dense_dti']:.5f}</code> ({ctr['c1_thermal_points_no_coherence']['n_cells']} cells), seeded random cells Dense <code>{ctr['c2_random_pseudo_sites_seed4243']['mean_dense_dti']:.5f}</code>, catalogue-proximity transfer ceiling Dense <code>{ctr['c3_catalogue_proximity_transfer_ceiling']['mean_dense_dti']:.5f}</code>. Coherence selection scored below the unselected thermal-anchor control, so the idea is rejected without retuning; no submission artifact was created. Full report: <a href="{BLOB}evidence/h21_2_geotherm_coherence_holdout.json">evidence/h21_2_geotherm_coherence_holdout.json</a>.</p>"""
+    else:
+        h21_2_block = '<p><strong>H21-2 status:</strong> preregistered; no result file exists yet.</p>'
+
     md = (DOCS / "research" / "hypothesis_register.md").read_text()
     md_html = markdown.markdown(md, extensions=["tables", "toc", "fenced_code", "sane_lists", "md_in_html"])
     # The register is authored beside research/*.md, while this HTML page is one level up.
@@ -332,6 +348,7 @@ def build_research() -> str:
     md_html = md_html.replace('href="../audit.html', 'href="audit.html')
     md_html = md_html.replace('href="../research/', 'href="research/')
     md_html = md_html.replace('href="preregistration_h21.md', 'href="research/preregistration_h21.md')
+    md_html = md_html.replace('href="preregistration_h21_2.md', 'href="research/preregistration_h21_2.md')
     signal_min_p = min(r["p_uncorrected"] for r in signal_attribution["top_by_abs_rho"])
     signal_bonferroni = signal_attribution["bonferroni_p_threshold_0_05"]
     signal_summary = f"""<h2>Exploratory archived-raster signal attribution</h2>
@@ -352,6 +369,9 @@ def build_research() -> str:
 <h2>H21-1 preregistered test</h2>
 <p>The frozen H21-1 transform uses multi-scale Hessian line ridges from band 16, <code>ieq_n100a15</code>, and compares against the scalar seismic-intensity feature at the same fixed budget. Its protocol is in <a href="research/preregistration_h21.md">research/preregistration_h21.md</a>. USGS Great Basin studies motivate a test of seismicity/structure relationships but do not show that this particular layer or transform improves contest DTI.</p>
 {h21_block}
+<h2>H21-2 preregistered test</h2>
+<p>The frozen H21-2 candidate scores raster cells by agreement among up to three chemical solute geothermometers (quartz, chalcedony, Na–K–Ca cation) at GDR 1391 spring/well sites, requiring at least two concordant estimates of a hot (&ge; 120 &deg;C) reservoir. Its protocol is in <a href="research/preregistration_h21_2.md">research/preregistration_h21_2.md</a>; the pre-registered data QA audit is <a href="{BLOB}evidence/h21_2_wellspring_audit.json">evidence/h21_2_wellspring_audit.json</a>. Geothermometer concordance is standard geothermal practice, but no published source shows it improves this competition's DTI.</p>
+{h21_2_block}
 {signal_summary}
 <h2>Ranked candidate hypotheses and source availability</h2>
 <div class="md">{md_html}</div>
