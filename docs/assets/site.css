@@ -68,3 +68,6 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:24px 0;color:var
 /* Native file controls and upload-guide URLs must stay inside mobile cards. */
 .drop input[type=file]{width:100%;max-width:100%;min-width:0}
 .drop,.steps{overflow-wrap:anywhere}
+
+/* Evidence paths can be longer than a phone viewport. */
+a{overflow-wrap:anywhere}
