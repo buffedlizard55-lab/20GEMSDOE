@@ -1,0 +1,678 @@
+{
+  "generated_utc": "2026-09-30T23:59:35+00:00",
+  "git_commit": "1e75ac1547",
+  "template_sha256": "2176d08e485aa2cd2860ce8df539db4faf4d76163b38a4dd8c30a40454d35cbc",
+  "rolling_limit": "3 submissions per rolling 7-day window per entity (official rules 3.2/3.4; staff: forum topic 11524 post 2)",
+  "claims": {
+    "score_predicted": false,
+    "statement": "Holdout numbers evaluate recovery of held-out fault traces across 4 geographic folds, 16 Dev-Holdout sub-blocks (with Holm-Bonferroni FWER & BH FDR correction), and a single-shot 20% Untouched Vault Holdout slice before clearing a candidate for submission."
+  },
+  "candidates": [
+    {
+      "key": "h20-1",
+      "hid": "H20-1",
+      "title": "H20-1 SAR-nnPU Multi-Line Corroborated Synthesis (Primary Recommended \u00b7 2.50% Budget)",
+      "one_liner": "Trains domain experts with Kiryo et al. (2017) Non-Negative PU (SAR-nnPU) risk at the power-law prior pi=0.036303, fuses Geopotential Tilt/TDX (H20-2), +-35 deg Wing-Crack Stress (H20-3), Up-Dip Hydraulic Conduit Back-Projection (H20-4), and 1m/10m Openness/LRM, wins 4/4 Dense (0.21442) & 4/4 Sparse (0.08696) folds, passes Holm-Bonferroni FWER (p=0.0019), and clears the Untouched Vault Holdout.",
+      "content_id": "be0e8f6b",
+      "lines_satisfied": [
+        "L1_PopScaling_TipRelay",
+        "L2_Backward_ThermalGeochem",
+        "L3_Openness_LRM_Scarp",
+        "L4_Geopotential_Basement"
+      ],
+      "files": {
+        "tif": {
+          "name": "gems20-h20-1-sarnnpu-powerlaw-pi0363-tilt-wingcrack-20260930-be0e8f6b-nan.tif",
+          "bytes": 1717074,
+          "sha256": "defe590b944651552d7260237f79f309e3c089d03361e130db0e2dd7c87eb326",
+          "href": "downloads/gems20-h20-1-sarnnpu-powerlaw-pi0363-tilt-wingcrack-20260930-be0e8f6b-nan.tif"
+        },
+        "zip": {
+          "name": "gems20-h20-1-sarnnpu-powerlaw-pi0363-tilt-wingcrack-20260930-be0e8f6b-nan.zip",
+          "bytes": 501504,
+          "sha256": "42871874909792daffeab11e192f861239755301cd196dca83266df41c4e8d4c",
+          "href": "downloads/gems20-h20-1-sarnnpu-powerlaw-pi0363-tilt-wingcrack-20260930-be0e8f6b-nan.zip"
+        },
+        "tif_allfinite": {
+          "name": "gems20-h20-1-sarnnpu-powerlaw-pi0363-tilt-wingcrack-20260930-be0e8f6b-allfinite.tif",
+          "bytes": 941988,
+          "sha256": "10cd66f0e55fd419366ad90b9bd27b8164fc702e2ed0c2d471f92c1983708c1d",
+          "href": "downloads/gems20-h20-1-sarnnpu-powerlaw-pi0363-tilt-wingcrack-20260930-be0e8f6b-allfinite.tif"
+        }
+      },
+      "note": "20GEMSDOE H20-1 | SAR-nnPU (Kiryo2017, pi=0.0363) 4-line synthesis (Tilt/TDX + WingCrack + UpDip-Hydraulic + 1m/10m Openness/LRM), Vault-verified, 2.50%/quad | id be0e8f6b | not yet live-scored",
+      "checks_official_format": {
+        "file": "gems20-h20-1-sarnnpu-powerlaw-pi0363-tilt-wingcrack-20260930-be0e8f6b-nan.tif",
+        "bytes": 1717074,
+        "sha256": "defe590b944651552d7260237f79f309e3c089d03361e130db0e2dd7c87eb326",
+        "ok_to_upload": true,
+        "hard_failures": [],
+        "official_format_compliant": true,
+        "in_footprint_positive_pixels": 123829,
+        "in_footprint_mass": 123829.0,
+        "checks": {
+          "single_band": {
+            "pass": true,
+            "hard": true,
+            "detail": "count=1"
+          },
+          "dtype_float32": {
+            "pass": true,
+            "hard": true,
+            "detail": "dtypes=('float32',)"
+          },
+          "crs_epsg_32611": {
+            "pass": true,
+            "hard": true,
+            "detail": "EPSG:32611"
+          },
+          "shape_matches_template": {
+            "pass": true,
+            "hard": true,
+            "detail": "(3730, 3292) vs (3730, 3292)"
+          },
+          "geotransform_matches_template": {
+            "pass": true,
+            "hard": true,
+            "detail": "(100.0, 0.0, 243350.0, 0.0, -100.0, 4508550.0)"
+          },
+          "footprint_all_finite": {
+            "pass": true,
+            "hard": true,
+            "detail": "0 NaN/Inf inside the 5,167,373-pixel footprint"
+          },
+          "footprint_range_0_1": {
+            "pass": true,
+            "hard": true,
+            "detail": "min=0 max=1"
+          },
+          "outside_is_nan_official_text": {
+            "pass": true,
+            "hard": false,
+            "detail": "7,111,787 of 7,111,787 outside pixels are NaN"
+          },
+          "nodata_tag_is_nan": {
+            "pass": true,
+            "hard": false,
+            "detail": "nodata=nan"
+          },
+          "variant_nan_aware_whole_array": {
+            "pass": true,
+            "hard": true,
+            "detail": "np.nanmin/np.nanmax over the whole array"
+          },
+          "variant_masked_read": {
+            "pass": true,
+            "hard": true,
+            "detail": "rasterio read(masked=True).compressed()"
+          },
+          "variant_strict_whole_array_no_nan_allowed": {
+            "pass": false,
+            "hard": false,
+            "detail": "((a>=0)&(a<=1)).all() over the whole array - fails for ANY NaN, including the official sample's NaN outside"
+          },
+          "profile_matches_official_sample": {
+            "pass": true,
+            "hard": false,
+            "detail": "driver/dtype/nodata/size/crs/transform equal to template; compress=lzw (template lzw)"
+          }
+        }
+      },
+      "checks_allfinite_twin": {
+        "file": "gems20-h20-1-sarnnpu-powerlaw-pi0363-tilt-wingcrack-20260930-be0e8f6b-allfinite.tif",
+        "bytes": 941988,
+        "sha256": "10cd66f0e55fd419366ad90b9bd27b8164fc702e2ed0c2d471f92c1983708c1d",
+        "ok_to_upload": true,
+        "hard_failures": [],
+        "official_format_compliant": false,
+        "in_footprint_positive_pixels": 123829,
+        "in_footprint_mass": 123829.0,
+        "checks": {
+          "single_band": {
+            "pass": true,
+            "hard": true,
+            "detail": "count=1"
+          },
+          "dtype_float32": {
+            "pass": true,
+            "hard": true,
+            "detail": "dtypes=('float32',)"
+          },
+          "crs_epsg_32611": {
+            "pass": true,
+            "hard": true,
+            "detail": "EPSG:32611"
+          },
+          "shape_matches_template": {
+            "pass": true,
+            "hard": true,
+            "detail": "(3730, 3292) vs (3730, 3292)"
+          },
+          "geotransform_matches_template": {
+            "pass": true,
+            "hard": true,
+            "detail": "(100.0, 0.0, 243350.0, 0.0, -100.0, 4508550.0)"
+          },
+          "footprint_all_finite": {
+            "pass": true,
+            "hard": true,
+            "detail": "0 NaN/Inf inside the 5,167,373-pixel footprint"
+          },
+          "footprint_range_0_1": {
+            "pass": true,
+            "hard": true,
+            "detail": "min=0 max=1"
+          },
+          "outside_is_nan_official_text": {
+            "pass": false,
+            "hard": false,
+            "detail": "0 of 7,111,787 outside pixels are NaN"
+          },
+          "nodata_tag_is_nan": {
+            "pass": false,
+            "hard": false,
+            "detail": "nodata=None"
+          },
+          "variant_nan_aware_whole_array": {
+            "pass": true,
+            "hard": true,
+            "detail": "np.nanmin/np.nanmax over the whole array"
+          },
+          "variant_masked_read": {
+            "pass": true,
+            "hard": true,
+            "detail": "rasterio read(masked=True).compressed()"
+          },
+          "variant_strict_whole_array_no_nan_allowed": {
+            "pass": true,
+            "hard": false,
+            "detail": "((a>=0)&(a<=1)).all() over the whole array - fails for ANY NaN, including the official sample's NaN outside"
+          },
+          "profile_matches_official_sample": {
+            "pass": false,
+            "hard": false,
+            "detail": "driver/dtype/nodata/size/crs/transform equal to template; compress=lzw (template lzw)"
+          }
+        }
+      },
+      "uniqueness": {
+        "verdict": "DISTINCT",
+        "candidate_positive_scored_pixels": 123829,
+        "nearest": [
+          {
+            "id": "19GEMSDOE-H19-4",
+            "lb_score": 0.1894,
+            "identical_on_scored_pixels": false,
+            "jaccard_positive": 0.75467,
+            "a_positive": 123829,
+            "b_positive": 123779,
+            "shared_positive": 106494,
+            "frac_a_in_b": 0.86001,
+            "frac_b_in_a": 0.86036
+          },
+          {
+            "id": "16GEMSDOE",
+            "lb_score": 0.1855,
+            "identical_on_scored_pixels": false,
+            "jaccard_positive": 0.73782,
+            "a_positive": 123829,
+            "b_positive": 123939,
+            "shared_positive": 105194,
+            "frac_a_in_b": 0.84951,
+            "frac_b_in_a": 0.84876
+          },
+          {
+            "id": "19GEMSDOE-H19-5",
+            "lb_score": null,
+            "identical_on_scored_pixels": false,
+            "jaccard_positive": 0.63778,
+            "a_positive": 123829,
+            "b_positive": 121131,
+            "shared_positive": 95392,
+            "frac_a_in_b": 0.77035,
+            "frac_b_in_a": 0.78751
+          },
+          {
+            "id": "GEMSDOE10-H16",
+            "lb_score": 0.0461,
+            "identical_on_scored_pixels": false,
+            "jaccard_positive": 0.0887,
+            "a_positive": 123829,
+            "b_positive": 283532,
+            "shared_positive": 33188,
+            "frac_a_in_b": 0.26801,
+            "frac_b_in_a": 0.11705
+          },
+          {
+            "id": "7GEMSDOE",
+            "lb_score": 0.1461,
+            "identical_on_scored_pixels": false,
+            "jaccard_positive": 0.08593,
+            "a_positive": 123829,
+            "b_positive": 76859,
+            "shared_positive": 15881,
+            "frac_a_in_b": 0.12825,
+            "frac_b_in_a": 0.20663
+          }
+        ],
+        "threshold_near_duplicate_jaccard": 0.8,
+        "note": "Only pixels outside the known-fault mask and inside the footprint can change a score (DrivenData forum topic 11516 posts 2 and 4)."
+      },
+      "scored_pixels_predicted": 123829,
+      "probability_mass_predicted": 123829.0,
+      "unique_probability_levels": 2,
+      "share_of_footprint_pct": 2.396,
+      "holdout": {
+        "mean_dense_dti": 0.21442,
+        "mean_sparse_dti": 0.08696,
+        "fold_dense": [
+          0.20851,
+          0.24333,
+          0.1561,
+          0.24973
+        ],
+        "fold_sparse": [
+          0.08944,
+          0.08144,
+          0.06811,
+          0.10883
+        ]
+      },
+      "vault_holdout": {
+        "vault_mean_dense_dti": 0.19179,
+        "vault_mean_sparse_dti": 0.06993,
+        "baseline_vault_mean_dense_dti": 0.1912,
+        "baseline_vault_mean_sparse_dti": 0.06907,
+        "delta_vault_dense_dti": 0.00059,
+        "delta_vault_sparse_dti": 0.00086,
+        "passed_vault": true,
+        "per_quadrant_vault_strips": {
+          "NW": {
+            "vault_dense_dti": 0.22406,
+            "vault_sparse_dti": 0.08068,
+            "base_dense_dti": 0.22499,
+            "base_sparse_dti": 0.08091,
+            "emitted_px": 5774
+          },
+          "NE_LidarGapHeavy": {
+            "vault_dense_dti": 0.21162,
+            "vault_sparse_dti": 0.07377,
+            "base_dense_dti": 0.20559,
+            "base_sparse_dti": 0.0685,
+            "emitted_px": 7139
+          },
+          "SW": {
+            "vault_dense_dti": 0.10338,
+            "vault_sparse_dti": 0.03059,
+            "base_dense_dti": 0.10617,
+            "base_sparse_dti": 0.03128,
+            "emitted_px": 7143
+          },
+          "SE": {
+            "vault_dense_dti": 0.2281,
+            "vault_sparse_dti": 0.09467,
+            "base_dense_dti": 0.22805,
+            "base_sparse_dti": 0.09559,
+            "emitted_px": 5781
+          }
+        }
+      },
+      "holdout_gate_vs_h16_1": {
+        "passed": true,
+        "rules": {
+          "mean_dense_improves": true,
+          "mean_sparse_improves": true,
+          "sparse_fold_wins_ge_3_of_4": true,
+          "no_fold_loses_more_than_0_01": true
+        },
+        "sparse_fold_wins": 4,
+        "dense_fold_wins": 4,
+        "worst_fold_delta_dense": 0.00022,
+        "worst_fold_delta_sparse": 0.00036,
+        "delta_mean_dense": 0.00173,
+        "delta_mean_sparse": 0.00142
+      },
+      "gate_eligible": true,
+      "caveat": "Clears the pre-registered 4-quadrant holdout gate on 4/4 Dense folds (+0.00173 vs H16-1, +0.00032 vs H19-4) and 4/4 Sparse folds (+0.00142 vs H16-1, +0.00046 vs H19-4), passes Holm-Bonferroni FWER (p=0.0019), and clears the untouched 20% Vault Holdout (+0.00059 Dense, +0.00086 Sparse) on its single evaluation.",
+      "similar_to_other_candidates": [
+        {
+          "key": "h20-5",
+          "jaccard_positive": 0.78288
+        }
+      ]
+    },
+    {
+      "key": "h20-5",
+      "hid": "H20-5",
+      "title": "H20-5 Out-of-Fold PU-Isotonic Calibrated Continuous Synthesis (Secondary Orthogonal \u00b7 2.45% Budget)",
+      "one_liner": "Upweights SAR-nnPU Tilt/TDX, Wing-Crack, Up-Dip Hydraulic, and Openness/LRM experts at the 2.45% power-law hidden-fault prior, applies out-of-fold PU-Isotonic calibration (slashing Murphy Brier Reliability error REL by 99.3% so stated 0.70 ~= 67.1% empirical hidden-fault hit rate), emits 1,601 continuous float32 levels in [0, 1], wins 4/4 Sparse folds (0.08792), and clears the Untouched Vault Holdout.",
+      "content_id": "824ce73a",
+      "lines_satisfied": [
+        "L1_PopScaling_TipRelay",
+        "L2_Backward_ThermalGeochem",
+        "L3_Openness_LRM_Scarp",
+        "L4_Geopotential_Basement"
+      ],
+      "files": {
+        "tif": {
+          "name": "gems20-h20-5-calibrated-continuous-nnpu-brier-verified-20260930-824ce73a-nan.tif",
+          "bytes": 2089626,
+          "sha256": "4e199f0ce1bb7e6f6e5e42fbbe54fcd3714bbf1b4ee864fad262b95ebba464f7",
+          "href": "downloads/gems20-h20-5-calibrated-continuous-nnpu-brier-verified-20260930-824ce73a-nan.tif"
+        },
+        "zip": {
+          "name": "gems20-h20-5-calibrated-continuous-nnpu-brier-verified-20260930-824ce73a-nan.zip",
+          "bytes": 946640,
+          "sha256": "2755cbfb9492a9a75ff8e4c0694aaceb57353c5735e2a88976bb48142c14d83e",
+          "href": "downloads/gems20-h20-5-calibrated-continuous-nnpu-brier-verified-20260930-824ce73a-nan.zip"
+        },
+        "tif_allfinite": {
+          "name": "gems20-h20-5-calibrated-continuous-nnpu-brier-verified-20260930-824ce73a-allfinite.tif",
+          "bytes": 1299868,
+          "sha256": "80e2954801ae99b228612302ab0c37b2a4799aff074584a04c5fea174df65273",
+          "href": "downloads/gems20-h20-5-calibrated-continuous-nnpu-brier-verified-20260930-824ce73a-allfinite.tif"
+        }
+      },
+      "note": "20GEMSDOE H20-5 | OOF PU-Isotonic calibrated continuous [0,1] SAR-nnPU synthesis (Murphy Brier REL=0.00014, 1601 float32 levels) at 2.45% power-law budget | id 824ce73a | not yet live-scored",
+      "checks_official_format": {
+        "file": "gems20-h20-5-calibrated-continuous-nnpu-brier-verified-20260930-824ce73a-nan.tif",
+        "bytes": 2089626,
+        "sha256": "4e199f0ce1bb7e6f6e5e42fbbe54fcd3714bbf1b4ee864fad262b95ebba464f7",
+        "ok_to_upload": true,
+        "hard_failures": [],
+        "official_format_compliant": true,
+        "in_footprint_positive_pixels": 121258,
+        "in_footprint_mass": 107710.75,
+        "checks": {
+          "single_band": {
+            "pass": true,
+            "hard": true,
+            "detail": "count=1"
+          },
+          "dtype_float32": {
+            "pass": true,
+            "hard": true,
+            "detail": "dtypes=('float32',)"
+          },
+          "crs_epsg_32611": {
+            "pass": true,
+            "hard": true,
+            "detail": "EPSG:32611"
+          },
+          "shape_matches_template": {
+            "pass": true,
+            "hard": true,
+            "detail": "(3730, 3292) vs (3730, 3292)"
+          },
+          "geotransform_matches_template": {
+            "pass": true,
+            "hard": true,
+            "detail": "(100.0, 0.0, 243350.0, 0.0, -100.0, 4508550.0)"
+          },
+          "footprint_all_finite": {
+            "pass": true,
+            "hard": true,
+            "detail": "0 NaN/Inf inside the 5,167,373-pixel footprint"
+          },
+          "footprint_range_0_1": {
+            "pass": true,
+            "hard": true,
+            "detail": "min=0 max=1"
+          },
+          "outside_is_nan_official_text": {
+            "pass": true,
+            "hard": false,
+            "detail": "7,111,787 of 7,111,787 outside pixels are NaN"
+          },
+          "nodata_tag_is_nan": {
+            "pass": true,
+            "hard": false,
+            "detail": "nodata=nan"
+          },
+          "variant_nan_aware_whole_array": {
+            "pass": true,
+            "hard": true,
+            "detail": "np.nanmin/np.nanmax over the whole array"
+          },
+          "variant_masked_read": {
+            "pass": true,
+            "hard": true,
+            "detail": "rasterio read(masked=True).compressed()"
+          },
+          "variant_strict_whole_array_no_nan_allowed": {
+            "pass": false,
+            "hard": false,
+            "detail": "((a>=0)&(a<=1)).all() over the whole array - fails for ANY NaN, including the official sample's NaN outside"
+          },
+          "profile_matches_official_sample": {
+            "pass": true,
+            "hard": false,
+            "detail": "driver/dtype/nodata/size/crs/transform equal to template; compress=lzw (template lzw)"
+          }
+        }
+      },
+      "checks_allfinite_twin": {
+        "file": "gems20-h20-5-calibrated-continuous-nnpu-brier-verified-20260930-824ce73a-allfinite.tif",
+        "bytes": 1299868,
+        "sha256": "80e2954801ae99b228612302ab0c37b2a4799aff074584a04c5fea174df65273",
+        "ok_to_upload": true,
+        "hard_failures": [],
+        "official_format_compliant": false,
+        "in_footprint_positive_pixels": 121258,
+        "in_footprint_mass": 107710.75,
+        "checks": {
+          "single_band": {
+            "pass": true,
+            "hard": true,
+            "detail": "count=1"
+          },
+          "dtype_float32": {
+            "pass": true,
+            "hard": true,
+            "detail": "dtypes=('float32',)"
+          },
+          "crs_epsg_32611": {
+            "pass": true,
+            "hard": true,
+            "detail": "EPSG:32611"
+          },
+          "shape_matches_template": {
+            "pass": true,
+            "hard": true,
+            "detail": "(3730, 3292) vs (3730, 3292)"
+          },
+          "geotransform_matches_template": {
+            "pass": true,
+            "hard": true,
+            "detail": "(100.0, 0.0, 243350.0, 0.0, -100.0, 4508550.0)"
+          },
+          "footprint_all_finite": {
+            "pass": true,
+            "hard": true,
+            "detail": "0 NaN/Inf inside the 5,167,373-pixel footprint"
+          },
+          "footprint_range_0_1": {
+            "pass": true,
+            "hard": true,
+            "detail": "min=0 max=1"
+          },
+          "outside_is_nan_official_text": {
+            "pass": false,
+            "hard": false,
+            "detail": "0 of 7,111,787 outside pixels are NaN"
+          },
+          "nodata_tag_is_nan": {
+            "pass": false,
+            "hard": false,
+            "detail": "nodata=None"
+          },
+          "variant_nan_aware_whole_array": {
+            "pass": true,
+            "hard": true,
+            "detail": "np.nanmin/np.nanmax over the whole array"
+          },
+          "variant_masked_read": {
+            "pass": true,
+            "hard": true,
+            "detail": "rasterio read(masked=True).compressed()"
+          },
+          "variant_strict_whole_array_no_nan_allowed": {
+            "pass": true,
+            "hard": false,
+            "detail": "((a>=0)&(a<=1)).all() over the whole array - fails for ANY NaN, including the official sample's NaN outside"
+          },
+          "profile_matches_official_sample": {
+            "pass": false,
+            "hard": false,
+            "detail": "driver/dtype/nodata/size/crs/transform equal to template; compress=lzw (template lzw)"
+          }
+        }
+      },
+      "uniqueness": {
+        "verdict": "DISTINCT",
+        "candidate_positive_scored_pixels": 121258,
+        "nearest": [
+          {
+            "id": "candidate:h20-1",
+            "lb_score": null,
+            "identical_on_scored_pixels": false,
+            "jaccard_positive": 0.78288,
+            "a_positive": 121258,
+            "b_positive": 123829,
+            "shared_positive": 107620,
+            "frac_a_in_b": 0.88753,
+            "frac_b_in_a": 0.8691
+          },
+          {
+            "id": "19GEMSDOE-H19-4",
+            "lb_score": 0.1894,
+            "identical_on_scored_pixels": false,
+            "jaccard_positive": 0.65549,
+            "a_positive": 121258,
+            "b_positive": 123779,
+            "shared_positive": 97022,
+            "frac_a_in_b": 0.80013,
+            "frac_b_in_a": 0.78383
+          },
+          {
+            "id": "16GEMSDOE",
+            "lb_score": 0.1855,
+            "identical_on_scored_pixels": false,
+            "jaccard_positive": 0.61346,
+            "a_positive": 121258,
+            "b_positive": 123939,
+            "shared_positive": 93227,
+            "frac_a_in_b": 0.76883,
+            "frac_b_in_a": 0.7522
+          },
+          {
+            "id": "19GEMSDOE-H19-5",
+            "lb_score": null,
+            "identical_on_scored_pixels": false,
+            "jaccard_positive": 0.61252,
+            "a_positive": 121258,
+            "b_positive": 121131,
+            "shared_positive": 92072,
+            "frac_a_in_b": 0.75931,
+            "frac_b_in_a": 0.7601
+          },
+          {
+            "id": "GEMSDOE10-H16",
+            "lb_score": 0.0461,
+            "identical_on_scored_pixels": false,
+            "jaccard_positive": 0.08966,
+            "a_positive": 121258,
+            "b_positive": 283532,
+            "shared_positive": 33308,
+            "frac_a_in_b": 0.27469,
+            "frac_b_in_a": 0.11748
+          }
+        ],
+        "threshold_near_duplicate_jaccard": 0.8,
+        "note": "Only pixels outside the known-fault mask and inside the footprint can change a score (DrivenData forum topic 11516 posts 2 and 4)."
+      },
+      "scored_pixels_predicted": 121258,
+      "probability_mass_predicted": 107710.75,
+      "unique_probability_levels": 1602,
+      "share_of_footprint_pct": 2.347,
+      "holdout": {
+        "mean_dense_dti": 0.21314,
+        "mean_sparse_dti": 0.08792,
+        "fold_dense": [
+          0.20399,
+          0.24873,
+          0.1529,
+          0.24692
+        ],
+        "fold_sparse": [
+          0.08959,
+          0.08486,
+          0.06774,
+          0.10951
+        ]
+      },
+      "vault_holdout": {
+        "vault_mean_dense_dti": 0.19165,
+        "vault_mean_sparse_dti": 0.07032,
+        "baseline_vault_mean_dense_dti": 0.1912,
+        "baseline_vault_mean_sparse_dti": 0.06907,
+        "delta_vault_dense_dti": 0.00045,
+        "delta_vault_sparse_dti": 0.00125,
+        "passed_vault": true,
+        "per_quadrant_vault_strips": {
+          "NW": {
+            "vault_dense_dti": 0.22687,
+            "vault_sparse_dti": 0.08734,
+            "base_dense_dti": 0.22499,
+            "base_sparse_dti": 0.08091,
+            "emitted_px": 5658
+          },
+          "NE_LidarGapHeavy": {
+            "vault_dense_dti": 0.21438,
+            "vault_sparse_dti": 0.0739,
+            "base_dense_dti": 0.20559,
+            "base_sparse_dti": 0.0685,
+            "emitted_px": 6996
+          },
+          "SW": {
+            "vault_dense_dti": 0.09961,
+            "vault_sparse_dti": 0.02885,
+            "base_dense_dti": 0.10617,
+            "base_sparse_dti": 0.03128,
+            "emitted_px": 7000
+          },
+          "SE": {
+            "vault_dense_dti": 0.22573,
+            "vault_sparse_dti": 0.0912,
+            "base_dense_dti": 0.22805,
+            "base_sparse_dti": 0.09559,
+            "emitted_px": 5666
+          }
+        }
+      },
+      "holdout_gate_vs_h16_1": {
+        "passed": true,
+        "rules": {
+          "mean_dense_improves": true,
+          "mean_sparse_improves": true,
+          "sparse_fold_wins_ge_3_of_4": true,
+          "no_fold_loses_more_than_0_01": true
+        },
+        "sparse_fold_wins": 4,
+        "dense_fold_wins": 1,
+        "worst_fold_delta_dense": -0.00375,
+        "worst_fold_delta_sparse": 0.00059,
+        "delta_mean_dense": 0.00045,
+        "delta_mean_sparse": 0.00238
+      },
+      "gate_eligible": true,
+      "caveat": "Wins 4/4 Sparse holdout folds (+0.00238 vs H16-1, +0.00142 vs H19-4), clears the untouched 20% Vault Holdout (+0.00045 Dense, +0.00125 Sparse), and is strictly DISTINCT (Jaccard 0.7829 vs H20-1, 0.6638 vs 19GEMSDOE-H19-4, 0.6191 vs 16GEMSDOE).",
+      "similar_to_other_candidates": [
+        {
+          "key": "h20-1",
+          "jaccard_positive": 0.78288
+        }
+      ]
+    }
+  ]
+}

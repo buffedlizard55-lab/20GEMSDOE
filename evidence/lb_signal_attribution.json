@@ -1,0 +1,214 @@
+{
+  "generated_utc": "2026-10-01T00:01:25+00:00",
+  "status": "EXPLORATORY_HYPOTHESIS_GENERATION",
+  "n_files": 19,
+  "files": [
+    "16GEMSDOE",
+    "GEMSDOE2",
+    "7GEMSDOE",
+    "12GEMSDOE",
+    "GEMSDOE3-1",
+    "GEMSDOE3-3",
+    "GEMSDOE10-H20",
+    "GEMSDOE3-2",
+    "15GEMSDOE",
+    "GEMSDOE10-H16",
+    "GEMSDOE4",
+    "6GEMSDOE",
+    "11GEMSDOE",
+    "GEMSDOE9",
+    "14GEMSDOE",
+    "GEMSDOE10-H25",
+    "17GEMSDOE-F",
+    "18GEMSDOE",
+    "19GEMSDOE-H19-4"
+  ],
+  "n_comparisons": 51,
+  "bonferroni_p_threshold_0_05": 0.00098,
+  "expected_false_positives_at_p_0_05": 2.6,
+  "top_by_abs_rho": [
+    {
+      "feature": "dem10_onesided",
+      "spearman_rho": -0.607,
+      "p_uncorrected": 0.0059,
+      "enrichment_range": [
+        0.451,
+        0.585
+      ]
+    },
+    {
+      "feature": "dem10_onesided3",
+      "spearman_rho": -0.586,
+      "p_uncorrected": 0.0084,
+      "enrichment_range": [
+        0.456,
+        0.573
+      ]
+    },
+    {
+      "feature": "worm_mag_1500m",
+      "spearman_rho": 0.57,
+      "p_uncorrected": 0.0108,
+      "enrichment_range": [
+        0.462,
+        0.577
+      ]
+    },
+    {
+      "feature": "lid1m_antislope",
+      "spearman_rho": 0.463,
+      "p_uncorrected": 0.0458,
+      "enrichment_range": [
+        0.494,
+        0.739
+      ]
+    },
+    {
+      "feature": "lid1m_tect_vs_fluv",
+      "spearman_rho": 0.46,
+      "p_uncorrected": 0.0477,
+      "enrichment_range": [
+        0.493,
+        0.749
+      ]
+    },
+    {
+      "feature": "det_elev_local15",
+      "spearman_rho": -0.456,
+      "p_uncorrected": 0.0497,
+      "enrichment_range": [
+        0.251,
+        0.565
+      ]
+    },
+    {
+      "feature": "lid1m_piedmont_step",
+      "spearman_rho": 0.442,
+      "p_uncorrected": 0.0581,
+      "enrichment_range": [
+        0.499,
+        0.736
+      ]
+    },
+    {
+      "feature": "grav_local15",
+      "spearman_rho": 0.432,
+      "p_uncorrected": 0.065,
+      "enrichment_range": [
+        0.484,
+        0.603
+      ]
+    },
+    {
+      "feature": "hydro_rad_edge",
+      "spearman_rho": 0.423,
+      "p_uncorrected": 0.0713,
+      "enrichment_range": [
+        0.508,
+        0.695
+      ]
+    },
+    {
+      "feature": "tmi_hg",
+      "spearman_rho": 0.395,
+      "p_uncorrected": 0.0944,
+      "enrichment_range": [
+        0.416,
+        0.683
+      ]
+    },
+    {
+      "feature": "up150_deep_grad",
+      "spearman_rho": 0.388,
+      "p_uncorrected": 0.101,
+      "enrichment_range": [
+        0.427,
+        0.638
+      ]
+    },
+    {
+      "feature": "hydro_demag_conduit",
+      "spearman_rho": 0.386,
+      "p_uncorrected": 0.1027,
+      "enrichment_range": [
+        0.499,
+        0.615
+      ]
+    },
+    {
+      "feature": "dem10_slope_std",
+      "spearman_rho": 0.381,
+      "p_uncorrected": 0.1078,
+      "enrichment_range": [
+        0.495,
+        0.748
+      ]
+    },
+    {
+      "feature": "hydro_k_th_anom",
+      "spearman_rho": -0.377,
+      "p_uncorrected": 0.1114,
+      "enrichment_range": [
+        0.424,
+        0.53
+      ]
+    },
+    {
+      "feature": "depth_base_grad",
+      "spearman_rho": -0.339,
+      "p_uncorrected": 0.1562,
+      "enrichment_range": [
+        0.381,
+        0.586
+      ]
+    }
+  ],
+  "bottom_by_abs_rho": [
+    {
+      "feature": "grav_vg",
+      "spearman_rho": -0.049,
+      "p_uncorrected": 0.8417,
+      "enrichment_range": [
+        0.45,
+        0.558
+      ]
+    },
+    {
+      "feature": "lid1m_valid",
+      "spearman_rho": 0.046,
+      "p_uncorrected": 0.8529,
+      "enrichment_range": [
+        0.432,
+        0.623
+      ]
+    },
+    {
+      "feature": "hydro_clay_conduit",
+      "spearman_rho": -0.039,
+      "p_uncorrected": 0.8753,
+      "enrichment_range": [
+        0.491,
+        0.571
+      ]
+    },
+    {
+      "feature": "tmi_vg",
+      "spearman_rho": -0.026,
+      "p_uncorrected": 0.9148,
+      "enrichment_range": [
+        0.452,
+        0.557
+      ]
+    },
+    {
+      "feature": "hydro_uk_anom",
+      "spearman_rho": -0.023,
+      "p_uncorrected": 0.9262,
+      "enrichment_range": [
+        0.469,
+        0.657
+      ]
+    }
+  ],
+  "caveat": "n=15 files, many correlated channels; nothing here survives a multiple-comparison correction unless p < the Bonferroni threshold."
+}
