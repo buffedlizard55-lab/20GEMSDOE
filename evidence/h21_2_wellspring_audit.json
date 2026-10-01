@@ -1,0 +1,180 @@
+{
+  "audit_of": "evidence/ci/gdr_wellspring_in_footprint.csv",
+  "input_sha256": "122718e65bdf55aab0ee12ad20d80062f0deb1de957225a61ad880dd5dc196ea",
+  "row_count": 27092,
+  "layer_counts": {
+    "well_features_20220808": 19456,
+    "well_chemistry_20220808": 2953,
+    "well_temperature_20220808": 2225,
+    "spring_chemistry_20220808": 1014,
+    "spring_temperature_20220808": 945,
+    "spring_features_20220808": 499
+  },
+  "unique_raster_cells": 12570,
+  "records_per_cell": {
+    "median": 1.0,
+    "p90": 4.0,
+    "max": 134
+  },
+  "unit_plausibility_degC": {
+    "temp_c": {
+      "n": 8718,
+      "min": 0.0,
+      "p25": 22.6,
+      "median": 32.0,
+      "p75": 65.55,
+      "max": 296.54,
+      "n_below_0C": 0,
+      "n_above_350C": 0
+    },
+    "geothermquartz_c": {
+      "n": 973,
+      "min": -34.39,
+      "p25": 80.76,
+      "median": 96.7,
+      "p75": 121.04,
+      "max": 269.11,
+      "n_below_0C": 12,
+      "n_above_350C": 0
+    },
+    "geothermchalc_c": {
+      "n": 966,
+      "min": -49.33,
+      "p25": 50.68,
+      "median": 66.68,
+      "p75": 92.71,
+      "max": 266.04,
+      "n_below_0C": 15,
+      "n_above_350C": 0
+    },
+    "geothermcat_c": {
+      "n": 1185,
+      "min": -6.5,
+      "p25": 47.18,
+      "median": 75.94,
+      "p75": 108.8,
+      "max": 262.0,
+      "n_below_0C": 2,
+      "n_above_350C": 0
+    }
+  },
+  "geothermometer_availability": {
+    "records_with_ge1_geothermometer": 1247,
+    "records_with_ge2_geothermometers": 971,
+    "records_with_3_geothermometers": 906,
+    "chemistry_layer_records": 3967,
+    "chemistry_cells_with_ge2_estimators": 572
+  },
+  "thermalclass": {
+    "raw_variants": {
+      "nan": 21583,
+      "Warm": 2245,
+      "Hot": 1873,
+      "Cold": 783,
+      "Unknown": 487,
+      "Hot ": 121
+    },
+    "normalized_counts": {
+      "<NA>": 21583,
+      "warm": 2245,
+      "hot": 1994,
+      "cold": 783,
+      "unknown": 487
+    },
+    "distinct_spellings": [
+      "Cold",
+      "Hot",
+      "Hot ",
+      "Unknown",
+      "Warm"
+    ],
+    "note": "Whitespace/case variants exist (e.g. 'Hot '); any downstream use must normalize."
+  },
+  "coordinate_consistency_vs_template": {
+    "n_rows_checked": 27092,
+    "max_abs_x_offset_m": 50.0,
+    "max_abs_y_offset_m": 130.6,
+    "rows_beyond_half_cell_50m": 2,
+    "template_shape_hw": [
+      3730,
+      3292
+    ],
+    "row_minmax": [
+      0,
+      3670
+    ],
+    "col_minmax": [
+      4,
+      3290
+    ]
+  },
+  "sampling_bias_distance_to_catalogue_px": {
+    "spring_chemistry_20220808": {
+      "n": 1014,
+      "min": 0.0,
+      "p25": 2.0,
+      "median": 11.87,
+      "p75": 32.22,
+      "max": 156.08,
+      "frac_within_10px_1km": 0.4714,
+      "frac_beyond_30px_3km": 0.3432
+    },
+    "spring_features_20220808": {
+      "n": 499,
+      "min": 0.0,
+      "p25": 2.24,
+      "median": 15.13,
+      "p75": 32.57,
+      "max": 156.08,
+      "frac_within_10px_1km": 0.4509,
+      "frac_beyond_30px_3km": 0.3547
+    },
+    "spring_temperature_20220808": {
+      "n": 945,
+      "min": 0.0,
+      "p25": 2.0,
+      "median": 11.7,
+      "p75": 31.95,
+      "max": 156.08,
+      "frac_within_10px_1km": 0.472,
+      "frac_beyond_30px_3km": 0.3397
+    },
+    "well_chemistry_20220808": {
+      "n": 2953,
+      "min": 0.0,
+      "p25": 12.0,
+      "median": 33.94,
+      "p75": 48.84,
+      "max": 101.98,
+      "frac_within_10px_1km": 0.2313,
+      "frac_beyond_30px_3km": 0.5591
+    },
+    "well_features_20220808": {
+      "n": 19456,
+      "min": 0.0,
+      "p25": 9.9,
+      "median": 24.04,
+      "p75": 46.87,
+      "max": 189.91,
+      "frac_within_10px_1km": 0.2552,
+      "frac_beyond_30px_3km": 0.4293
+    },
+    "well_temperature_20220808": {
+      "n": 2225,
+      "min": 0.0,
+      "p25": 5.83,
+      "median": 19.21,
+      "p75": 44.82,
+      "max": 143.03,
+      "frac_within_10px_1km": 0.3622,
+      "frac_beyond_30px_3km": 0.4036
+    }
+  },
+  "excluded_by_design": [
+    "no fold or quadrant assignment",
+    "no overlap with labels.tif",
+    "no candidate field construction",
+    "no DTI or score of any kind"
+  ],
+  "interpretation_limits": "Field semantics/units come from GDR 1391 layer/column names ('*_c' = degrees Celsius); sample dates, analytical-batch comparability, and well depth-dependence are NOT resolved by this audit. Bottom-hole well temperatures increase with depth regardless of faults; measured temperature is therefore not interchangeable with a chemical geothermometer."
+}
