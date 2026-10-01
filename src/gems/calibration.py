@@ -1,5 +1,8 @@
-"""Genuine Calibration Study: Reliability Diagram & Murphy (1973) Brier-Score Decomposition
-on Recovered Hidden-Fault Pixels in the Spatially-Blocked Holdout.
+"""Generic binary-target calibration metrics and out-of-fold score mapping.
+
+The interpretation of a Brier score, reliability gap or isotonic mapping depends on the
+supplied target. These utilities do not establish that the target is observed ground
+truth or that probabilities are calibrated for hidden competition faults.
 
 References:
   - Murphy, A. H. (1973). "A New Vector Partition of the Probability Score."
@@ -23,9 +26,8 @@ def brier_decomposition_murphy1973(
 ) -> dict[str, Any]:
     """Compute exact Murphy (1973) Brier-score decomposition and reliability diagram.
 
-    For binary outcomes y_i in {0, 1} and continuous predictions p_i in [0, 1] partitioned
-    into K bins (where p_bar_k is the bin mean prediction and o_bar_k is the bin empirical
-    hit rate):
+    For binary target values y_i in {0, 1} and continuous predictions p_i in [0, 1] partitioned
+    into K bins (where p_bar_k is the bin mean prediction and o_bar_k is the bin target-positive rate):
       Brier_binned = Reliability - Resolution + Uncertainty
       Reliability  = (1/N) * sum_k n_k * (p_bar_k - o_bar_k)^2   [lower is better]
       Resolution   = (1/N) * sum_k n_k * (o_bar_k - o_bar)^2     [higher is better]
@@ -59,7 +61,7 @@ def brier_decomposition_murphy1973(
         if nk > 0:
             p_bar_k = float(np.mean(p[m]))
             o_bar_k = float(np.mean(y[m]))
-            gap_k = o_bar_k - p_bar_k  # positive => model is underconfident!
+            gap_k = o_bar_k - p_bar_k  # target-positive rate minus mean prediction; target interpretation is caller-defined
             abs_gap = abs(gap_k)
             rel += (nk / N) * ((p_bar_k - o_bar_k) ** 2)
             res += (nk / N) * ((o_bar_k - o_bar) ** 2)
@@ -78,8 +80,8 @@ def brier_decomposition_murphy1973(
                 "count": nk,
                 "fraction_of_eval": round(nk / N, 5),
                 "mean_predicted_prob": round(p_bar_k, 5),
-                "empirical_hit_rate": round(o_bar_k, 5),
-                "underconfidence_gap_obs_minus_pred": round(gap_k, 5),
+                "target_positive_rate": round(o_bar_k, 5),
+                "target_gap_target_minus_predicted": round(gap_k, 5),
             }
         )
 
@@ -99,7 +101,7 @@ def brier_decomposition_murphy1973(
     brier_partition = rel - res + uncertainty
     return {
         "n_evaluated_pixels": N,
-        "base_hit_rate_o_bar": round(o_bar, 5),
+        "base_target_positive_rate": round(o_bar, 5),
         "brier_score_exact": round(brier_exact, 6),
         "brier_score_murphy_partition": round(brier_partition, 6),
         "reliability_REL": round(rel, 6),
@@ -110,21 +112,20 @@ def brier_decomposition_murphy1973(
         "stated_0_70_audit": {
             "window": "[0.65, 0.75)",
             "count": stated_70_n,
-            "mean_stated_probability": round(stated_70_pred, 5),
-            "empirical_hidden_fault_hit_rate": round(stated_70_hit, 5),
-            "calibration_bias_obs_minus_stated": round(stated_70_hit - stated_70_pred, 5),
+            "mean_predicted_probability": round(stated_70_pred, 5),
+            "target_positive_rate": round(stated_70_hit, 5),
+            "target_minus_prediction": round(stated_70_hit - stated_70_pred, 5),
         },
         "reliability_diagram_bins": bins_report,
     }
 
 
 class OutOfFoldPUCalibrator:
-    """Out-of-fold PU probability calibrator evaluated strictly on held-out hidden-fault pixels.
+    """Apply a fold-separated PU score transform against a caller-supplied binary target.
 
-    Addresses the systematic underconfidence induced by PU contamination:
-      1. Applies analytical Elkan-Noto / SAR-PU prior rescaling p_pu = clip(p_raw / c_eff, 0, 1).
-      2. Fits an out-of-fold monotone IsotonicRegression mapping strictly on the 3 non-test folds'
-         candidate ridge pixels against held-out hidden fault recovery, never touching the test fold!
+    This utility does not establish that the target is observed, independent or representative
+    of hidden competition faults. Its output is only as meaningful as the target, split and
+    prior assumptions supplied by the caller.
     """
 
     def __init__(self, c_labeling_freq: float = 0.3251):
@@ -138,7 +139,7 @@ class OutOfFoldPUCalibrator:
         eval_mask: np.ndarray,
         fold_ids: np.ndarray,
     ) -> np.ndarray:
-        """Fit a separate IsotonicRegression on the 3 training folds for each held-out fold f_id."""
+        """Fit a fold-specific isotonic mapping to the caller-supplied target; semantics depend on that target."""
         p_raw = np.clip(np.asarray(raw_prob, dtype=np.float64), 0.0, 1.0)
         y_hit = (np.asarray(target_hit) > 0.5).astype(np.float64)
         mask = np.asarray(eval_mask, dtype=bool)

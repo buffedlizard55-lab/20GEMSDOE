@@ -1,0 +1,216 @@
+{
+  "generated_utc": "2026-10-01T01:49:29+00:00",
+  "candidate_id": "H21-1-multiscale-seismic-density-ridge",
+  "status": "EXPLORATORY_KNOWN_CATALOGUE_SPATIAL_TRANSFER_PROXY",
+  "slot_recommendation": false,
+  "slot_reason": "The evaluator uses known-catalogue fault labels and a synthetic sparse-component proxy, not hidden competition ground truth. A proxy-screen pass would be necessary but not sufficient for a submission recommendation. Both the historical H20 threshold screen and the current reproduced H16-1 comparator must pass.",
+  "preregistration": {
+    "path": "docs/research/preregistration_h21.md",
+    "sha256": "9d61d6be1363f42228f9b99d9aa7840093e361f1627903952c38b7d295e540db",
+    "transform_constants": {
+      "band": 16,
+      "band_name": "ieq_n100a15",
+      "sigmas_px": [
+        2.0,
+        4.0,
+        8.0
+      ],
+      "beta": 0.5,
+      "c_quantile": 0.9,
+      "edge_guard_px": 32,
+      "budget_per_quadrant": 0.025,
+      "ridge_nms": true,
+      "threshold_search": false
+    }
+  },
+  "input_sha256": {
+    "training_features.tif": "4371c82e3b8339b807bdffcf4ef59a225520fe2988d521be208ae33743123bc5",
+    "labels.tif": "7ba308ccdc4418b31a178f4f1ef21aaa6e152e4028f2f6f64b01f7eb25ae4093",
+    "sample_submission.tif": "2176d08e485aa2cd2860ce8df539db4faf4d76163b38a4dd8c30a40454d35cbc"
+  },
+  "input_metadata": {
+    "band_16_description": "ieq_n100a15 - Earthquake intensity or density (n=100km radius, a=15\u00b0 parameters)",
+    "footprint_pixels": 5167373,
+    "known_fault_pixels_in_footprint": 60988,
+    "invalid_or_sentinel_band16_cells_in_footprint": 3061,
+    "interior_pixels_after_edge_guard": 4746228,
+    "hessian_c_q90_by_sigma": {
+      "2.0": 0.008301854133605957,
+      "4.0": 0.014257708564400673,
+      "8.0": 0.014192690141499043
+    }
+  },
+  "evaluation": {
+    "protocol": "4 contiguous geographic quadrants; fixed 2.5% per-quadrant emission; deterministic 20%-of-connected-components sparse proxy; exact repository DTI implementation",
+    "target_scope": "held-out portions of the supplied known-fault catalogue, not newly discovered/hidden fault labels",
+    "h21_multiscale_ridge": {
+      "mean_dense_dti": 0.06207,
+      "mean_sparse_dti": 0.02511,
+      "fold_dense": [
+        0.05673,
+        0.0528,
+        0.06765,
+        0.0711
+      ],
+      "fold_sparse": [
+        0.01816,
+        0.01879,
+        0.02419,
+        0.03928
+      ],
+      "folds": {
+        "NW": {
+          "dense_dti": 0.05673,
+          "sparse_dti": 0.01816,
+          "dense_coverage": 0.0775,
+          "sparse_coverage": 0.0636,
+          "emitted_px": 28868
+        },
+        "NE_LidarGapHeavy": {
+          "dense_dti": 0.0528,
+          "sparse_dti": 0.01879,
+          "dense_coverage": 0.0723,
+          "sparse_coverage": 0.0708,
+          "emitted_px": 35693
+        },
+        "SW": {
+          "dense_dti": 0.06765,
+          "sparse_dti": 0.02419,
+          "dense_coverage": 0.0776,
+          "sparse_coverage": 0.0661,
+          "emitted_px": 35716
+        },
+        "SE": {
+          "dense_dti": 0.0711,
+          "sparse_dti": 0.03928,
+          "dense_coverage": 0.0799,
+          "sparse_coverage": 0.0992,
+          "emitted_px": 28907
+        }
+      }
+    },
+    "raw_seismic_ieq_control": {
+      "mean_dense_dti": 0.07977,
+      "mean_sparse_dti": 0.02849,
+      "fold_dense": [
+        0.06986,
+        0.07034,
+        0.08286,
+        0.09602
+      ],
+      "fold_sparse": [
+        0.02416,
+        0.02029,
+        0.03085,
+        0.03865
+      ],
+      "folds": {
+        "NW": {
+          "dense_dti": 0.06986,
+          "sparse_dti": 0.02416,
+          "dense_coverage": 0.0956,
+          "sparse_coverage": 0.0845,
+          "emitted_px": 28868
+        },
+        "NE_LidarGapHeavy": {
+          "dense_dti": 0.07034,
+          "sparse_dti": 0.02029,
+          "dense_coverage": 0.0964,
+          "sparse_coverage": 0.0764,
+          "emitted_px": 35693
+        },
+        "SW": {
+          "dense_dti": 0.08286,
+          "sparse_dti": 0.03085,
+          "dense_coverage": 0.0951,
+          "sparse_coverage": 0.0842,
+          "emitted_px": 35716
+        },
+        "SE": {
+          "dense_dti": 0.09602,
+          "sparse_dti": 0.03865,
+          "dense_coverage": 0.1081,
+          "sparse_coverage": 0.0975,
+          "emitted_px": 28907
+        }
+      }
+    },
+    "comparison_to_stored_references": {
+      "stored_h20_reference_present": true,
+      "reproduced_h16_reference_present": true,
+      "gate_vs_stored_h20_best": {
+        "passed": false,
+        "rules": {
+          "mean_dense_improves": false,
+          "mean_sparse_improves": false,
+          "sparse_fold_wins_ge_3_of_4": false,
+          "no_fold_loses_more_than_0_01": false
+        },
+        "sparse_fold_wins": 0,
+        "dense_fold_wins": 0,
+        "worst_fold_delta_dense": -0.19053,
+        "worst_fold_delta_sparse": -0.07143,
+        "delta_mean_dense": -0.15235,
+        "delta_mean_sparse": -0.06281
+      },
+      "stored_h20_reference": {
+        "dense_candidate": "H20-1",
+        "dense_mean": 0.21442,
+        "dense_folds": [
+          0.20851,
+          0.24333,
+          0.1561,
+          0.24973
+        ],
+        "sparse_candidate": "H20-5",
+        "sparse_mean": 0.08792,
+        "sparse_folds": [
+          0.08959,
+          0.08486,
+          0.06774,
+          0.10951
+        ],
+        "reproduced_in_this_run": false,
+        "comparator_note": "historical, unreproduced; dense and sparse tracks are drawn from separate candidates"
+      },
+      "gate_vs_reproduced_h16_1": {
+        "passed": false,
+        "rules": {
+          "mean_dense_improves": false,
+          "mean_sparse_improves": false,
+          "sparse_fold_wins_ge_3_of_4": false,
+          "no_fold_loses_more_than_0_01": false
+        },
+        "sparse_fold_wins": 0,
+        "dense_fold_wins": 0,
+        "worst_fold_delta_dense": -0.18618,
+        "worst_fold_delta_sparse": -0.07084,
+        "delta_mean_dense": -0.15062,
+        "delta_mean_sparse": -0.06043
+      },
+      "reproduced_h16_1_reference": {
+        "source": "evidence/spatial_holdout_h16_results.json",
+        "mean_dense_dti": 0.21269,
+        "mean_sparse_dti": 0.08554,
+        "fold_dense": [
+          0.20774,
+          0.23898,
+          0.15453,
+          0.24951
+        ],
+        "fold_sparse": [
+          0.089,
+          0.07794,
+          0.06675,
+          0.10847
+        ]
+      },
+      "conservative_screen_passed": false
+    },
+    "primary_gate_passed_against_stored_h20_values": false,
+    "gate_passed_against_current_reproduced_h16_1": false,
+    "conservative_screen_passed_both_comparators": false
+  },
+  "multiple_comparison_note": "Only one preregistered candidate was evaluated; raw seismic intensity is a descriptive control. No post-hoc parameter sweep or significance claim was made.",
+  "submission_artifact_created": false
+}

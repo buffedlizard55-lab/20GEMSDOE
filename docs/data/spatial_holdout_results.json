@@ -1,9 +1,7 @@
 {
   "generated_utc": "2026-09-30T23:59:08+00:00",
-  "evaluation_scope": "4-quadrant spatially blocked out-of-fold transfer evaluation on held-out portions of the known fault catalogue (Dense = 100% of test quadrant faults held out; Sparse = deterministic 20% of connected fault components held out while 80% remain visible as known catalogue) plus 16-sub-block Dev-Holdout and untouched 20% Vault-Holdout gate. Not the hidden competition test set.",
+  "evaluation_scope": "Historical spatial-transfer proxy on held-out portions of the supplied known-fault catalogue. Dense and Sparse DTI are known-catalogue metrics; Sparse additionally uses a deterministic 20%-of-connected-components simulation. Not hidden competition labels, not an estimate of leaderboard DTI, and not a submission gate.",
   "baseline_id": "H16_1_SeamFree_MultiScale_Synthesis",
-  "promoted_primary_id": "H20_1_SAR_nnPU_MultiLine_Corroborated",
-  "promoted_secondary_id": "H20_5_Calibrated_Continuous_SoftTail_nnpu",
   "hypotheses_preregistered": [
     {
       "id": "H20-1",
@@ -31,7 +29,9 @@
         "https://gdr.openei.org/submissions/1391 (DOI 10.15121/1881483)",
         "https://doi.org/10.1029/1999RG000074 (Bonnet et al. 2001)"
       ],
-      "preregistered_prediction": "Positive gain on 16/16 Dev-Holdout sub-blocks (Holm-Bonferroni p < 0.01) and clears Vault-Holdout on single touch."
+      "preregistered_prediction": "Positive gain on 16/16 Dev-Holdout sub-blocks (Holm-Bonferroni p < 0.01) and clears Vault-Holdout on single touch.",
+      "chronology_verified": false,
+      "performance_status": "historical report; not reproduced in this review"
     },
     {
       "id": "H20-2",
@@ -59,7 +59,9 @@
         "https://doi.org/10.1111/j.1365-2478.2006.00537.x (Cooper & Cowan 2006, Geophys. Prospect.)",
         "https://www.sciencebase.gov/catalog/item/657e1d85d34e23d3533209f7 (USGS GeoDAWN)"
       ],
-      "preregistered_prediction": "Positive gain over H16-2 Geopotential Worm across all 4 quadrants, with largest lift in NE_LidarGapHeavy."
+      "preregistered_prediction": "Positive gain over H16-2 Geopotential Worm across all 4 quadrants, with largest lift in NE_LidarGapHeavy.",
+      "chronology_verified": false,
+      "performance_status": "historical report; not reproduced in this review"
     },
     {
       "id": "H20-3",
@@ -87,7 +89,9 @@
         "https://doi.org/10.1130/0091-7613(1996)024<0275:STAAFR>2.3.CO;2 (Morris, Ferrill & Henderson 1996)",
         "https://doi.org/10.5066/P9YL58W6 (INGENIOUS Slip & Dilation Tendency)"
       ],
-      "preregistered_prediction": "Positive Sparse and Dense DTI gain over isotropic H19-1 tip prior on Dev-Holdout sub-blocks."
+      "preregistered_prediction": "Positive Sparse and Dense DTI gain over isotropic H19-1 tip prior on Dev-Holdout sub-blocks.",
+      "chronology_verified": false,
+      "performance_status": "historical report; not reproduced in this review"
     },
     {
       "id": "H20-4",
@@ -115,7 +119,9 @@
         "https://gdr.openei.org/submissions/355 (DOI 10.15121/1148722)",
         "https://doi.org/10.1016/S0377-0273(97)00019-X (Curewitz & Karson 1997)"
       ],
-      "preregistered_prediction": "Reduces false positives on flat playa interiors while improving hidden conduit recall on piedmont margins."
+      "preregistered_prediction": "Reduces false positives on flat playa interiors while improving hidden conduit recall on piedmont margins.",
+      "chronology_verified": false,
+      "performance_status": "historical report; not reproduced in this review"
     },
     {
       "id": "H20-5",
@@ -127,7 +133,7 @@
       ],
       "physical_signature": "Instead of collapsing predictions to binary {0, 1}, emits calibrated continuous probabilities p(x) in [0, 1] along directional ridge-NMS skeletons: primary multi-line corroborated ridges (~2.15% of footprint) emit p(x) in [0.88, 1.0], while secondary corroborated splay/relay/tip ridges (~0.55% of footprint) emit their calibrated continuous posterior p_cal(x) in [0.38, 0.88], and off-ridge background is zeroed.",
       "why_unmapped_not_catalogued": "Because the competition metric is continuous Distance-Weighted Tversky Index with alpha=0.2 (low FP penalty) and beta=0.8 (4x higher FN penalty), any ridge pixel whose calibrated 300m-buffered hit probability exceeds the marginal Tversky break-even threshold p* = alpha * DTI / (1 - beta + beta * DTI) ~= 0.16 improves expected DTI when emitted with continuous calibrated probability rather than truncated to 0.",
-      "differs_from_prior_repos": "16GEMSDOE (0.1855) and 19GEMSDOE (0.1894) emitted strictly binary {0.0, 1.0} masks (only 2 unique values). H20-5 is the first ridge-thinned, Murphy-Brier-verified continuous probability submission (thousands of unique calibrated float32 values in [0, 1]) that remains strictly DISTINCT (Jaccard < 0.80) from all historic submissions.",
+      "differs_from_prior_repos": "16GEMSDOE (0.1855) and 19GEMSDOE (0.1894) emitted strictly binary {0.0, 1.0} masks (only 2 unique values). H20-5 is the first ridge-thinned, reported against a synthetic target continuous probability submission (thousands of unique calibrated float32 values in [0, 1]) that remains strictly DISTINCT (Jaccard < 0.80) from all historic submissions.",
       "lines_satisfied": [
         "L1_PopScaling_TipRelay",
         "L2_Backward_ThermalGeochem",
@@ -141,7 +147,9 @@
         "https://doi.org/10.1175/1520-0450(1973)012<0595:ANVPOT>2.0.CO;2 (Murphy 1973)",
         "https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#mathematical-representation"
       ],
-      "preregistered_prediction": "Slashes Murphy Reliability error (REL) and ECE by >80% on held-out hidden faults (stated 0.70 ~= 70% hit rate) and improves continuous DTI."
+      "preregistered_prediction": "Slashes Murphy Reliability error (REL) and ECE by >80% on held-out hidden faults (stated 0.70 ~= 70% hit rate) and improves continuous DTI.",
+      "chronology_verified": false,
+      "performance_status": "historical report; not reproduced in this review"
     }
   ],
   "folds": {
@@ -1187,7 +1195,10 @@
       ],
       "lines_not_satisfied": [],
       "lines_satisfied_count": 4,
-      "disposition": "PROMOTED PRIMARY (H20-1 SAR-nnPU Multi-Line Corroborated Synthesis @ Power-Law Prior pi=0.0363; wins 4/4 Dense & 4/4 Sparse folds, clears Holm-Bonferroni FWER & Untouched Vault Gate)"
+      "disposition": "HISTORICAL PRIMARY REPORT (H20-1 SAR-nnPU Multi-Line Corroborated Synthesis @ Power-Law Prior pi=0.0363; wins 4/4 Dense & 4/4 Sparse folds, clears Holm-Bonferroni FWER & shared spatial proxy Gate)",
+      "evidence_status": "historical, unreproduced known-catalogue proxy",
+      "submission_eligible": false,
+      "submission_recommendation": false
     },
     "H20_5_Calibrated_Continuous_SoftTail_nnpu": {
       "mean_dense_dti": 0.21314,
@@ -1228,7 +1239,10 @@
       ],
       "lines_not_satisfied": [],
       "lines_satisfied_count": 4,
-      "disposition": "PROMOTED SECONDARY (H20-5 Out-of-Fold PU-Isotonic Calibrated Continuous DTI Synthesis @ 2.45% Power-Law Deficit Budget; wins 4/4 Sparse folds, slashes Murphy REL by 99.3%, clears Vault Gate)"
+      "disposition": "HISTORICAL SECONDARY REPORT (H20-5 Out-of-Fold PU-Isotonic Calibrated Continuous DTI Synthesis @ 2.45% Power-Law Deficit Budget; wins 4/4 Sparse folds, slashes Murphy REL by 99.3%, clears historical spatial-proxy comparison)",
+      "evidence_status": "historical, unreproduced known-catalogue proxy",
+      "submission_eligible": false,
+      "submission_recommendation": false
     },
     "H19_4_MultiLine_Corroborated_Synthesis": {
       "mean_dense_dti": 0.21442,
@@ -1269,7 +1283,7 @@
       ],
       "lines_not_satisfied": [],
       "lines_satisfied_count": 4,
-      "disposition": "PROMOTED PRIMARY (H20-1 SAR-nnPU Multi-Line Corroborated Synthesis @ Power-Law Prior pi=0.0363; wins 4/4 Dense & 4/4 Sparse folds, clears Holm-Bonferroni FWER & Untouched Vault Gate)"
+      "disposition": "HISTORICAL PRIMARY REPORT (H20-1 SAR-nnPU Multi-Line Corroborated Synthesis @ Power-Law Prior pi=0.0363; wins 4/4 Dense & 4/4 Sparse folds, clears Holm-Bonferroni FWER & shared spatial proxy Gate)"
     },
     "H19_5_PowerLaw_Budget_Corroborated": {
       "mean_dense_dti": 0.21314,
@@ -1310,7 +1324,7 @@
       ],
       "lines_not_satisfied": [],
       "lines_satisfied_count": 4,
-      "disposition": "PROMOTED SECONDARY (H20-5 Out-of-Fold PU-Isotonic Calibrated Continuous DTI Synthesis @ 2.45% Power-Law Deficit Budget; wins 4/4 Sparse folds, slashes Murphy REL by 99.3%, clears Vault Gate)"
+      "disposition": "HISTORICAL SECONDARY REPORT (H20-5 Out-of-Fold PU-Isotonic Calibrated Continuous DTI Synthesis @ 2.45% Power-Law Deficit Budget; wins 4/4 Sparse folds, slashes Murphy REL by 99.3%, clears historical spatial-proxy comparison)"
     },
     "Sibling_7GEMSDOE_LidarOnly_36c3a3f3": {
       "mean_dense_dti": 0.17395,
@@ -1378,8 +1392,10 @@
       "mean_sparse_dti": 0.06274,
       "delta_sparse_vs_h16_1": -0.0228,
       "sparse_fold_wins": 0,
-      "gate_passed": false,
-      "disposition": "DISCARDED (Single-Layer Match: 19 competition GeoDAWN bands with naive PN loss)"
+      "disposition": "Historical model comparison only; not a verified fault or submission recommendation.",
+      "status": "HISTORICAL_KNOWN_CATALOGUE_PROXY_NOT_HIDDEN_FAULT_VALIDATION",
+      "submission_eligible": false,
+      "historical_proxy_gate_passed": false
     },
     {
       "candidate": "H16_5_Strain_Seismic_Completeness",
@@ -1403,8 +1419,10 @@
       "mean_sparse_dti": 0.05613,
       "delta_sparse_vs_h16_1": -0.02941,
       "sparse_fold_wins": 0,
-      "gate_passed": false,
-      "disposition": "DISCARDED (Single-Layer Match & Fails Holdout Gate)"
+      "disposition": "Historical model comparison only; not a verified fault or submission recommendation.",
+      "status": "HISTORICAL_KNOWN_CATALOGUE_PROXY_NOT_HIDDEN_FAULT_VALIDATION",
+      "submission_eligible": false,
+      "historical_proxy_gate_passed": false
     },
     {
       "candidate": "H20_3_WingCrack_Transtension_nnpu",
@@ -1428,8 +1446,10 @@
       "mean_sparse_dti": 0.05558,
       "delta_sparse_vs_h16_1": -0.02996,
       "sparse_fold_wins": 0,
-      "gate_passed": false,
-      "disposition": "COMPONENT ONLY (H20-3 Anisotropic +-35 deg Wing-Crack & Transtensional Slip-Tendency expert; beats H16-5 Strain by +0.00298 Sparse DTI, feeds H20-1/H20-5)"
+      "disposition": "Historical model comparison only; not a verified fault or submission recommendation.",
+      "status": "HISTORICAL_KNOWN_CATALOGUE_PROXY_NOT_HIDDEN_FAULT_VALIDATION",
+      "submission_eligible": false,
+      "historical_proxy_gate_passed": false
     },
     {
       "candidate": "H16_4_Hydrothermal_Conduit",
@@ -1453,8 +1473,10 @@
       "mean_sparse_dti": 0.06299,
       "delta_sparse_vs_h16_1": -0.02255,
       "sparse_fold_wins": 0,
-      "gate_passed": false,
-      "disposition": "REJECTED Standalone (Isotropic hydrothermal proxy superseded by H20-4 Up-Dip Hydraulic Conduit)"
+      "disposition": "Historical model comparison only; not a verified fault or submission recommendation.",
+      "status": "HISTORICAL_KNOWN_CATALOGUE_PROXY_NOT_HIDDEN_FAULT_VALIDATION",
+      "submission_eligible": false,
+      "historical_proxy_gate_passed": false
     },
     {
       "candidate": "H20_4_UpDip_Hydraulic_Conduit_nnpu",
@@ -1478,8 +1500,10 @@
       "mean_sparse_dti": 0.06191,
       "delta_sparse_vs_h16_1": -0.02363,
       "sparse_fold_wins": 0,
-      "gate_passed": false,
-      "disposition": "COMPONENT ONLY (H20-4 Anisotropic Up-Dip Hydraulic-Gradient Conduit Back-Projection expert; feeds Line 2 of H20-1/H20-5)"
+      "disposition": "Historical model comparison only; not a verified fault or submission recommendation.",
+      "status": "HISTORICAL_KNOWN_CATALOGUE_PROXY_NOT_HIDDEN_FAULT_VALIDATION",
+      "submission_eligible": false,
+      "historical_proxy_gate_passed": false
     },
     {
       "candidate": "H16_2_Geopotential_Strike_Worm",
@@ -1503,8 +1527,10 @@
       "mean_sparse_dti": 0.06408,
       "delta_sparse_vs_h16_1": -0.02146,
       "sparse_fold_wins": 0,
-      "gate_passed": false,
-      "disposition": "DISCARDED Standalone (Amplitude-biased horizontal gradient worm; augmented by H20-2 Tilt/TDX)"
+      "disposition": "Historical model comparison only; not a verified fault or submission recommendation.",
+      "status": "HISTORICAL_KNOWN_CATALOGUE_PROXY_NOT_HIDDEN_FAULT_VALIDATION",
+      "submission_eligible": false,
+      "historical_proxy_gate_passed": false
     },
     {
       "candidate": "H20_2_Tilt_TDX_Worm_nnpu",
@@ -1528,8 +1554,10 @@
       "mean_sparse_dti": 0.06393,
       "delta_sparse_vs_h16_1": -0.02161,
       "sparse_fold_wins": 0,
-      "gate_passed": false,
-      "disposition": "COMPONENT ONLY (H20-2 Depth-Normalized Potential-Field Tilt Angle & TDX Contact Mapper; beats H16-2 Sparse DTI, feeds H20-1/H20-5)"
+      "disposition": "Historical model comparison only; not a verified fault or submission recommendation.",
+      "status": "HISTORICAL_KNOWN_CATALOGUE_PROXY_NOT_HIDDEN_FAULT_VALIDATION",
+      "submission_eligible": false,
+      "historical_proxy_gate_passed": false
     },
     {
       "candidate": "H16_3_ScarpPure_1m_10m",
@@ -1553,8 +1581,10 @@
       "mean_sparse_dti": 0.08217,
       "delta_sparse_vs_h16_1": -0.00337,
       "sparse_fold_wins": 1,
-      "gate_passed": false,
-      "disposition": "DISCARDED Standalone (Single-Layer Topographic Match with naive PN loss)"
+      "disposition": "Historical model comparison only; not a verified fault or submission recommendation.",
+      "status": "HISTORICAL_KNOWN_CATALOGUE_PROXY_NOT_HIDDEN_FAULT_VALIDATION",
+      "submission_eligible": false,
+      "historical_proxy_gate_passed": false
     },
     {
       "candidate": "H20_Scarp_Openness_Pure_nnpu",
@@ -1578,8 +1608,10 @@
       "mean_sparse_dti": 0.08243,
       "delta_sparse_vs_h16_1": -0.00311,
       "sparse_fold_wins": 1,
-      "gate_passed": false,
-      "disposition": "COMPONENT ONLY (Line 3 1m/10m Openness/LRM SAR-nnPU Scarp expert; beats H16-3 Pure by +0.00068 Dense / +0.00061 Sparse DTI)"
+      "disposition": "Historical model comparison only; not a verified fault or submission recommendation.",
+      "status": "HISTORICAL_KNOWN_CATALOGUE_PROXY_NOT_HIDDEN_FAULT_VALIDATION",
+      "submission_eligible": false,
+      "historical_proxy_gate_passed": false
     },
     {
       "candidate": "H16_3_Antislope_Piedmont_Scarp_1m_10m",
@@ -1603,8 +1635,10 @@
       "mean_sparse_dti": 0.07948,
       "delta_sparse_vs_h16_1": -0.00606,
       "sparse_fold_wins": 0,
-      "gate_passed": false,
-      "disposition": "REJECTED Standalone (2-Line naive PN expert superseded by H20 AntiPiedmont SAR-nnPU)"
+      "disposition": "Historical model comparison only; not a verified fault or submission recommendation.",
+      "status": "HISTORICAL_KNOWN_CATALOGUE_PROXY_NOT_HIDDEN_FAULT_VALIDATION",
+      "submission_eligible": false,
+      "historical_proxy_gate_passed": false
     },
     {
       "candidate": "H20_Scarp_Openness_AntiPiedmont_nnpu",
@@ -1628,8 +1662,10 @@
       "mean_sparse_dti": 0.08012,
       "delta_sparse_vs_h16_1": -0.00542,
       "sparse_fold_wins": 0,
-      "gate_passed": false,
-      "disposition": "COMPONENT ONLY (2-Line Openness/LRM + Tilt/WingCrack/UpDip AntiPiedmont SAR-nnPU expert; beats H16-3 AntiPiedmont by +0.00127 Dense / +0.00331 Sparse DTI)"
+      "disposition": "Historical model comparison only; not a verified fault or submission recommendation.",
+      "status": "HISTORICAL_KNOWN_CATALOGUE_PROXY_NOT_HIDDEN_FAULT_VALIDATION",
+      "submission_eligible": false,
+      "historical_proxy_gate_passed": false
     },
     {
       "candidate": "H20_SingleLayer_PatternMatch_Ablation",
@@ -1652,8 +1688,10 @@
       "mean_sparse_dti": 0.01222,
       "delta_sparse_vs_h16_1": -0.07332,
       "sparse_fold_wins": 0,
-      "gate_passed": false,
-      "disposition": "DISCARDED (Single-Layer Pattern Matches Only: collapses on both Dense and Sparse DTI)"
+      "disposition": "Historical model comparison only; not a verified fault or submission recommendation.",
+      "status": "HISTORICAL_KNOWN_CATALOGUE_PROXY_NOT_HIDDEN_FAULT_VALIDATION",
+      "submission_eligible": false,
+      "historical_proxy_gate_passed": false
     },
     {
       "candidate": "H16_1_SeamFree_MultiScale_Synthesis",
@@ -1677,8 +1715,10 @@
       "mean_sparse_dti": 0.08554,
       "delta_sparse_vs_h16_1": 0.0,
       "sparse_fold_wins": 0,
-      "gate_passed": false,
-      "disposition": "PRIOR NAMED LEADERBOARD BASELINE (16GEMSDOE extradr19: 0.1855 LB; trained with naive PN binary cross-entropy)"
+      "disposition": "Historical model comparison only; not a verified fault or submission recommendation.",
+      "status": "HISTORICAL_KNOWN_CATALOGUE_PROXY_NOT_HIDDEN_FAULT_VALIDATION",
+      "submission_eligible": false,
+      "historical_proxy_gate_passed": false
     },
     {
       "candidate": "H20_1_SAR_nnPU_MultiLine_Corroborated",
@@ -1701,8 +1741,10 @@
       "mean_sparse_dti": 0.08696,
       "delta_sparse_vs_h16_1": 0.00142,
       "sparse_fold_wins": 4,
-      "gate_passed": true,
-      "disposition": "PROMOTED PRIMARY (H20-1 SAR-nnPU Multi-Line Corroborated Synthesis @ Power-Law Prior pi=0.0363; wins 4/4 Dense & 4/4 Sparse folds, clears Holm-Bonferroni FWER & Untouched Vault Gate)"
+      "disposition": "Historical H20-1 proxy result only; not an observed/verified fault and not a submission recommendation.",
+      "status": "HISTORICAL_KNOWN_CATALOGUE_PROXY_NOT_HIDDEN_FAULT_VALIDATION",
+      "submission_eligible": false,
+      "historical_proxy_gate_passed": true
     },
     {
       "candidate": "H20_5_Calibrated_Continuous_SoftTail_nnpu",
@@ -1725,8 +1767,10 @@
       "mean_sparse_dti": 0.08792,
       "delta_sparse_vs_h16_1": 0.00238,
       "sparse_fold_wins": 4,
-      "gate_passed": true,
-      "disposition": "PROMOTED SECONDARY (H20-5 Out-of-Fold PU-Isotonic Calibrated Continuous DTI Synthesis @ 2.45% Power-Law Deficit Budget; wins 4/4 Sparse folds, slashes Murphy REL by 99.3%, clears Vault Gate)"
+      "disposition": "Historical H20-5 proxy result only; calibration target synthetic; not an observed/verified fault or submission recommendation.",
+      "status": "HISTORICAL_KNOWN_CATALOGUE_PROXY_NOT_HIDDEN_FAULT_VALIDATION",
+      "submission_eligible": false,
+      "historical_proxy_gate_passed": true
     }
   ],
   "multiple_comparisons_summary": [
@@ -1881,23 +1925,29 @@
       "pass_benjamini_hochberg_fdr_0_05": false
     }
   ],
-  "vault_holdout_summary": {
+  "audit_status": "HISTORICAL_UNREPRODUCED_KNOWN_CATALOGUE_PROXY_NO_SUBMISSION_RECOMMENDATION",
+  "audit_corrected_utc": "2026-10-01T01:46:45+00:00",
+  "submission_recommendation": false,
+  "current_reproduction_status": "H20 OOF caches are incomplete; H20 metrics were not reproduced in this review.",
+  "historical_reported_primary_id": "H20_1_SAR_nnPU_MultiLine_Corroborated",
+  "historical_reported_secondary_id": "H20_5_Calibrated_Continuous_SoftTail_nnpu",
+  "historical_shared_spatial_slice_comparison": {
     "max_allowed_touches": 2,
     "touches_used": 2,
     "touch_audit_log": [
       {
         "touch_number": 1,
         "candidate_id": "H20-1_SAR_nnPU_Primary",
-        "passed_vault": true,
         "vault_mean_dense_dti": 0.19179,
-        "vault_mean_sparse_dti": 0.06993
+        "vault_mean_sparse_dti": 0.06993,
+        "recorded_proxy_rule_passed": true
       },
       {
         "touch_number": 2,
         "candidate_id": "H20-5_Calibrated_Continuous_Secondary",
-        "passed_vault": true,
         "vault_mean_dense_dti": 0.19165,
-        "vault_mean_sparse_dti": 0.07032
+        "vault_mean_sparse_dti": 0.07032,
+        "recorded_proxy_rule_passed": true
       }
     ],
     "results": {
@@ -1908,7 +1958,6 @@
         "baseline_vault_mean_sparse_dti": 0.06907,
         "delta_vault_dense_dti": 0.00059,
         "delta_vault_sparse_dti": 0.00086,
-        "passed_vault": true,
         "per_quadrant_vault_strips": {
           "NW": {
             "vault_dense_dti": 0.22406,
@@ -1938,7 +1987,8 @@
             "base_sparse_dti": 0.09559,
             "emitted_px": 5781
           }
-        }
+        },
+        "recorded_proxy_rule_passed": true
       },
       "H20-5_Calibrated_Continuous_Secondary": {
         "vault_mean_dense_dti": 0.19165,
@@ -1947,7 +1997,6 @@
         "baseline_vault_mean_sparse_dti": 0.06907,
         "delta_vault_dense_dti": 0.00045,
         "delta_vault_sparse_dti": 0.00125,
-        "passed_vault": true,
         "per_quadrant_vault_strips": {
           "NW": {
             "vault_dense_dti": 0.22687,
@@ -1977,7 +2026,8 @@
             "base_sparse_dti": 0.09559,
             "emitted_px": 5666
           }
-        }
+        },
+        "recorded_proxy_rule_passed": true
       }
     }
   }

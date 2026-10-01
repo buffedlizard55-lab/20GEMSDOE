@@ -39,7 +39,8 @@ def test_published_files_match_manifest_hashes_and_pass_all_hard_checks(cand, te
     assert twin["ok_to_upload"]
     with zipfile.ZipFile(DOCS_DIR / cand["files"]["zip"]["href"]) as z:
         assert z.namelist() == [tif.name] and hashlib.sha256(z.read(tif.name)).hexdigest() == cand["files"]["tif"]["sha256"]
-    assert cand["content_id"] in tif.name and cand["content_id"] in cand["note"] and "not yet live-scored" in cand["note"]
+    assert cand["content_id"] in tif.name and cand["content_id"] in cand["note"]
+    assert "no upload recommendation" in cand["note"].lower()
     assert len(cand["note"]) <= 200
 
 
@@ -126,11 +127,13 @@ def test_site_builds_cleanly_and_links_resolve():
     assert r.returncode == 0, r.stdout + r.stderr
 
 
-def test_home_page_leads_with_the_download_and_states_the_limits():
+def test_home_page_leads_with_format_checked_download_and_states_limits():
     html = (DOCS_DIR / "index.html").read_text()
-    first_dl = html.index("Download submission")
-    assert first_dl < html.index("Why the score 0.1563 kept repeating")
-    assert "Dec 3, 2026 23:59 UTC" in html and "rolling" in html and "not live-scored" in html.lower()
+    first_dl = html.index("Download format-checked artifact")
+    assert first_dl < html.index("Why the historical 0.1563 score repeated")
+    assert "Dec 3, 2026 23:59 UTC" in html and "rolling" in html
+    assert "No current candidate is recommended" in html
+    assert "synthetic target" in html and "not hidden-fault validation" in html
     for c in SUBS["candidates"]:
         assert c["files"]["tif"]["href"] in html and c["note"].split("|")[0].strip() in html
     assert not re.search(r"\{\{\w+\}\}", html)

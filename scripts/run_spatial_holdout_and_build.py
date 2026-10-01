@@ -6,6 +6,7 @@ calibrate a private score, or spend a DrivenData submission slot.
 """
 from __future__ import annotations
 
+import argparse
 import gc
 import json
 import os
@@ -265,6 +266,8 @@ def thin_components(truth_2d: np.ndarray, keep_frac: float, seed: int) -> np.nda
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.parse_args()  # Make --help side-effect-free before any data/model work.
     with rasterio.open(DATA_DIR / "sample_submission.tif") as src:
         footprint = np.isfinite(src.read(1))
     with rasterio.open(DATA_DIR / "labels.tif") as src:
@@ -527,7 +530,7 @@ if __name__ == "__main__":
         f"  {'Sibling_7GEMSDOE_LidarOnly_36c3a3f3':40s} | Mean Dense DTI: {np.mean(g7_dense):.5f} | Mean Sparse DTI: {np.mean(g7_sparse):.5f}"
     )
 
-    (EVIDENCE_DIR / "spatial_holdout_results.json").write_text(json.dumps(results, indent=2) + "\n")
+    (EVIDENCE_DIR / "spatial_holdout_h16_results.json").write_text(json.dumps(results, indent=2) + "\n")
     np.savez(
         DATA_DIR / "cache" / "oof_probs_h16_1.npz",
         h16_1=oof_probs["H16_1_SeamFree_MultiScale_Synthesis"],
@@ -536,4 +539,4 @@ if __name__ == "__main__":
         h16_2=oof_probs["H16_2_Geopotential_Strike_Worm"],
         h16_4=oof_probs["H16_4_Hydrothermal_Conduit"],
     )
-    print("  Saved evidence/spatial_holdout_results.json and data/cache/oof_probs_h16_1.npz.")
+    print("  Saved evidence/spatial_holdout_h16_results.json and data/cache/oof_probs_h16_1.npz; preserved the prior H20 summary.")

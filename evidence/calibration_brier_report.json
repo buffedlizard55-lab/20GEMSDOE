@@ -1,10 +1,10 @@
 {
   "generated_utc": "2026-09-30T23:58:24+00:00",
-  "evaluation_protocol": "Strictly out-of-fold evaluation across the 4 spatially blocked geographic quadrants on 466,731 directional ridge-NMS candidate pixels (zero training-set evaluation; isotonic calibration for fold f is fit strictly on folds != f).",
+  "evaluation_protocol": "Historical four-fold out-of-fold isotonic computation over 1,211,155 evaluated ridge pixels. The prediction-side calibration is fold-separated, but the evaluation target is synthetic: it is generated from known-catalogue/SGMC proximity and a selected prior. These metrics must not be described as hidden-fault calibration.",
   "murphy_1973_identity": "Brier_partition = Reliability (REL) - Resolution (RES) + Uncertainty (UNC)",
   "key_findings": {
-    "naive_pn_underconfidence": "Under PU contamination (c = 0.3134), naive PN models compress probabilities downward on hidden faults: in the [0.65, 0.75) window, stated 0.6799 corresponds to an empirical hidden-fault hit rate of 0.7564 (underconfidence bias = +0.0765).",
-    "oof_pu_isotonic_calibration_improvement": "Out-of-fold PU-Isotonic calibration (H20-5) reduces Murphy Reliability error REL by 99.3% (0.019674 -> 0.000143), reduces ECE by 96.9% (0.13277 -> 0.00405), and aligns the [0.65, 0.75) stated ~0.70 bin (0.6896) with an empirical hidden-fault hit rate of 0.6714 (bias = -0.0183)."
+    "synthetic_proxy_target": "The report compares probabilities with y_pu_hidden_truth constructed from known-catalogue/SGMC proximity and model-derived Bernoulli sampling; the target is not independent hidden-fault truth.",
+    "historical_oof_metric_comparison": "Stored OOF metrics show agreement with the synthetic proxy target only. No empirical claim about hidden-fault calibration, hit rate, or reliability is supported."
   },
   "models": {
     "Naive_PN_Uncalibrated_Underconfident": {
@@ -21,8 +21,8 @@
         "window": "[0.65, 0.75)",
         "count": 2315,
         "mean_stated_probability": 0.67987,
-        "empirical_hidden_fault_hit_rate": 0.75637,
-        "calibration_bias_obs_minus_stated": 0.0765
+        "synthetic_proxy_positive_rate": 0.75637,
+        "proxy_bias_positive_rate_minus_stated_probability": 0.0765
       },
       "reliability_diagram_bins": [
         {
@@ -35,8 +35,8 @@
           "count": 90457,
           "fraction_of_eval": 0.07469,
           "mean_predicted_prob": 0.07865,
-          "empirical_hit_rate": 0.10624,
-          "underconfidence_gap_obs_minus_pred": 0.02759
+          "synthetic_proxy_positive_rate": 0.10624,
+          "proxy_gap_positive_rate_minus_predicted_probability": 0.02759
         },
         {
           "bin_index": 1,
@@ -48,8 +48,8 @@
           "count": 307755,
           "fraction_of_eval": 0.2541,
           "mean_predicted_prob": 0.15791,
-          "empirical_hit_rate": 0.20798,
-          "underconfidence_gap_obs_minus_pred": 0.05007
+          "synthetic_proxy_positive_rate": 0.20798,
+          "proxy_gap_positive_rate_minus_predicted_probability": 0.05007
         },
         {
           "bin_index": 2,
@@ -61,8 +61,8 @@
           "count": 402076,
           "fraction_of_eval": 0.33198,
           "mean_predicted_prob": 0.25359,
-          "empirical_hit_rate": 0.33485,
-          "underconfidence_gap_obs_minus_pred": 0.08126
+          "synthetic_proxy_positive_rate": 0.33485,
+          "proxy_gap_positive_rate_minus_predicted_probability": 0.08126
         },
         {
           "bin_index": 3,
@@ -74,8 +74,8 @@
           "count": 294867,
           "fraction_of_eval": 0.24346,
           "mean_predicted_prob": 0.34086,
-          "empirical_hit_rate": 0.44834,
-          "underconfidence_gap_obs_minus_pred": 0.10748
+          "synthetic_proxy_positive_rate": 0.44834,
+          "proxy_gap_positive_rate_minus_predicted_probability": 0.10748
         },
         {
           "bin_index": 4,
@@ -87,8 +87,8 @@
           "count": 90826,
           "fraction_of_eval": 0.07499,
           "mean_predicted_prob": 0.4377,
-          "empirical_hit_rate": 0.56951,
-          "underconfidence_gap_obs_minus_pred": 0.1318
+          "synthetic_proxy_positive_rate": 0.56951,
+          "proxy_gap_positive_rate_minus_predicted_probability": 0.1318
         },
         {
           "bin_index": 5,
@@ -100,8 +100,8 @@
           "count": 18194,
           "fraction_of_eval": 0.01502,
           "mean_predicted_prob": 0.54173,
-          "empirical_hit_rate": 0.67605,
-          "underconfidence_gap_obs_minus_pred": 0.13431
+          "synthetic_proxy_positive_rate": 0.67605,
+          "proxy_gap_positive_rate_minus_predicted_probability": 0.13431
         },
         {
           "bin_index": 6,
@@ -113,8 +113,8 @@
           "count": 6513,
           "fraction_of_eval": 0.00538,
           "mean_predicted_prob": 0.63591,
-          "empirical_hit_rate": 0.70966,
-          "underconfidence_gap_obs_minus_pred": 0.07375
+          "synthetic_proxy_positive_rate": 0.70966,
+          "proxy_gap_positive_rate_minus_predicted_probability": 0.07375
         },
         {
           "bin_index": 7,
@@ -126,8 +126,8 @@
           "count": 467,
           "fraction_of_eval": 0.00039,
           "mean_predicted_prob": 0.72143,
-          "empirical_hit_rate": 0.82013,
-          "underconfidence_gap_obs_minus_pred": 0.0987
+          "synthetic_proxy_positive_rate": 0.82013,
+          "proxy_gap_positive_rate_minus_predicted_probability": 0.0987
         },
         {
           "bin_index": 8,
@@ -139,8 +139,8 @@
           "count": 0,
           "fraction_of_eval": 0.0,
           "mean_predicted_prob": 0.85,
-          "empirical_hit_rate": 0.0,
-          "underconfidence_gap_obs_minus_pred": 0.0
+          "synthetic_proxy_positive_rate": 0.0,
+          "proxy_gap_positive_rate_minus_predicted_probability": 0.0
         },
         {
           "bin_index": 9,
@@ -152,8 +152,8 @@
           "count": 0,
           "fraction_of_eval": 0.0,
           "mean_predicted_prob": 0.95,
-          "empirical_hit_rate": 0.0,
-          "underconfidence_gap_obs_minus_pred": 0.0
+          "synthetic_proxy_positive_rate": 0.0,
+          "proxy_gap_positive_rate_minus_predicted_probability": 0.0
         }
       ]
     },
@@ -171,8 +171,8 @@
         "window": "[0.65, 0.75)",
         "count": 158554,
         "mean_stated_probability": 0.69317,
-        "empirical_hidden_fault_hit_rate": 0.51587,
-        "calibration_bias_obs_minus_stated": -0.1773
+        "synthetic_proxy_positive_rate": 0.51587,
+        "proxy_bias_positive_rate_minus_stated_probability": -0.1773
       },
       "reliability_diagram_bins": [
         {
@@ -185,8 +185,8 @@
           "count": 17666,
           "fraction_of_eval": 0.01459,
           "mean_predicted_prob": 0.0728,
-          "empirical_hit_rate": 0.08004,
-          "underconfidence_gap_obs_minus_pred": 0.00724
+          "synthetic_proxy_positive_rate": 0.08004,
+          "proxy_gap_positive_rate_minus_predicted_probability": 0.00724
         },
         {
           "bin_index": 1,
@@ -198,8 +198,8 @@
           "count": 84270,
           "fraction_of_eval": 0.06958,
           "mean_predicted_prob": 0.15418,
-          "empirical_hit_rate": 0.11264,
-          "underconfidence_gap_obs_minus_pred": -0.04154
+          "synthetic_proxy_positive_rate": 0.11264,
+          "proxy_gap_positive_rate_minus_predicted_probability": -0.04154
         },
         {
           "bin_index": 2,
@@ -211,8 +211,8 @@
           "count": 135114,
           "fraction_of_eval": 0.11156,
           "mean_predicted_prob": 0.25305,
-          "empirical_hit_rate": 0.1797,
-          "underconfidence_gap_obs_minus_pred": -0.07335
+          "synthetic_proxy_positive_rate": 0.1797,
+          "proxy_gap_positive_rate_minus_predicted_probability": -0.07335
         },
         {
           "bin_index": 3,
@@ -224,8 +224,8 @@
           "count": 188008,
           "fraction_of_eval": 0.15523,
           "mean_predicted_prob": 0.35233,
-          "empirical_hit_rate": 0.24253,
-          "underconfidence_gap_obs_minus_pred": -0.1098
+          "synthetic_proxy_positive_rate": 0.24253,
+          "proxy_gap_positive_rate_minus_predicted_probability": -0.1098
         },
         {
           "bin_index": 4,
@@ -237,8 +237,8 @@
           "count": 216487,
           "fraction_of_eval": 0.17874,
           "mean_predicted_prob": 0.4505,
-          "empirical_hit_rate": 0.31321,
-          "underconfidence_gap_obs_minus_pred": -0.13729
+          "synthetic_proxy_positive_rate": 0.31321,
+          "proxy_gap_positive_rate_minus_predicted_probability": -0.13729
         },
         {
           "bin_index": 5,
@@ -250,8 +250,8 @@
           "count": 240944,
           "fraction_of_eval": 0.19894,
           "mean_predicted_prob": 0.55096,
-          "empirical_hit_rate": 0.38445,
-          "underconfidence_gap_obs_minus_pred": -0.16651
+          "synthetic_proxy_positive_rate": 0.38445,
+          "proxy_gap_positive_rate_minus_predicted_probability": -0.16651
         },
         {
           "bin_index": 6,
@@ -263,8 +263,8 @@
           "count": 213627,
           "fraction_of_eval": 0.17638,
           "mean_predicted_prob": 0.64656,
-          "empirical_hit_rate": 0.46354,
-          "underconfidence_gap_obs_minus_pred": -0.18302
+          "synthetic_proxy_positive_rate": 0.46354,
+          "proxy_gap_positive_rate_minus_predicted_probability": -0.18302
         },
         {
           "bin_index": 7,
@@ -276,8 +276,8 @@
           "count": 95702,
           "fraction_of_eval": 0.07902,
           "mean_predicted_prob": 0.73964,
-          "empirical_hit_rate": 0.57623,
-          "underconfidence_gap_obs_minus_pred": -0.16341
+          "synthetic_proxy_positive_rate": 0.57623,
+          "proxy_gap_positive_rate_minus_predicted_probability": -0.16341
         },
         {
           "bin_index": 8,
@@ -289,8 +289,8 @@
           "count": 18872,
           "fraction_of_eval": 0.01558,
           "mean_predicted_prob": 0.83251,
-          "empirical_hit_rate": 0.7261,
-          "underconfidence_gap_obs_minus_pred": -0.10641
+          "synthetic_proxy_positive_rate": 0.7261,
+          "proxy_gap_positive_rate_minus_predicted_probability": -0.10641
         },
         {
           "bin_index": 9,
@@ -302,8 +302,8 @@
           "count": 465,
           "fraction_of_eval": 0.00038,
           "mean_predicted_prob": 0.91338,
-          "empirical_hit_rate": 0.83441,
-          "underconfidence_gap_obs_minus_pred": -0.07897
+          "synthetic_proxy_positive_rate": 0.83441,
+          "proxy_gap_positive_rate_minus_predicted_probability": -0.07897
         }
       ]
     },
@@ -321,8 +321,8 @@
         "window": "[0.65, 0.75)",
         "count": 16455,
         "mean_stated_probability": 0.68965,
-        "empirical_hidden_fault_hit_rate": 0.67135,
-        "calibration_bias_obs_minus_stated": -0.0183
+        "synthetic_proxy_positive_rate": 0.67135,
+        "proxy_bias_positive_rate_minus_stated_probability": -0.0183
       },
       "reliability_diagram_bins": [
         {
@@ -335,8 +335,8 @@
           "count": 23549,
           "fraction_of_eval": 0.01944,
           "mean_predicted_prob": 0.0727,
-          "empirical_hit_rate": 0.09805,
-          "underconfidence_gap_obs_minus_pred": 0.02535
+          "synthetic_proxy_positive_rate": 0.09805,
+          "proxy_gap_positive_rate_minus_predicted_probability": 0.02535
         },
         {
           "bin_index": 1,
@@ -348,8 +348,8 @@
           "count": 186291,
           "fraction_of_eval": 0.15381,
           "mean_predicted_prob": 0.14966,
-          "empirical_hit_rate": 0.14698,
-          "underconfidence_gap_obs_minus_pred": -0.00268
+          "synthetic_proxy_positive_rate": 0.14698,
+          "proxy_gap_positive_rate_minus_predicted_probability": -0.00268
         },
         {
           "bin_index": 2,
@@ -361,8 +361,8 @@
           "count": 297066,
           "fraction_of_eval": 0.24527,
           "mean_predicted_prob": 0.25151,
-          "empirical_hit_rate": 0.25354,
-          "underconfidence_gap_obs_minus_pred": 0.00203
+          "synthetic_proxy_positive_rate": 0.25354,
+          "proxy_gap_positive_rate_minus_predicted_probability": 0.00203
         },
         {
           "bin_index": 3,
@@ -374,8 +374,8 @@
           "count": 311203,
           "fraction_of_eval": 0.25695,
           "mean_predicted_prob": 0.35427,
-          "empirical_hit_rate": 0.35582,
-          "underconfidence_gap_obs_minus_pred": 0.00156
+          "synthetic_proxy_positive_rate": 0.35582,
+          "proxy_gap_positive_rate_minus_predicted_probability": 0.00156
         },
         {
           "bin_index": 4,
@@ -387,8 +387,8 @@
           "count": 247559,
           "fraction_of_eval": 0.2044,
           "mean_predicted_prob": 0.4447,
-          "empirical_hit_rate": 0.44143,
-          "underconfidence_gap_obs_minus_pred": -0.00327
+          "synthetic_proxy_positive_rate": 0.44143,
+          "proxy_gap_positive_rate_minus_predicted_probability": -0.00327
         },
         {
           "bin_index": 5,
@@ -400,8 +400,8 @@
           "count": 96552,
           "fraction_of_eval": 0.07972,
           "mean_predicted_prob": 0.54376,
-          "empirical_hit_rate": 0.54446,
-          "underconfidence_gap_obs_minus_pred": 0.0007
+          "synthetic_proxy_positive_rate": 0.54446,
+          "proxy_gap_positive_rate_minus_predicted_probability": 0.0007
         },
         {
           "bin_index": 6,
@@ -413,8 +413,8 @@
           "count": 31944,
           "fraction_of_eval": 0.02637,
           "mean_predicted_prob": 0.63884,
-          "empirical_hit_rate": 0.62813,
-          "underconfidence_gap_obs_minus_pred": -0.01071
+          "synthetic_proxy_positive_rate": 0.62813,
+          "proxy_gap_positive_rate_minus_predicted_probability": -0.01071
         },
         {
           "bin_index": 7,
@@ -426,8 +426,8 @@
           "count": 10998,
           "fraction_of_eval": 0.00908,
           "mean_predicted_prob": 0.74758,
-          "empirical_hit_rate": 0.68121,
-          "underconfidence_gap_obs_minus_pred": -0.06636
+          "synthetic_proxy_positive_rate": 0.68121,
+          "proxy_gap_positive_rate_minus_predicted_probability": -0.06636
         },
         {
           "bin_index": 8,
@@ -439,8 +439,8 @@
           "count": 5130,
           "fraction_of_eval": 0.00424,
           "mean_predicted_prob": 0.83918,
-          "empirical_hit_rate": 0.7117,
-          "underconfidence_gap_obs_minus_pred": -0.12748
+          "synthetic_proxy_positive_rate": 0.7117,
+          "proxy_gap_positive_rate_minus_predicted_probability": -0.12748
         },
         {
           "bin_index": 9,
@@ -452,10 +452,19 @@
           "count": 863,
           "fraction_of_eval": 0.00071,
           "mean_predicted_prob": 0.93122,
-          "empirical_hit_rate": 0.79258,
-          "underconfidence_gap_obs_minus_pred": -0.13864
+          "synthetic_proxy_positive_rate": 0.79258,
+          "proxy_gap_positive_rate_minus_predicted_probability": -0.13864
         }
       ]
     }
-  }
+  },
+  "audit_status": "HISTORICAL_OOF_METRICS_AGAINST_SYNTHETIC_PROXY_TARGET_NOT_EMPIRICAL_CALIBRATION",
+  "audit_corrected_utc": "2026-10-01T01:44:34+00:00",
+  "target_status": "synthetic proxy only; no observed or held-out hidden-fault labels",
+  "target_generation": {
+    "summary": "y_pu_hidden_truth = s_hit OR Bernoulli(p_hidden_u), where s_hit uses distance to supplied known-catalogue/SGMC traces and p_hidden_u is derived from the selected power-law prior and model score.",
+    "implication": "Brier, Murphy REL/RES/UNC, ECE and probability-bin rates describe agreement with this constructed proxy target only. They are not empirical hidden-fault calibration, hidden-fault hit rates, or evidence of contest probability calibration.",
+    "random_seed": 20260930
+  },
+  "reproduced_in_current_session": false
 }
