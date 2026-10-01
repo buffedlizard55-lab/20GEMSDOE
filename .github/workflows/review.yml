@@ -47,4 +47,5 @@ jobs:
           path: |
             .cache/browser_review.json
             .cache/browser-review/*-home.png
+            .cache/browser-review/failure.png
           if-no-files-found: warn

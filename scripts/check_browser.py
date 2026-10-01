@@ -85,6 +85,24 @@ def main():
         report={'generated_utc':datetime.now(timezone.utc).isoformat(timespec='seconds'),'real_browser':'Chromium via Playwright','passed':True,'checks':checks,'errors':errors,'contest_access_or_upload':False,'predictions_generated':False,'scope':'Automated UI/desktop/mobile/export smoke checks, not geological validation or manual visual review'}
         args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(report,indent=2)+'\n')
         print(json.dumps(report,indent=2))
+    except Exception as exc:
+        detail=type(exc).__name__+": "+str(exc)
+        diagnostics=[]
+        try:
+            if not page.is_closed():
+                diagnostics=page.evaluate("Array.from(document.querySelectorAll('body *')).map(e=>{const r=e.getBoundingClientRect();return {tag:e.tagName,id:e.id,cls:e.className,left:r.left,right:r.right,width:r.width}}).filter(e=>e.right>innerWidth+1||e.left< -1).slice(0,30)")
+                page.screenshot(path=str(folder/'failure.png'),full_page=False)
+        except Exception:
+            pass  # original test failure remains fatal; diagnostics are best-effort
+        report={'generated_utc':datetime.now(timezone.utc).isoformat(timespec='seconds'),'real_browser':'Chromium via Playwright','passed':False,'checks':checks,'errors':errors+[detail],'overflow_diagnostics':diagnostics,'contest_access_or_upload':False}
+        args.output.parent.mkdir(parents=True,exist_ok=True)
+        args.output.write_text(json.dumps(report,indent=2)+'\n')
+        def annotation(text):
+            return text.replace('%','%25').replace('\r','%0D').replace('\n','%0A')
+        print('::error file=scripts/check_browser.py::'+annotation(detail),flush=True)
+        if diagnostics:
+            print('::notice::'+annotation('Browser layout diagnostics: '+json.dumps(diagnostics)),flush=True)
+        raise
     finally:
         server.shutdown();server.server_close();thread.join(timeout=5)
 
