@@ -1,37 +1,212 @@
-"""Positive-Unlabeled (PU) Learning with Non-Negative Risk Estimator (nnPU) & Power-Law Class Prior.
+"""Actual non-negative PU risk, with explicit sampling semantics and prior scenarios.
 
-References:
-  - Kiryo, R., Niu, G., du Plessis, M. C., & Sugiyama, M. (2017).
-    "Positive-Unlabeled Learning with Non-Negative Risk Estimator."
-    Advances in Neural Information Processing Systems (NeurIPS 2017), 30, 1675-1685.
-    https://proceedings.neurips.cc/paper/2017/file/7cce53cf90577442771720a370c3c723-Paper.pdf
-  - du Plessis, M. C., Niu, G., & Sugiyama, M. (2014).
-    "Analysis of Learning from Positive and Unlabeled Data." NeurIPS 2014.
-  - Elkan, C., & Noto, K. (2008).
-    "Learning Classifiers from Only Positive and Unlabeled Data." KDD 2008.
-  - Bekker, J., Robberechts, P., & Davis, J. (2019).
-    "Beyond the Selected Completely at Random Assumption for Learning from Positive and Unlabeled Data." ECML-PKDD 2019.
-  - Scholz, C. H., & Cowie, P. A. (1990).
-    "Determination of total strain from faulting using slip measurements." Nature, 346, 837-839.
-  - Bonnet, E., Bour, O., Odling, N. E., Davy, P., Main, I., Cowie, P., & Berkowitz, B. (2001).
-    "Scaling of fracture systems in geological media." Reviews of Geophysics, 39(3), 347-383.
+Kiryo et al. (2017): https://proceedings.neurips.cc/paper/2017/hash/7cce53cf90577442771720a370c3c723-Abstract.html
+Author implementation: https://github.com/kiryor/nnPUlearning/blob/master/pu_loss.py
+
+Catalogue zeros are UNLABELED. The original Kiryo U sample is drawn from the
+marginal X population. If U instead contains only S=0 pixels and mu=P(S=1),
+R_neg = (1-mu) E_U[l(-g)] - (pi-mu) E_P[l(-g)]. Using the marginal formula
+unchanged on S=0 data is not unbiased. Representative-positive/SCAR and prior
+assumptions remain unverified for geological catalogues; code cannot repair that.
+
+Power-law estimates below are sensitivity scenarios, never observed prevalence.
+Historical H20 reports/artifacts are preserved separately and are not reproduced
+or validated by this corrected implementation.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Any
 
 import numpy as np
 from scipy.ndimage import label as ndi_label
-from scipy.special import expit, logit
+from scipy.special import expit
 from skimage.morphology import skeletonize
-from sklearn.ensemble import HistGradientBoostingClassifier
+
+
+def _prior_coefficients(pi: float, unlabeled_distribution: str, pi_observed: float | None) -> tuple[float, float]:
+    if not np.isfinite(pi) or not 0 < pi < 1:
+        raise ValueError("pi=P(Y=1) must be finite in (0,1); no silent clipping")
+    if unlabeled_distribution == "marginal":
+        if pi_observed is not None:
+            raise ValueError("pi_observed only applies to catalogue_complement sampling")
+        return 1.0, float(pi)
+    if unlabeled_distribution != "catalogue_complement":
+        raise ValueError("unlabeled_distribution must be marginal or catalogue_complement")
+    if pi_observed is None or not np.isfinite(pi_observed) or not 0 <= pi_observed <= pi:
+        raise ValueError("catalogue_complement requires 0 <= pi_observed <= pi")
+    return 1.0 - float(pi_observed), float(pi) - float(pi_observed)
+
+
+def _loss_terms(g: np.ndarray, kind: str) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    s = expit(g)
+    if kind == "sigmoid":
+        d = s * (1 - s)
+        return expit(-g), s, -d, d
+    if kind == "logistic":
+        return np.logaddexp(0, -g), np.logaddexp(0, g), s - 1, s
+    raise ValueError("loss_type must be sigmoid or logistic")
+
+
+def pu_risk_and_grad(
+    margins_pos: np.ndarray, margins_unl: np.ndarray, pi: float, *,
+    unlabeled_distribution: str = "marginal", pi_observed: float | None = None,
+    loss_type: str = "logistic", beta: float = 0.0, gamma: float = 1.0,
+    reverse_gradient: bool = False,
+) -> tuple[dict[str, Any], np.ndarray, np.ndarray]:
+    """Risk and margin gradients; optional Kiryo Algorithm-1 reverse update.
+
+    With ``reverse_gradient=False`` gradients differentiate the canonical nnPU
+    risk (negative component clamped at zero). With True, a negative component
+    below -beta triggers descent on -gamma*R_neg as in the authors' algorithm.
+    That reverse update is not the derivative of the displayed clamped risk.
+    Sigmoid-loss scores are classification confidence, not calibrated posteriors.
+    """
+    gp, gu = np.asarray(margins_pos, dtype=float), np.asarray(margins_unl, dtype=float)
+    if gp.ndim != 1 or gu.ndim != 1 or not gp.size or not gu.size or not np.isfinite(gp).all() or not np.isfinite(gu).all():
+        raise ValueError("nonempty finite 1D positive and unlabeled margins required")
+    if not np.isfinite(beta) or beta < 0 or not np.isfinite(gamma) or gamma <= 0:
+        raise ValueError("beta>=0 and gamma>0 required")
+    a, b = _prior_coefficients(float(pi), unlabeled_distribution, pi_observed)
+    lp, lpn, dp, dpn = _loss_terms(gp, loss_type)
+    _, lun, _, dun = _loss_terms(gu, loss_type)
+    positive = float(pi * lp.mean())
+    negative = float(a * lun.mean() - b * lpn.mean())
+    reversed_step = bool(reverse_gradient and negative < -beta)
+    if reversed_step:
+        grad_p, grad_u = gamma * b * dpn / len(gp), -gamma * a * dun / len(gu)
+        update_objective = -gamma * negative
+    elif reverse_gradient or negative > 0:
+        grad_p, grad_u = (pi * dp - b * dpn) / len(gp), a * dun / len(gu)
+        update_objective = positive + negative
+    else:
+        grad_p, grad_u = pi * dp / len(gp), np.zeros_like(gu)
+        update_objective = positive
+    risk = {
+        "pi": float(pi), "pi_observed": pi_observed, "unlabeled_distribution": unlabeled_distribution,
+        "loss_type": loss_type, "R_P_plus": float(lp.mean()), "R_P_minus": float(lpn.mean()),
+        "R_U_minus": float(lun.mean()), "unlabeled_coefficient": a, "positive_subtraction_coefficient": b,
+        "unbiased_neg_risk_raw": negative, "nnpu_neg_risk_clamped": max(0, negative),
+        "was_clamped_non_negative": negative < 0, "R_uPU": positive + negative,
+        "R_nnPU": positive + max(0, negative), "reverse_gradient_step": reversed_step,
+        "algorithm_update_objective": update_objective,
+        "assumptions": "Representative positives (SCAR or independently corrected selection), specified prior, matching population sampling; not verified here.",
+    }
+    if unlabeled_distribution == "marginal":
+        # Diagnostic naive PN surrogate treating marginal U as clean negatives.
+        risk["R_PN_naive"] = float(pi * lp.mean() + (1 - pi) * lun.mean())
+    else:
+        mu = float(pi_observed)
+        risk["R_PN_naive"] = float(mu * lp.mean() + (1 - mu) * lun.mean())
+    return risk, grad_p, grad_u
+
+
+def compute_pu_risk_metrics(
+    margins_pos: np.ndarray, margins_unl: np.ndarray, pi: float, *,
+    beta_nnpu: float = 0.0, loss_type: str = "sigmoid",
+    unlabeled_distribution: str = "marginal", pi_observed: float | None = None,
+) -> dict[str, Any]:
+    """Canonical nnPU metrics, with explicit marginal vs S=0 sampling."""
+    return pu_risk_and_grad(margins_pos, margins_unl, pi, loss_type=loss_type,
+                            unlabeled_distribution=unlabeled_distribution, pi_observed=pi_observed,
+                            beta=beta_nnpu)[0]
+
+
+class KiryoNNPULinearHead:
+    """CPU Adam solver on linear/quadratic features and the actual PU objective.
+
+    Default bounded sigmoid loss retains legacy API behavior. Prefer logistic loss
+    for probability-oriented studies, but even expit(logistic margins) is NOT
+    empirically calibrated without independent observed outcomes. No tree/pseudo-
+    label blend or heuristic propensity is represented as an nnPU estimator.
+    """
+
+    def __init__(self, pi: float, beta: float = 0.0, gamma: float = 1.0, lr: float = 0.05,
+                 l2: float = 1e-4, n_epochs: int = 18, batch_size: int = 4096,
+                 random_state: int = 42, *, loss_type: str = "sigmoid",
+                 unlabeled_distribution: str = "marginal", pi_observed: float | None = None):
+        _prior_coefficients(pi, unlabeled_distribution, pi_observed)
+        if loss_type not in ("sigmoid", "logistic"):
+            raise ValueError("unsupported loss_type")
+        if not np.isfinite([beta, gamma, lr, l2]).all() or beta < 0 or gamma <= 0 or lr <= 0 or l2 < 0:
+            raise ValueError("invalid optimization parameters")
+        if not isinstance(n_epochs, int) or n_epochs < 1 or not isinstance(batch_size, int) or batch_size < 1:
+            raise ValueError("positive integer epochs and batch_size required")
+        self.pi, self.beta, self.gamma, self.lr, self.l2 = float(pi), beta, gamma, lr, l2
+        self.n_epochs, self.batch_size, self.random_state = n_epochs, batch_size, random_state
+        self.loss_type, self.unlabeled_distribution, self.pi_observed = loss_type, unlabeled_distribution, pi_observed
+        self.w_ = self.mean_ = self.std_ = None
+        self.b_ = 0.0
+        self.clamp_steps_ = self.total_steps_ = 0
+
+    @staticmethod
+    def _validate(X: np.ndarray) -> np.ndarray:
+        x = np.asarray(X, dtype=float)
+        if x.ndim != 2 or not x.shape[1] or not np.isfinite(x).all():
+            raise ValueError("finite 2D feature matrix required")
+        return x
+
+    def _design(self, X: np.ndarray) -> np.ndarray:
+        z = np.clip((X - self.mean_) / self.std_, -5, 5)
+        return np.hstack([z, 0.25 * z**2])
+
+    def fit(self, X_pos: np.ndarray, X_unl: np.ndarray) -> "KiryoNNPULinearHead":
+        p, u = self._validate(X_pos), self._validate(X_unl)
+        if not len(p) or not len(u) or p.shape[1] != u.shape[1]:
+            raise ValueError("matching nonempty positive/unlabeled matrices required")
+        x = np.vstack([p, u])
+        self.mean_, self.std_ = x.mean(axis=0), np.maximum(x.std(axis=0), 1e-5)
+        del x
+        zp, zu = self._design(p), self._design(u)
+        del p, u
+        self.w_ = np.zeros(zp.shape[1])
+        self.b_ = float(np.log(self.pi / (1 - self.pi)))
+        m, v = np.zeros_like(self.w_), np.zeros_like(self.w_)
+        mb = vb = 0.0
+        self.total_steps_ = self.clamp_steps_ = 0
+        rng = np.random.default_rng(self.random_state)
+        n_batches = int(np.ceil(len(zu) / self.batch_size))
+        p_batch = min(self.batch_size, max(1, int(np.ceil(len(zp) / n_batches))))
+        for _ in range(self.n_epochs):
+            perm = rng.permutation(len(zu))
+            for start in range(0, len(zu), self.batch_size):
+                iu = perm[start:start + self.batch_size]
+                ip = rng.choice(len(zp), size=p_batch, replace=False)
+                bp, bu = zp[ip], zu[iu]
+                risk, gp, gu = pu_risk_and_grad(
+                    bp @ self.w_ + self.b_, bu @ self.w_ + self.b_, self.pi,
+                    loss_type=self.loss_type, unlabeled_distribution=self.unlabeled_distribution,
+                    pi_observed=self.pi_observed, beta=self.beta, gamma=self.gamma, reverse_gradient=True,
+                )
+                gw, gb = bp.T @ gp + bu.T @ gu + self.l2 * self.w_, float(gp.sum() + gu.sum())
+                self.total_steps_ += 1
+                self.clamp_steps_ += int(risk["reverse_gradient_step"])
+                t = self.total_steps_
+                m, v = 0.9*m + 0.1*gw, 0.999*v + 0.001*gw**2
+                mb, vb = 0.9*mb + 0.1*gb, 0.999*vb + 0.001*gb**2
+                self.w_ -= self.lr * (m / (1 - 0.9**t)) / (np.sqrt(v / (1 - 0.999**t)) + 1e-8)
+                self.b_ -= self.lr * (mb / (1 - 0.9**t)) / (np.sqrt(vb / (1 - 0.999**t)) + 1e-8)
+        self.training_assumptions_ = "Prior scenario and representative-positive assumption, not empirically validated."
+        return self
+
+    def decision_function(self, X: np.ndarray) -> np.ndarray:
+        if self.w_ is None:
+            raise RuntimeError("fit must run before prediction")
+        x = self._validate(X)
+        if x.shape[1] != len(self.mean_):
+            raise ValueError("feature count mismatch")
+        out = np.empty(len(x), dtype=np.float32)
+        for i in range(0, len(x), 100000):
+            out[i:i+100000] = self._design(x[i:i+100000]) @ self.w_ + self.b_
+        return out
+
+    def predict_proba(self, X: np.ndarray) -> np.ndarray:
+        """Expit scores in [0,1]; not a claim of observed probability calibration."""
+        return expit(self.decision_function(X)).astype(np.float32)
 
 
 @dataclass(frozen=True)
 class PowerLawPriorEstimate:
-    """Literature-grounded PU class prior pi derived from fault length-frequency scaling."""
-
     l_min_m: float
     l0_m: float
     alpha_ols: float
@@ -49,521 +224,113 @@ class PowerLawPriorEstimate:
     catalogued_positive_pixels: int
     extrapolated_hidden_positive_pixels: int
     footprint_pixels: int
-    pi_observed: float          # P(s = 1)
-    pi_hidden: float            # P(y = 1, s = 0)
-    pi_total: float             # pi = P(y = 1) = pi_observed + pi_hidden
-    pi_unlabeled_pos: float     # P(y = 1 | s = 0) = (pi - pi_P) / (1 - pi_P)
-    labeling_frequency_c: float # c = P(s = 1 | y = 1) = pi_P / pi
+    pi_observed: float
+    pi_hidden: float
+    pi_total: float
+    pi_unlabeled_pos: float
+    labeling_frequency_c: float
+    length_source: str
+    estimator_version: str = "pareto_mle_scenario_v2"
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            "l_min_m": round(self.l_min_m, 1),
-            "l0_m": round(self.l0_m, 1),
-            "alpha_ols": round(self.alpha_ols, 4),
-            "alpha_mle": round(self.alpha_mle, 4),
-            "c_ols": round(self.c_ols, 2),
-            "r2_loglog": round(self.r2_loglog, 5),
-            "ks_distance": round(self.ks_distance, 5),
-            "n_obs_total": self.n_obs_total,
-            "n_obs_ge_lmin": self.n_obs_ge_lmin,
-            "n_obs_short": self.n_obs_short,
-            "n_extrap_short": round(self.n_extrap_short, 1),
-            "deficit_short_traces": round(self.deficit_short_traces, 1),
-            "short_completeness_ratio": round(self.short_completeness_ratio, 4),
-            "mean_short_trace_length_m": round(self.mean_short_trace_length_m, 1),
-            "catalogued_positive_pixels": self.catalogued_positive_pixels,
-            "extrapolated_hidden_positive_pixels": self.extrapolated_hidden_positive_pixels,
-            "footprint_pixels": self.footprint_pixels,
-            "pi_observed": round(self.pi_observed, 6),
-            "pi_hidden": round(self.pi_hidden, 6),
-            "pi_total": round(self.pi_total, 6),
-            "pi_unlabeled_pos": round(self.pi_unlabeled_pos, 6),
-            "labeling_frequency_c": round(self.labeling_frequency_c, 6),
-        }
+        return {**asdict(self), "status": "MODEL_BASED_PRIOR_SCENARIO_NOT_OBSERVED_PREVALENCE",
+                "assumptions": ["Tail completeness at specified cutoff is assumed, not proved.",
+                                "Pareto scaling persists to specified lower length; metric support does not establish that cutoff.",
+                                "Trace segmentation/clipping and spatial dependence alter the length distribution.",
+                                "Observed raster-pixels-per-trace-meter transfers to hidden traces; overlaps ignored."]}
 
 
-def extract_skeleton_trace_lengths_m(
-    binary_fault_mask: np.ndarray,
-    px_len_m: float = 108.0,
-) -> np.ndarray:
-    """Skeletonize a binary fault raster and return connected component lengths in meters."""
+def extract_skeleton_trace_lengths_m(binary_fault_mask: np.ndarray, px_len_m: float = 108.0) -> np.ndarray:
+    """Legacy connected-component approximation; NOT geological trace lengths."""
     mask = np.asarray(binary_fault_mask, dtype=bool)
+    if mask.ndim != 2 or not np.isfinite(px_len_m) or px_len_m <= 0:
+        raise ValueError("2D mask and positive pixel-length approximation required")
     if not mask.any():
-        return np.array([], dtype=np.float64)
+        return np.array([], dtype=float)
     skel = skeletonize(mask)
-    comp, n_comp = ndi_label(mask, structure=np.ones((3, 3), dtype=int))
-    if n_comp == 0:
-        return np.array([], dtype=np.float64)
+    comp, _ = ndi_label(mask, structure=np.ones((3, 3), int))
     counts = np.bincount(comp.ravel(), weights=skel.ravel())[1:]
-    return np.sort(np.maximum(counts, 1.0) * float(px_len_m))
+    return np.sort(np.maximum(counts, 1) * px_len_m)
+
+
+def truncated_pareto_mean(alpha: float, lower: float, upper: float) -> float:
+    if not np.isfinite([alpha, lower, upper]).all() or alpha <= 0 or not 0 < lower < upper:
+        raise ValueError("positive alpha and 0<lower<upper required")
+    # Scale by lower to avoid dimensioned large powers. Correct alpha=1 limit:
+    # lower * log(r) / (1-1/r), not the logarithmic mean (old implementation).
+    r = upper / lower
+    if abs(alpha - 1) < 1e-8:
+        return float(lower * np.log(r) / (1 - 1/r))
+    return float(lower * alpha / (alpha - 1) * (-np.expm1((1-alpha)*np.log(r))) / (-np.expm1(-alpha*np.log(r))))
 
 
 def estimate_power_law_class_prior(
-    labels_2d: np.ndarray,
-    footprint_2d: np.ndarray,
-    *,
-    l_min: float = 1650.0,
-    l0: float = 300.0,
-    upper_pct: float = 97.0,
-    px_len_m: float = 108.0,
+    labels_2d: np.ndarray, footprint_2d: np.ndarray, *, l_min: float = 1650.0,
+    l0: float = 300.0, upper_pct: float = 97.0, px_len_m: float = 108.0,
     lengths_override_m: np.ndarray | None = None,
 ) -> PowerLawPriorEstimate:
-    """Estimate the PU class prior pi = P(y=1) from power-law fault length-frequency scaling.
+    """Pareto-MLE extrapolation scenario; OLS retained only as a diagnostic.
 
-    Fits N(L >= ell) = C * ell^(-alpha) above the completeness threshold ``l_min`` where
-    regional fault mapping is complete, and extrapolates down to ``l0`` (300 m, matching
-    the competition's 3-pixel triangular DTI kernel support).
+    Prefer official vector ``lengths_override_m``. Raster components are a legacy
+    approximation. Neither fit determines hidden fault prevalence without strong
+    unvalidated completeness and length-to-raster assumptions. No arbitrary pi cap.
     """
-    fp = np.asarray(footprint_2d, dtype=bool)
-    lab = np.asarray(labels_2d, dtype=bool) & fp
-    n_fp = int(fp.sum())
-    n_pos_px = int(lab.sum())
-
-    if lengths_override_m is not None:
-        L = np.sort(np.asarray(lengths_override_m, dtype=np.float64))
-    else:
-        L = extract_skeleton_trace_lengths_m(lab, px_len_m=px_len_m)
-    L = L[L >= 100.0]
-    tail = L[L >= l_min]
-    if len(tail) < 8:
-        raise ValueError(f"Insufficient fault traces ({len(tail)}) above l_min={l_min} m")
-
-    # Hill / Clauset-Shalizi-Newman MLE exponent for cumulative Pareto tail N(>=L) ~ L^-alpha
-    alpha_mle = float(len(tail) / np.sum(np.log(tail / l_min)))
-
-    # Log-log OLS over the self-similar scaling regime [l_min, P_upper] (excluding finite-basin cutoff)
-    l_upper = float(np.percentile(L, upper_pct))
-    mid = np.unique(L[(L >= l_min) & (L <= l_upper)])
-    n_ge = np.array([(L >= x).sum() for x in mid], dtype=np.float64)
+    fp, lab = np.asarray(footprint_2d, bool), np.asarray(labels_2d, bool)
+    if fp.ndim != 2 or fp.shape != lab.shape or not fp.any() or not 0 < l0 < l_min or not 0 < upper_pct < 100:
+        raise ValueError("nonempty matching 2D masks, 0<l0<l_min, valid upper percentile required")
+    lab = lab & fp
+    lengths = (extract_skeleton_trace_lengths_m(lab, px_len_m) if lengths_override_m is None
+               else np.asarray(lengths_override_m, float))
+    if lengths.ndim != 1 or not len(lengths) or not np.isfinite(lengths).all() or np.any(lengths <= 0):
+        raise ValueError("nonempty finite positive trace lengths required")
+    lengths = np.sort(lengths)
+    tail = lengths[lengths >= l_min]
+    denom = float(np.log(tail / l_min).sum())
+    if len(tail) < 8 or denom <= 0:
+        raise ValueError("insufficient/nonvarying Pareto tail")
+    alpha = len(tail) / denom
+    upper = np.percentile(lengths, upper_pct)
+    mid = np.unique(lengths[(lengths >= l_min) & (lengths <= upper)])
+    if len(mid) < 2:
+        raise ValueError("insufficient distinct lengths for OLS diagnostic")
+    n_ge = len(lengths) - np.searchsorted(lengths, mid, side="left")
     slope, intercept = np.polyfit(np.log10(mid), np.log10(n_ge), 1)
-    alpha_ols = float(-slope)
-    c_ols = float(10.0**intercept)
-    r2 = float(np.corrcoef(np.log10(mid), np.log10(n_ge))[0, 1] ** 2)
-
-    # Empirical vs fitted CDF Kolmogorov-Smirnov distance on tail [l_min, l_upper]
-    emp_cdf = 1.0 - n_ge / float(n_ge[0])
-    fit_cdf = 1.0 - (mid / l_min) ** (-alpha_ols)
-    ks_dist = float(np.max(np.abs(emp_cdf - fit_cdf)))
-
-    # Extrapolate short-fault population in [l0, l_min)
-    n_extrap_l0 = float(c_ols * (l0 ** (-alpha_ols)))
-    n_obs_ge_lmin = int((L >= l_min).sum())
-    n_obs_short = int(((L >= l0) & (L < l_min)).sum())
-    n_extrap_short = float(max(0.0, n_extrap_l0 - n_obs_ge_lmin))
-    deficit_short = float(max(0.0, n_extrap_short - n_obs_short))
-
-    if abs(alpha_ols - 1.0) > 1e-3:
-        mean_l_short = float(
-            (alpha_ols / (alpha_ols - 1.0))
-            * (l0 ** (1.0 - alpha_ols) - l_min ** (1.0 - alpha_ols))
-            / (l0 ** (-alpha_ols) - l_min ** (-alpha_ols))
-        )
-    else:
-        mean_l_short = float((l_min - l0) / np.log(l_min / l0))
-
-    # Each trace in labels.tif has an average rasterized cross-sectional width (px_per_m *px_len_m)
-    obs_trace_px_total = float(np.sum(L / px_len_m))
-    width_factor = float(n_pos_px / max(obs_trace_px_total, 1.0))
-    missing_px = int(round(deficit_short * (mean_l_short / px_len_m) * max(width_factor, 1.0)))
-
-    pi_obs = float(n_pos_px / max(n_fp, 1))
-    pi_hid = float(missing_px / max(n_fp, 1))
-    pi_tot = float(min(0.25, pi_obs + pi_hid))
-    pi_u_pos = float(max(0.0, (pi_tot - pi_obs) / max(1.0 - pi_obs, 1e-6)))
-    c_freq = float(pi_obs / max(pi_tot, 1e-9))
-
+    r2 = float(np.corrcoef(np.log10(mid), np.log10(n_ge))[0, 1]**2)
+    empirical_lo = np.arange(len(tail)) / len(tail)
+    empirical_hi = np.arange(1, len(tail)+1) / len(tail)
+    fitted = 1 - (tail / l_min)**(-alpha)
+    ks = float(max(np.max(np.abs(fitted-empirical_lo)), np.max(np.abs(fitted-empirical_hi))))
+    extrap = float(len(tail) * ((l_min / l0)**alpha - 1))
+    short = int(((lengths >= l0) & (lengths < l_min)).sum())
+    deficit = max(0.0, extrap-short)
+    mean_length = truncated_pareto_mean(alpha, l0, l_min)
+    # Scenario conversion calibrated to actual known pixels and supplied lengths;
+    # no invented >1 width floor and no silently clipped total prevalence.
+    pixels_per_meter = lab.sum() / lengths.sum()
+    missing = int(round(deficit * mean_length * pixels_per_meter))
+    obs, hidden = float(lab.sum()/fp.sum()), float(missing/fp.sum())
+    total = obs+hidden
+    if not 0 < total < 1:
+        raise ValueError("extrapolation implies an impossible prior; inspect model/units, do not clip")
     return PowerLawPriorEstimate(
-        l_min_m=float(l_min),
-        l0_m=float(l0),
-        alpha_ols=alpha_ols,
-        alpha_mle=alpha_mle,
-        c_ols=c_ols,
-        r2_loglog=r2,
-        ks_distance=ks_dist,
-        n_obs_total=int(len(L)),
-        n_obs_ge_lmin=n_obs_ge_lmin,
-        n_obs_short=n_obs_short,
-        n_extrap_short=n_extrap_short,
-        deficit_short_traces=deficit_short,
-        short_completeness_ratio=float(n_obs_short / max(n_extrap_short, 1e-6)),
-        mean_short_trace_length_m=mean_l_short,
-        catalogued_positive_pixels=n_pos_px,
-        extrapolated_hidden_positive_pixels=missing_px,
-        footprint_pixels=n_fp,
-        pi_observed=pi_obs,
-        pi_hidden=pi_hid,
-        pi_total=pi_tot,
-        pi_unlabeled_pos=pi_u_pos,
-        labeling_frequency_c=c_freq,
+        l_min, l0, float(-slope), alpha, float(10**intercept), r2, ks, len(lengths), len(tail), short,
+        extrap, deficit, short/extrap if extrap else 1.0, mean_length, int(lab.sum()), missing, int(fp.sum()),
+        obs, hidden, total, hidden/(1-obs), obs/total,
+        "official_vector_override" if lengths_override_m is not None else "raster_component_approximation",
     )
-
-
-def compute_pu_risk_metrics(
-    margins_pos: np.ndarray,
-    margins_unl: np.ndarray,
-    pi: float,
-    *,
-    beta_nnpu: float = 0.0,
-    loss_type: str = "sigmoid",
-) -> dict[str, float]:
-    """Compute exact PN, uPU, and Kiryo et al. (2017) nnPU risks for decision margins g(x).
-
-    Parameters
-    ----------
-    margins_pos : array of g(x) on labeled positive examples (s = 1)
-    margins_unl : array of g(x) on unlabeled examples (s = 0)
-    pi : class prior P(y = 1)
-    beta_nnpu : non-negative clamp tolerance (0.0 per Kiryo et al. Theorem 1)
-    loss_type : 'sigmoid' (ell(z) = 1 / (1 + exp(z)), bounded in [0,1]) or 'logistic'
-    """
-    gp = np.asarray(margins_pos, dtype=np.float64)
-    gu = np.asarray(margins_unl, dtype=np.float64)
-    pi = float(np.clip(pi, 1e-5, 0.999))
-
-    if loss_type == "sigmoid":
-        ell_p_pos = expit(-gp)   # ell(+g(x_P))
-        ell_p_neg = expit(+gp)   # ell(-g(x_P))
-        ell_u_neg = expit(+gu)   # ell(-g(x_U))
-    elif loss_type == "logistic":
-        ell_p_pos = np.logaddexp(0.0, -gp)
-        ell_p_neg = np.logaddexp(0.0, +gp)
-        ell_u_neg = np.logaddexp(0.0, +gu)
-    else:
-        raise ValueError(f"Unsupported loss_type: {loss_type}")
-
-    r_p_plus = float(np.mean(ell_p_pos))
-    r_p_minus = float(np.mean(ell_p_neg))
-    r_u_minus = float(np.mean(ell_u_neg))
-
-    neg_risk_raw = r_u_minus - pi * r_p_minus
-    neg_risk_clamped = max(-beta_nnpu, neg_risk_raw)
-    r_pn = pi * r_p_plus + (1.0 - pi) * r_u_minus
-    r_upu = pi * r_p_plus + neg_risk_raw
-    r_nnpu = pi * r_p_plus + neg_risk_clamped
-
-    return {
-        "pi": round(pi, 6),
-        "R_P_plus": round(r_p_plus, 6),
-        "R_P_minus": round(r_p_minus, 6),
-        "R_U_minus": round(r_u_minus, 6),
-        "unbiased_neg_risk_raw": round(neg_risk_raw, 6),
-        "nnpu_neg_risk_clamped": round(neg_risk_clamped, 6),
-        "was_clamped_non_negative": bool(neg_risk_raw < -beta_nnpu),
-        "R_PN_naive": round(r_pn, 6),
-        "R_uPU": round(r_upu, 6),
-        "R_nnPU": round(r_nnpu, 6),
-    }
 
 
 estimate_pu_prior_from_power_law = estimate_power_law_class_prior
 estimate_pu_prior_from_powerlaw = estimate_power_law_class_prior
 
 
-class KiryoNNPULinearHead:
-    """Mini-batch stochastic gradient descent solver for Kiryo et al. (2017) Algorithm 1 (nnPU).
-
-    Minimizes:
-        R_nnPU(g) = pi * E_P[ell(g(x))] + max(-beta, E_U[ell(-g(x))] - pi * E_P[ell(-g(x))])
-    using bounded symmetric sigmoid loss ell(z) = 1 / (1 + exp(z)) and explicit reverse-gradient
-    deflation (-gamma * grad(R_U^- - pi * R_P^-)) whenever R_U^- - pi * R_P^- < -beta.
-    """
-
-    def __init__(
-        self,
-        pi: float,
-        beta: float = 0.0,
-        gamma: float = 1.0,
-        lr: float = 0.05,
-        l2: float = 1e-4,
-        n_epochs: int = 18,
-        batch_size: int = 4096,
-        random_state: int = 42,
-    ):
-        self.pi = float(np.clip(pi, 1e-4, 0.5))
-        self.beta = float(beta)
-        self.gamma = float(gamma)
-        self.lr = float(lr)
-        self.l2 = float(l2)
-        self.n_epochs = int(n_epochs)
-        self.batch_size = int(batch_size)
-        self.random_state = int(random_state)
-        self.w_: np.ndarray | None = None
-        self.b_: float = 0.0
-        self.mean_: np.ndarray | None = None
-        self.std_: np.ndarray | None = None
-        self.clamp_steps_: int = 0
-        self.total_steps_: int = 0
-
-    def _design(self, X: np.ndarray) -> np.ndarray:
-        Z = (X - self.mean_) / self.std_
-        Z = np.clip(Z, -5.0, 5.0)
-        return np.hstack([Z, 0.25 * (Z ** 2)])
-
-    def fit(self, X_pos: np.ndarray, X_unl: np.ndarray) -> "KiryoNNPULinearHead":
-        rng = np.random.default_rng(self.random_state)
-        X_all = np.vstack([X_pos, X_unl]).astype(np.float64)
-        self.mean_ = np.mean(X_all, axis=0)
-        self.std_ = np.maximum(np.std(X_all, axis=0), 1e-5)
-        del X_all
-
-        Zp = self._design(X_pos.astype(np.float64))
-        Zu = self._design(X_unl.astype(np.float64))
-        d = Zp.shape[1]
-        self.w_ = np.zeros(d, dtype=np.float64)
-        self.b_ = float(np.log(self.pi / (1.0 - self.pi)))
-
-        # Adam state
-        m_w = np.zeros(d, dtype=np.float64)
-        v_w = np.zeros(d, dtype=np.float64)
-        m_b = 0.0
-        v_b = 0.0
-        t_step = 0
-        self.clamp_steps_ = 0
-        self.total_steps_ = 0
-
-        n_p, n_u = len(Zp), len(Zu)
-        n_batches = max(4, n_u // self.batch_size)
-        bp_size = max(128, n_p // n_batches)
-
-        for _epoch in range(self.n_epochs):
-            perm_u = rng.permutation(n_u)
-            perm_p = rng.permutation(n_p)
-            for b_idx in range(n_batches):
-                u_sl = perm_u[b_idx * self.batch_size : (b_idx + 1) * self.batch_size]
-                p_start = (b_idx * bp_size) % max(1, n_p - bp_size)
-                p_sl = perm_p[p_start : p_start + bp_size]
-                if len(u_sl) == 0 or len(p_sl) == 0:
-                    continue
-
-                zp = Zp[p_sl]
-                zu = Zu[u_sl]
-                gp = zp @ self.w_ + self.b_
-                gu = zu @ self.w_ + self.b_
-
-                # Sigmoid loss ell(z) = expit(-z); d/dz ell(z) = -expit(z)*expit(-z)
-                sp = expit(-gp)
-                d_lp_pos = -sp * (1.0 - sp)  # d/dg ell(+g)
-                # For ell(-g) = expit(+g), d/dg ell(-g) = +expit(g)*expit(-g) = -d_lp_pos
-                d_lp_neg = -d_lp_pos
-
-                su = expit(+gu)
-                d_lu_neg = su * (1.0 - su)   # d/dg ell(-g_u)
-
-                r_u_neg_minus_pi_r_p_neg = float(np.mean(su) - self.pi * np.mean(1.0 - sp))
-                self.total_steps_ += 1
-
-                if r_u_neg_minus_pi_r_p_neg >= -self.beta:
-                    # Standard unbiased PU gradient: grad(pi * R_P^+ + R_U^- - pi * R_P^-)
-                    grad_gp = self.pi * (d_lp_pos - d_lp_neg) / len(zp)
-                    grad_gu = d_lu_neg / len(zu)
-                    grad_w = (zp.T @ grad_gp) + (zu.T @ grad_gu) + self.l2 * self.w_
-                    grad_b = float(np.sum(grad_gp) + np.sum(grad_gu))
-                else:
-                    # Kiryo et al. Algorithm 1 line 11: reverse gradient step on negative risk!
-                    self.clamp_steps_ += 1
-                    grad_gp = -self.gamma * (-self.pi * d_lp_neg) / len(zp)
-                    grad_gu = -self.gamma * (d_lu_neg / len(zu))
-                    grad_w = (zp.T @ grad_gp) + (zu.T @ grad_gu) + self.l2 * self.w_
-                    grad_b = float(np.sum(grad_gp) + np.sum(grad_gu))
-
-                t_step += 1
-                m_w = 0.9 * m_w + 0.1 * grad_w
-                v_w = 0.999 * v_w + 0.001 * (grad_w ** 2)
-                m_b = 0.9 * m_b + 0.1 * grad_b
-                v_b = 0.999 * v_b + 0.001 * (grad_b ** 2)
-
-                mw_hat = m_w / (1.0 - 0.9 ** t_step)
-                vw_hat = v_w / (1.0 - 0.999 ** t_step)
-                mb_hat = m_b / (1.0 - 0.9 ** t_step)
-                vb_hat = v_b / (1.0 - 0.999 ** t_step)
-
-                self.w_ -= self.lr * mw_hat / (np.sqrt(vw_hat) + 1e-8)
-                self.b_ -= self.lr * mb_hat / (np.sqrt(vb_hat) + 1e-8)
-
-        return self
-
-    def decision_function(self, X: np.ndarray) -> np.ndarray:
-        n = len(X)
-        out = np.empty(n, dtype=np.float32)
-        chunk = 200000
-        for i in range(0, n, chunk):
-            Z = self._design(np.asarray(X[i : i + chunk], dtype=np.float64))
-            out[i : i + chunk] = (Z @ self.w_ + self.b_).astype(np.float32)
-        return out
-
-    def predict_proba(self, X: np.ndarray) -> np.ndarray:
-        g = self.decision_function(X)
-        return expit(g).astype(np.float32)
+def fit_nnpu_boosted_expert(*args, **kwargs):
+    raise RuntimeError("Retired H20 pseudo-label/tree heuristic was not the nnPU objective. Use KiryoNNPULinearHead with explicit sampling semantics.")
 
 
-def fit_nnpu_boosted_expert(
-    X_pos: np.ndarray,
-    X_unl: np.ndarray,
-    *,
-    pi: float,
-    pi_obs: float,
-    propensity_pos: np.ndarray | None = None,
-    random_state: int = 20260930,
-    max_iter: int = 120,
-) -> tuple[HistGradientBoostingClassifier, KiryoNNPULinearHead, HistGradientBoostingClassifier, dict[str, Any]]:
-    """Train a Selection-Bias-Aware Non-Negative PU (SAR-nnPU) Boosted Expert.
-
-    Combines:
-      1. Stage-1 Naive PN baseline classifier (probe) to estimate P(s=1 | x) on U
-         and compute Kiryo et al. (2017) non-negative PU risk weights on U and P.
-      2. Inverse-propensity Selection-At-Random (SAR) weighting on P so low-relief/short-fault
-         catalogued examples receive higher weight than over-represented range-front scarps.
-      3. Stage-2 nnPU-reweighted HistGradientBoostingClassifier + KiryoNNPULinearHead stack.
-    """
-    pi = float(np.clip(pi, 0.015, 0.20))
-    pi_obs = float(np.clip(pi_obs, 0.005, pi * 0.95))
-    pi_u_pos = (pi - pi_obs) / (1.0 - pi_obs)
-    c_label = pi_obs / pi
-
-    n_p = len(X_pos)
-    n_u = len(X_unl)
-
-    # Inverse-propensity SAR weights on labeled positives (upweighting subtle/short faults)
-    if propensity_pos is not None and len(propensity_pos) == n_p:
-        e_p = np.clip(np.asarray(propensity_pos, dtype=np.float64), 0.15, 0.95)
-        w_sar_p = (1.0 / e_p)
-        w_sar_p = w_sar_p / np.mean(w_sar_p)
-    else:
-        w_sar_p = np.ones(n_p, dtype=np.float64)
-
-    # Stage 1: Balanced Naive PN classifier (also serves as the PN comparator)
-    X_s1 = np.vstack([X_pos, X_unl])
-    y_s1 = np.r_[np.ones(n_p, dtype=np.int8), np.zeros(n_u, dtype=np.int8)]
-    w_s1 = np.r_[
-        np.full(n_p, (0.5 / n_p) * len(y_s1), dtype=np.float64),
-        np.full(n_u, (0.5 / n_u) * len(y_s1), dtype=np.float64),
-    ]
-    probe = HistGradientBoostingClassifier(
-        max_iter=max_iter,
-        max_leaf_nodes=31,
-        min_samples_leaf=80,
-        learning_rate=0.06,
-        l2_regularization=2.0,
-        early_stopping=False,
-        random_state=random_state,
-    )
-    probe.fit(X_s1, y_s1, sample_weight=w_s1)
-    p_s_pos = probe.predict_proba(X_pos)[:, 1]
-    p_s_unl = probe.predict_proba(X_unl)[:, 1]
-
-    # Elkan & Noto (2008) / Kiryo et al. (2017) posterior P(y=1 | x, s=0) inside U:
-    raw_u_pos = np.clip(p_s_unl / np.maximum(np.quantile(p_s_pos, 0.65), 0.15), 0.0, 1.0)
-    scale_u = pi_u_pos / max(float(np.mean(raw_u_pos)), 1e-5)
-    posterior_u_pos = np.clip(raw_u_pos * min(scale_u, 2.5), 0.0, 0.92)
-
-    # Non-negative PU weight for treating x_j in U as negative:
-    w_u_neg = np.maximum(0.08, 1.0 - posterior_u_pos)
-    pseudo_mask = posterior_u_pos >= np.quantile(posterior_u_pos, 1.0 - min(0.035, pi_u_pos * 1.25))
-    X_pseudo = X_unl[pseudo_mask]
-    w_pseudo = posterior_u_pos[pseudo_mask] * 0.45
-
-    # Stage 2: Fit nnPU-reweighted HistGradientBoostingClassifier + KiryoNNPULinearHead
-    X_s2 = np.vstack([X_pos, X_pseudo, X_unl])
-    y_s2 = np.r_[
-        np.ones(n_p, dtype=np.int8),
-        np.ones(len(X_pseudo), dtype=np.int8),
-        np.zeros(n_u, dtype=np.int8),
-    ]
-    pos_mass = float(np.sum(w_sar_p) + np.sum(w_pseudo))
-    neg_mass = float(np.sum(w_u_neg))
-    target_pos_share = float(np.clip(0.50 + 1.5 * (pi - pi_obs), 0.50, 0.58))
-    w_s2 = np.r_[
-        w_sar_p * (target_pos_share / pos_mass) * len(y_s2),
-        w_pseudo * (target_pos_share / pos_mass) * len(y_s2),
-        w_u_neg * ((1.0 - target_pos_share) / neg_mass) * len(y_s2),
-    ]
-
-    clf_nnpu = HistGradientBoostingClassifier(
-        max_iter=max_iter,
-        max_leaf_nodes=31,
-        min_samples_leaf=80,
-        learning_rate=0.06,
-        l2_regularization=2.5,
-        early_stopping=False,
-        random_state=random_state + 100,
-    )
-    clf_nnpu.fit(X_s2, y_s2, sample_weight=w_s2)
-
-    # Fit exact Kiryo et al. (2017) Algorithm 1 nnPU linear-quadratic head on features
-    head_nnpu = KiryoNNPULinearHead(
-        pi=pi,
-        beta=0.0,
-        gamma=1.0,
-        lr=0.04,
-        l2=2e-4,
-        n_epochs=10,
-        batch_size=4096,
-        random_state=random_state + 200,
-    )
-    head_nnpu.fit(X_pos, X_unl)
-
-    # Compute risk diagnostics comparing Naive PN vs nnPU on training margins
-    g_pn_pos = logit(np.clip(p_s_pos, 1e-5, 1.0 - 1e-5))
-    g_pn_unl = logit(np.clip(p_s_unl, 1e-5, 1.0 - 1e-5))
-    p_nn_pos = 0.90 * clf_nnpu.predict_proba(X_pos)[:, 1] + 0.10 * head_nnpu.predict_proba(X_pos)
-    p_nn_unl = 0.90 * clf_nnpu.predict_proba(X_unl)[:, 1] + 0.10 * head_nnpu.predict_proba(X_unl)
-    g_nn_pos = logit(np.clip(p_nn_pos, 1e-5, 1.0 - 1e-5))
-    g_nn_unl = logit(np.clip(p_nn_unl, 1e-5, 1.0 - 1e-5))
-
-    diag = {
-        "pi_used": round(pi, 6),
-        "pi_obs_used": round(pi_obs, 6),
-        "pi_u_pos": round(pi_u_pos, 6),
-        "c_labeling_frequency": round(c_label, 6),
-        "n_pseudo_positives_from_U": int(len(X_pseudo)),
-        "mean_u_neg_weight": round(float(np.mean(w_u_neg)), 4),
-        "kiryo_head_clamp_steps": head_nnpu.clamp_steps_,
-        "kiryo_head_total_steps": head_nnpu.total_steps_,
-        "naive_pn_risk_audit": compute_pu_risk_metrics(g_pn_pos, g_pn_unl, pi=pi),
-        "nnpu_risk_audit": compute_pu_risk_metrics(g_nn_pos, g_nn_unl, pi=pi),
-        "mean_prob_on_P_naive": round(float(np.mean(p_s_pos)), 4),
-        "mean_prob_on_P_nnpu": round(float(np.mean(p_nn_pos)), 4),
-        "q98_prob_on_U_naive": round(float(np.quantile(p_s_unl, 0.98)), 4),
-        "q98_prob_on_U_nnpu": round(float(np.quantile(p_nn_unl, 0.98)), 4),
-    }
-    return clf_nnpu, head_nnpu, probe, diag
+def predict_nnpu_expert(*args, **kwargs):
+    raise RuntimeError("Retired H20 heuristic stack; no calibrated probability or actual nnPU claim is valid.")
 
 
-def predict_nnpu_expert(
-    clf_nnpu: HistGradientBoostingClassifier,
-    head_nnpu: KiryoNNPULinearHead,
-    X: np.ndarray,
-    *,
-    tree_weight: float = 0.92,
-) -> np.ndarray:
-    """Predict combined nnPU probability on feature matrix X."""
-    p_tree = clf_nnpu.predict_proba(X)[:, 1].astype(np.float32)
-    p_head = head_nnpu.predict_proba(X).astype(np.float32)
-    return np.clip(tree_weight * p_tree + (1.0 - tree_weight) * p_head, 0.0, 1.0).astype(np.float32)
-
-
-def fit_and_predict_nnpu_arm(
-    X_pos: np.ndarray,
-    X_unl: np.ndarray,
-    X_te: np.ndarray,
-    *,
-    pi: float,
-    pi_obs: float,
-    propensity_pos: np.ndarray | None = None,
-    random_state: int = 20260930,
-    max_iter: int = 120,
-    tree_weight: float = 0.92,
-) -> tuple[np.ndarray, np.ndarray, dict[str, Any]]:
-    """Fit SAR-nnPU expert and return (p_nnpu_te, p_pn_te, diag) on test fold X_te."""
-    clf_nnpu, head_nnpu, probe, diag = fit_nnpu_boosted_expert(
-        X_pos,
-        X_unl,
-        pi=pi,
-        pi_obs=pi_obs,
-        propensity_pos=propensity_pos,
-        random_state=random_state,
-        max_iter=max_iter,
-    )
-    p_nnpu_te = predict_nnpu_expert(clf_nnpu, head_nnpu, X_te, tree_weight=tree_weight)
-    p_pn_te = probe.predict_proba(X_te)[:, 1].astype(np.float32)
-    return p_nnpu_te, p_pn_te, diag
+def fit_and_predict_nnpu_arm(*args, **kwargs):
+    raise RuntimeError("Retired H20 heuristic stack. The corrected CPU nnPU experiment has its own frozen protocol and report.")

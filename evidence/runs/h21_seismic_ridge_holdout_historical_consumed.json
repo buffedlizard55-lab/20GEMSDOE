@@ -1,0 +1,8 @@
+{
+  "state": "consumed",
+  "recorded_at": "2026-10-01",
+  "retrospective_record_not_original_preregistration": true,
+  "outcome_path": "evidence/h21_seismic_ridge_holdout.json",
+  "outcome_sha256": "6581e73cf804f64ef3c828e7e5bf0dd09a42638e7fcd8fd61c1cba635003e229",
+  "decision": "REJECT_NO_RERUN_NO_RETUNING"
+}

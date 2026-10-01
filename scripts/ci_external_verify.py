@@ -285,7 +285,7 @@ def main() -> None:
     if not (p_lab and p_tmp):
         report["fatal"] = "could not fetch competition-grid copy from GitHub"
         (OUT / "external_verification.json").write_text(json.dumps(report, indent=2) + "\n")
-        return
+        raise SystemExit(report["fatal"])
 
     with rasterio.open(p_tmp) as s:
         footprint = np.isfinite(s.read(1))
@@ -726,6 +726,13 @@ def main() -> None:
 
     (OUT / "external_verification.json").write_text(json.dumps(report, indent=2) + "\n")
     print("Wrote evidence/ci/external_verification.json", flush=True)
+    failed=[key for key,value in report["downloads"].items() if not value.get("ok")]
+    failed += [key for key,value in report["steps"].items() if value.get("ok") is False]
+    dem=json.loads((OUT/"dem1m_tile_audit.json").read_text()) if (OUT/"dem1m_tile_audit.json").exists() else {}
+    if not dem or dem.get("tiles_succeeded")!=dem.get("tiles_requested"):
+        failed.append("incomplete DEM tile coverage")
+    if failed:
+        raise SystemExit("Partial/failed external verification (reports preserved): "+", ".join(failed))
 
 
 if __name__ == "__main__":

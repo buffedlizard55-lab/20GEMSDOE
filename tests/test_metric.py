@@ -44,8 +44,8 @@ def test_exact_and_fast_agree_for_binary_predictions():
 
 
 def test_marginal_inclusion_bar_values_used_on_the_site():
-    assert round(marginal_inclusion_threshold(0.1563), 4) == 0.0323
-    assert round(marginal_inclusion_threshold(0.3168), 4) == 0.0676
+    assert round(marginal_inclusion_threshold(0.1563), 4) == 0.0313
+    assert round(marginal_inclusion_threshold(0.3168), 4) == 0.0634
 
 
 def test_recall_dominated_form_of_the_score():
@@ -70,3 +70,28 @@ def test_minimum_recall_bound_quoted_on_the_knowledge_page():
         assert abs(100 * t - expected_pct) < 0.06
         assert abs(t / (0.2 * t + 0.8) - s) < 1e-12              # G = 1, F = 0 reproduces the target score
     assert abs(0.35 / (0.2 * 0.35 + 0.2 * 1.17 + 0.8) - 0.3168) < 1e-3   # the page's illustration
+
+
+def test_known_prediction_near_new_truth_is_also_excluded_by_default():
+    valid=np.ones((10,10),bool);cat=np.zeros_like(valid);cat[5,5]=True
+    new=np.zeros_like(valid);new[5,6]=True
+    assert dti_components_exact(cat.astype(float),new,valid,cat)["dti"]==0
+    assert dti_score_fast(cat,new,valid,cat)["dti"]==0
+    assert dti_components_exact(cat.astype(float),new,valid,cat,mask_predictions=False)["dti"]>0
+
+
+def test_marginal_formula_accounts_for_FN_reduction():
+    T,F,G=12.,50.,40.
+    s=T/(T+.2*F+.8*(G-T))
+    q=marginal_inclusion_threshold(s)
+    updated=(T+q)/(T+q+.2*(F+1-q)+.8*(G-T-q))
+    assert abs(updated-s)<1e-12
+
+
+def test_fast_metric_never_silently_thresholds_continuous_probabilities():
+    import pytest
+    truth=np.zeros((10,10),bool);truth[5,5]=1
+    soft=np.full(truth.shape,.1)
+    with pytest.raises(ValueError):
+        dti_score_fast(soft,truth)
+    assert dti_components_exact(soft,truth)["dti"]>0

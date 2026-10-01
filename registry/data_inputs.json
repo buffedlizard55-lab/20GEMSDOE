@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "provenance_scope": "Pinned team bridge/extraction identities. Not independent byte comparison with the login-gated official competition archive.",
+  "core": {
+    "repo": "buffedlizard55-lab/GEMSDOE",
+    "commit": "c0c06ac82178f26b94fce3397036ef8f12a2f3a0",
+    "manifest_sha256": "7aa87dc4c1631e88709018963c4c3d85f9809a7b8f209fb74456943822beb0e9",
+    "manifest_bytes": 2617,
+    "files": [
+      {
+        "name": "gems-geodawn-numerical-features.tif",
+        "canonical": "training_features.tif",
+        "bytes": 418912844,
+        "sha256": "4371c82e3b8339b807bdffcf4ef59a225520fe2988d521be208ae33743123bc5",
+        "parts": [
+          {
+            "name": "gems-geodawn-numerical-features.tif.part-000",
+            "bytes": 94371840,
+            "sha256": "0a330f8951af6c921029e25c84a579319d2db554d62d30d894d6ddc97f98cff7"
+          },
+          {
+            "name": "gems-geodawn-numerical-features.tif.part-001",
+            "bytes": 94371840,
+            "sha256": "3c98037b2c997e3bbfcdfc2d9a982e8b820a77410dd7404b05cdb80594922c50"
+          },
+          {
+            "name": "gems-geodawn-numerical-features.tif.part-002",
+            "bytes": 94371840,
+            "sha256": "c375c4dbc40c59bbaece572b5e348700b75935f9a30c879c82b6417e0836f31c"
+          },
+          {
+            "name": "gems-geodawn-numerical-features.tif.part-003",
+            "bytes": 94371840,
+            "sha256": "b164159e6d0cb2595bc9f63a948af2646b124114a9c5921880c7516092137320"
+          },
+          {
+            "name": "gems-geodawn-numerical-features.tif.part-004",
+            "bytes": 41425484,
+            "sha256": "fa0a6f9c936fac1d6f20ca37f5929b2d60bf7a80f3d477dcab886f941aee2696"
+          }
+        ]
+      },
+      {
+        "name": "existing_faults.tif",
+        "canonical": "labels.tif",
+        "bytes": 425830,
+        "sha256": "7ba308ccdc4418b31a178f4f1ef21aaa6e152e4028f2f6f64b01f7eb25ae4093"
+      },
+      {
+        "name": "example_submission.tif",
+        "canonical": "sample_submission.tif",
+        "bytes": 1599597,
+        "sha256": "2176d08e485aa2cd2860ce8df539db4faf4d76163b38a4dd8c30a40454d35cbc"
+      }
+    ]
+  },
+  "external": {
+    "repo": "buffedlizard55-lab/7GEMSDOE",
+    "commit": "9d8b5d55b674629f7b0e0e486269917c0fa2dade",
+    "files": [
+      {
+        "source_path": "external/dem/lidar_scarp_features_u8.tif",
+        "canonical": "external/lidar_scarp_features_u8.tif",
+        "sha256": "d580bb8bdcdb941e32fefb8b38044bc5bf04e199bf2e83498c3576e6fc465568",
+        "bytes": 36943606
+      },
+      {
+        "source_path": "external/dem/lidar_scarp_features.json",
+        "canonical": "external/lidar_scarp_features.json",
+        "sha256": "9ef0df6e87598a8b0cd52fe821661e5fdb3a00568c5d9b1c5d61fd6b242dcd41",
+        "bytes": 3531
+      },
+      {
+        "source_path": "external/geodawn_rad/geodawn_rad_u8.tif",
+        "canonical": "external/geodawn_rad_u8.tif",
+        "sha256": "c22420f75999030d7cc65c9e31e50d232ea6158423bca051613a18a8b20ba682",
+        "bytes": 26612970
+      },
+      {
+        "source_path": "external/geodawn_rad/geodawn_rad.json",
+        "canonical": "external/geodawn_rad.json",
+        "sha256": "d917fd08f89c160d2a0ba91af9c3321c8c8b5677fcdba39b10e684384cbc7488",
+        "bytes": 7985
+      },
+      {
+        "source_path": "external/geodawn_extensions/geodawn_extensions_u8.tif",
+        "canonical": "external/geodawn_extensions_u8.tif",
+        "sha256": "a35a9c6d2a14786f4dab85481ee59769213072f5dab5b2535ea82ae4d9bb7d9b",
+        "bytes": 27132925
+      },
+      {
+        "source_path": "external/geodawn_extensions/geodawn_extensions.json",
+        "canonical": "external/geodawn_extensions.json",
+        "sha256": "56556f24c051043fd7a85587786118f8064624f2ad0604aaa3e6614f1a9f6d2f",
+        "bytes": 8927
+      }
+    ]
+  },
+  "dem10": {
+    "repo": "buffedlizard55-lab/GEMSDOE10",
+    "commit": "91d6566ecc86141eca9e81c259057678930e596f",
+    "historical_tag": "ext/dem10-36343078537",
+    "manifest_sha256": "bfb79f39be0737b448b1a3bf5432db168a77d6786240eafdca352e7a87400f0d",
+    "manifest_bytes": 13194
+  },
+  "upstream_manual_review_urls": [
+    "https://www.drivendata.org/competitions/306/competition-doe-gems/data/",
+    "https://www.usgs.gov/data/geodawn-airborne-magnetic-and-radiometric-surveys-northwestern-great-basin-nevada-and",
+    "https://www.sciencebase.gov/catalog/item/4f70aa9fe4b058caae3f8de5"
+  ],
+  "not_required_by_current_H16": [
+    "5GEMSDOE context_detector_prob_4fold_base/topo/topo_rad",
+    "5GEMSDOE ens12 raster",
+    "GDR355 structural inventory"
+  ],
+  "notes": [
+    "Atomic downloads, per-part/final SHA-256, immutable full commit refs; no clone/default-branch/mutable-tag dependency.",
+    "Geospatial/feature dependencies, including sidecar JSON, are verified even when rasters are already cached.",
+    "No authenticated DrivenData scraping is performed."
+  ]
+}

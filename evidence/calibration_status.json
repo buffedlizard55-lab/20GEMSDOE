@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-01",
+  "status": "BLOCKED_NO_INDEPENDENT_HIDDEN_FAULT_AND_VERIFIED_BACKGROUND_LABELS",
+  "empirical_hidden_fault_reliability_diagram_available": false,
+  "empirical_hidden_fault_brier_available": false,
+  "hidden_fault_prevalence_identified": false,
+  "SCAR_verified": false,
+  "positive_inaccuracy_rate_measured": false,
+  "final_untouched_confirmation_available": false,
+  "old_H20_vault_is_untouched": false,
+  "numerical_PU_risk_and_Brier_utilities_tested": true,
+  "numerical_tests_are_empirical_calibration": false,
+  "corrected_PU_candidate_trained_with_identified_prior": false,
+  "prior_study": "evidence/pu_vector_prior_study.json",
+  "scientific_audit": "docs/research/scientific_audit.md",
+  "blocked_on": [
+    "Independently adjudicated fault positives AND verified non-fault outcomes on a representative or documented probability sample",
+    "A source-grounded class-prior model whose completeness and selection assumptions are defensible",
+    "A final independent region/sample whose outcomes have never been accessed by any candidate"
+  ],
+  "cannot_substitute": [
+    "Unlabeled catalogue-zero pixels as true negatives",
+    "Synthetic catalogue thinning",
+    "Model-derived pseudo-labels or heuristic propensity",
+    "The previously reused catalogue Vault",
+    "Software manifest assertions as proof of geological provenance"
+  ]
+}

@@ -15,6 +15,7 @@ References:
 from __future__ import annotations
 
 from typing import Any
+from itertools import product
 
 import numpy as np
 from scipy import stats
@@ -84,12 +85,18 @@ def holm_bonferroni_and_bh_correction(
     Each item in ``tests`` must have ``id`` and ``p_value_raw`` (one-sided test of
     pre-registered directional improvement over baseline).
     """
+    if not np.isfinite(alpha) or not 0 < alpha < 1:
+        raise ValueError("alpha must lie in (0,1)")
     m = len(tests)
     if m == 0:
         return []
 
     raw_p = np.array([float(t["p_value_raw"]) for t in tests], dtype=np.float64)
-    order = np.argsort(raw_p)
+    if not np.isfinite(raw_p).all() or np.any((raw_p < 0) | (raw_p > 1)):
+        raise ValueError("p-values must be finite and in [0,1]")
+    if len({t["id"] for t in tests}) != m:
+        raise ValueError("test IDs must be unique")
+    order = np.argsort(raw_p, kind="stable")
 
     # 1. Holm-Bonferroni step-down FWER adjusted p-values:
     # p_holm_(i) = max_{j <= i} min(1, (m - j) * p_(j))
@@ -128,6 +135,9 @@ def holm_bonferroni_and_bh_correction(
             {
                 "rank_by_p_value": rank_1based,
                 "m_total_hypotheses_tested": m,
+                "alpha": alpha,
+                "pass_holm_fwer": bool(holm_reject[i]),
+                "pass_bh_fdr": bool(bh_reject[i]),
                 "holm_bonferroni_threshold": round(alpha / float(m - rank_1based + 1), 6),
                 "p_value_holm_bonferroni": round(float(holm_adj[i]), 6),
                 "pass_holm_bonferroni_fwer_0_05": bool(holm_reject[i]),
@@ -137,6 +147,28 @@ def holm_bonferroni_and_bh_correction(
         )
         out.append(row)
     return out
+
+
+def exact_paired_signflip_test(candidate: list[float], baseline: list[float]) -> dict[str, Any]:
+    """Exact one-sided paired sign-flip reference test on *blocks*, not pixels.
+
+    Exchangeability and block independence are assumptions, not established by
+    adjacent spatial folds. This cannot repair holdout reuse or label bias.
+    """
+    c, b = np.asarray(candidate, dtype=float), np.asarray(baseline, dtype=float)
+    if c.ndim != 1 or c.shape != b.shape or not 1 <= len(c) <= 20 or not np.isfinite(c).all() or not np.isfinite(b).all():
+        raise ValueError("1..20 matching finite paired block scores required")
+    d = c - b
+    statistic = float(d.mean())
+    signs = np.asarray(list(product((-1, 1), repeat=len(d))), dtype=np.int8)
+    simulated = np.mean(signs * d, axis=1)
+    p = float(np.mean(simulated >= statistic - 1e-12))
+    return {
+        "n_blocks": len(d), "n_sign_patterns": len(signs),
+        "mean_delta": statistic, "fold_deltas": d.tolist(),
+        "p_value_raw": p, "minimum_possible_p": 1 / len(signs),
+        "assumptions": "Paired sign exchangeability and independent blocks; not verified for adjacent reused quadrants.",
+    }
 
 
 def paired_subblock_significance_test(

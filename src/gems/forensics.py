@@ -48,6 +48,10 @@ class Grid:
 
     @classmethod
     def from_footprint(cls, footprint: np.ndarray, labels: np.ndarray) -> "Grid":
+        footprint, labels = np.asarray(footprint), np.asarray(labels)
+        if footprint.ndim != 2 or labels.shape != footprint.shape or not np.isin(footprint,[0,1]).all() or not np.isfinite(labels[footprint.astype(bool)]).all():
+            raise ValueError("matching binary footprint and finite in-footprint catalogue required")
+        footprint = footprint.astype(bool)
         catalogue = (labels > 0) & footprint
         dist = distance_transform_edt(~catalogue).astype(np.float32)
         return cls(footprint, catalogue, footprint & ~catalogue, dist)
@@ -56,7 +60,10 @@ class Grid:
     def load(cls, template_path: Path, labels_path: Path) -> "Grid":
         with rasterio.open(template_path) as src:
             footprint = np.isfinite(src.read(1))
+            grid = (src.shape,src.crs,src.transform)
         with rasterio.open(labels_path) as src:
+            if src.count != 1 or (src.shape,src.crs,src.transform) != grid:
+                raise ValueError("catalogue grid differs from template")
             catalogue = (src.read(1) > 0) & footprint
         dist = distance_transform_edt(~catalogue).astype(np.float32)
         return cls(footprint, catalogue, footprint & ~catalogue, dist)
@@ -111,12 +118,20 @@ def pair_metrics(
 ) -> dict[str, Any]:
     pa = scored_positive(a, grid) if pa is None else pa
     pb = scored_positive(b, grid) if pb is None else pb
-    sa = np.nan_to_num(a[grid.scored], nan=0.0)
-    sb = np.nan_to_num(b[grid.scored], nan=0.0)
+    if np.asarray(a).shape != grid.footprint.shape or np.asarray(b).shape != grid.footprint.shape:
+        raise ValueError("prediction/grid shape mismatch")
+    sa, sb = np.asarray(a)[grid.scored], np.asarray(b)[grid.scored]
+    finite = bool(np.isfinite(sa).all() and np.isfinite(sb).all())
+    delta = np.abs(sa.astype(np.float64)-sb.astype(np.float64)) if finite else None
     inter = int((pa & pb).sum())
     union = int((pa | pb).sum())
     out = {
-        "identical_on_scored_pixels": bool(np.array_equal(sa, sb)),
+        "identical_on_scored_pixels": bool(finite and np.array_equal(sa, sb)),
+        "scored_values_finite": finite,
+        "mean_absolute_scored_difference": float(delta.mean()) if finite and delta.size else None,
+        "max_absolute_scored_difference": float(delta.max()) if finite and delta.size else None,
+        "fraction_scored_values_changed_exactly": float(np.mean(sa != sb)) if finite and sa.size else None,
+        "positive_support_union_nonempty": union > 0,
         "jaccard_positive": round(inter / union, 5) if union else 1.0,
         "a_positive": int(pa.sum()),
         "b_positive": int(pb.sum()),
@@ -130,6 +145,9 @@ def pair_metrics(
 
 
 def gate_candidate(candidate: np.ndarray, grid: Grid, history: list[dict[str, Any]]) -> dict[str, Any]:
+    candidate = np.asarray(candidate)
+    if candidate.shape != grid.footprint.shape or not grid.scored.any() or not np.isfinite(candidate[grid.scored]).all() or np.any((candidate[grid.scored]<0)|(candidate[grid.scored]>1)):
+        raise ValueError("candidate must have finite [0,1] values on a nonempty matching score mask")
     pc = scored_positive(candidate, grid)
     rows = []
     for h in history:
@@ -143,15 +161,19 @@ def gate_candidate(candidate: np.ndarray, grid: Grid, history: list[dict[str, An
     worst = rows[0] if rows else None
     if worst is None:
         verdict = "DISTINCT"
-    elif worst["identical_on_scored_pixels"]:
+    elif any(row["identical_on_scored_pixels"] for row in rows):
         verdict = "DUPLICATE"
-    elif worst["jaccard_positive"] >= NEAR_DUP_JACCARD:
+    elif any(row["jaccard_positive"] >= NEAR_DUP_JACCARD and row["positive_support_union_nonempty"] for row in rows):
         verdict = "NEAR_DUPLICATE"
     else:
         verdict = "DISTINCT"
     return {
         "verdict": verdict,
         "candidate_positive_scored_pixels": int(pc.sum()),
+        "reference_count": len(rows),
+        "reference_history_available": bool(rows),
+        "verdict_is_artifact_similarity_only": True,
+        "continuous_caveat": "Jaccard uses >0.5 support; empty support does not prove continuous-score similarity. Exact values and absolute differences are also reported.",
         "nearest": rows[:5],
         "threshold_near_duplicate_jaccard": NEAR_DUP_JACCARD,
         "note": (

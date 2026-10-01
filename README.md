@@ -3,7 +3,7 @@
 [![DrivenData DOE GEMS #306](https://img.shields.io/badge/DrivenData-DOE_GEMS_%23306-0f766e)](https://www.drivendata.org/competitions/306/competition-doe-gems/)
 [![Current public leader](https://img.shields.io/badge/Public_leader-DARD_0.3168-1d4ed8)](https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/)
 
-**Project status as of 2026-10-01:** research artifacts and the submission-page packaging flow are present. No 20GEMSDOE candidate is recommended for a weekly submission. Two preregistered single-shot tests are now complete and both are rejected as submission candidates: H21-1 (multi-scale seismic ridges; Dense `0.06207` / Sparse `0.02511`) and H21-2 (multi-geothermometer coherence; Dense `0.03244` / Sparse `0.01388`), each far below the reproduced H16-1 comparator (Dense `0.21269` / Sparse `0.08554`). H20 holdout values remain unreproduced historical reports, and the former “hidden-fault calibration” used a synthetic target, not hidden-fault evidence. The full competition raster stack was re-verified this session from the hash-pinned GitHub bridge (all SHA-256 matches) and H21-2 was executed end-to-end on it; the USGS-derived external DEM stack needed by the legacy H16/H20 feature pipeline is not restorable in this sandbox (flag F38).
+**Project status as of 2026-10-01:** No candidate is recommended and no contest upload was made. H22-2 (`0.06131 / 0.02222`) and H22-3 (`0.06215 / 0.02433`) each ran once after pushed preregistration, lost the reproduced H16-1 (`0.21269 / 0.08554`) proxy baseline, and are permanently rejected without retuning. H21-1/H21-2 are also rejected. All required core/external/13 DEM inputs are now hash-restorable; F38 is resolved. Actual nnPU risk/head and Brier decomposition are numerically corrected, **not** a scientifically confirmed model. Hidden-fault calibration, identified prior and independent final confirmation remain blocked. Archived continuous H22 diagnostics were mistakenly thresholded; see the additive [metric correction](evidence/h22_metric_schema_annotations.json).
 
 ## Start here — evidence, status, and safe use
 
@@ -16,8 +16,8 @@ Manual review links: [competition page](https://www.drivendata.org/competitions/
 ### Current public leaderboard snapshot (manual check, 2026-10-01)
 
 - Public leader: **DARD, 0.3168**.
-- Best group-associated score: **0.1894** (account `smrtdoog5`, rank 23 on the captured page; association with 19GEMSDOE H19-4 is owner-reported).
-- Next group-associated score: **0.1855** (account `extradr19`, rank 25; association with 16GEMSDOE H16-1 is owner-reported).
+- Best group-associated score: **0.1894** (account `smrtdoog5`, rank 24 on the captured page; association with 19GEMSDOE H19-4 is owner-reported).
+- Next group-associated score: **0.1855** (account `extradr19`, rank 27; association with 16GEMSDOE H16-1 is owner-reported).
 - The requested starting value DARD `0.3049` is stale. Ranks can move; scores and ranks are a dated snapshot, not a live feed. See [`docs/data/leaderboard.json`](docs/data/leaderboard.json) and the [official leaderboard](https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/).
 
 ### Why `0.1563` repeated — artifact evidence, not a claim about model code
@@ -28,7 +28,7 @@ The forensics compare the 27 archived GeoTIFF entries on the **officially releva
 
 ### Data provenance and reproducibility limits
 
-- The repository's working inputs live in ignored local `data/` (a symlink to `.cache/gems_data` here). All 13 10 m DEM channels were verified and `prepare_data.py` completed **in an earlier session on an unrestricted machine**. On 2026-10-01 the three core competition rasters were restored in this sandbox from the hash-pinned GitHub bridge; every part and the reassembled feature stack matched the manifest SHA-256 pins exactly (`4371c82e…3123bc5` features, `7ba308cc…9e4093` labels, `2176d08e…4d35cbc` template). The USGS-derived external DEM stack (needed by `scripts/prepare_data.py` and the H16/H20 feature pipeline) cannot be fetched from this sandbox (flag F38); `prepare_data.py` therefore cannot complete here, but the metric/holdout/submission code and the H21-2 evaluation run fully against the restored core rasters.
+- Required inputs are restored with `bash scripts/download_competition_data.sh` into ignored `data/` (normally `.cache/gems_data`). Every core part/final file, external raster/metadata and all 13 DEM channels are pinned to full Git commit SHA and SHA-256 in [`registry/data_inputs.json`](registry/data_inputs.json). Atomic writes preserve old files on failures. H16 means were reproduced; bridge integrity still does not establish independent official archive authenticity.
 - The reported 19-band feature stack (`3292×3730`, EPSG:32611, 100 m cells, geotransform identical to the template) was re-read and band-name-verified against its own metadata this session.
 - The current core competition rasters were recovered from hash-pinned team GitHub bridge copies. Their local SHA-256 values are recorded and checked, and the labels raster was compared with the public GDR fault vectors. **The files were not independently downloaded from or byte-compared with DrivenData's login-gated competition archive in this session.** Hash integrity is not the same as official-host provenance.
 - Band 6's `tc` tag is inconsistent with its behaviour: its correlation with the external GeoDAWN `TC` channel is 0.9971, versus 0.0128 with computed magnetic tilt. Do not describe this layer as a validated tilt feature without resolving the discrepancy; see [F01](docs/audit.html#F01) and [`evidence/feature_profile.json`](evidence/feature_profile.json).
@@ -47,18 +47,19 @@ Consequently, no stored H20 metric, Holm p-value, Vault result, proxy comparison
 
 ## Candidate research — H22 register
 
-Four untested, materially different ideas plus two completed preregistered single-shot tests are in [`docs/research/hypothesis_register.md`](docs/research/hypothesis_register.md). The ranges for **untested** hypotheses below are subjective planning priors, not measured effects. Completed tests are reported separately and are not presented as expected-gain estimates.
+Five H22-family hypotheses were registered before implementation/results with named layers, physical transforms, catalogue-gap mechanisms, cost and subjective upside scenarios in [`docs/research/hypothesis_register.md`](docs/research/hypothesis_register.md). H22-2 is operator-only novelty: earlier H16/15GEMSDOE already used demagnetization. H22-3 tests paired-marker displacement, not another local edge blend; encoded K textures are not physical K/Th or measured slip.
 
-| Rank | Hypothesis | Named layers and physical transform | Catalogue-gap rationale | Difference from existing work | Planning expectation / cost / status |
-|---|---|---|---|---|---|
-| 1 | **H22-2: magnetic hydrothermal-destruction low lineaments** (proposed; next preregistration candidate) | Band 2 `rtp` (cross-check band 1 `mag_anom`, band 14 `tmi`); H21-1's frozen Hessian machinery applied to the *negative* field — linear magnetic **lows** | Sustained upflow can destroy magnetite along faults, producing linear lows that need not coincide with mapped traces, including blind/covered settings | Prior work uses magnetic *edges/gradients* as positive ridge evidence; a trough lineament transform is the opposite polarity and a different physical process. Low cost: inputs local, protocol pattern exists. Caution: family-adjacent 15GEMSDOE `conj_alteration_mag` scored `0.0782`. | **Subjective prior:** `+0.000–0.003`; low cost. No new data needed. |
-| 2 | **H21-3: persistent Landsat alteration lineaments** (proposed) | Landsat Collection 2 Level-2 SR_B2–SR_B7, QA_PIXEL, vegetation mask; multi-date iron/clay ratios with terrain controls | Hydrothermal alteration may mark fault-hosted fluid pathways; albedo, shadows, transported minerals and illumination are confounders | Adds visible/NIR/SWIR spectral evidence distinct from existing GeoDAWN radiometric and DEM channels | **Subjective prior:** `+0.000–0.004`; high cost. USGS product is no-cost; scene coverage/quality not checked. |
-| 3 | **H21-4: structurally perturbed drainage** (proposed) | USGS 3DHP flowlines/catchments, conditioned 3DEP DEM, independent scarp/relief channels; aligned offsets/deflections/knickpoints | Fault movement may deflect channels where the trace is subtle; lithology, roads, drainage capture and DEM artifacts can mimic it | H17-2 parked a drainage idea; this is a specific hydrology-conditioned operator, not another generic DEM blend | **Subjective prior:** `+0.000–0.003`; high cost. USGS 3DHP is public, but local regional product completeness must be checked before reliance. |
-| 4 | **H22-1: Quaternary vent-alignment structural control** (proposed) | Committed `evidence/ci/gdr_volcanic_vents_in_footprint.csv` (21 vents) vs `gdr_qfaults_traces.csv`; ≥3-vent collinear alignments, proximity field | Aligned vents may trace feeder fractures tapping deep permeability, unmapped at catalogue scale; tiny sample limits power | No prior artifact used vent geometry as lineament evidence | **Subjective prior:** `+0.000–0.002`; low cost. Data already CI-fetched and hash-pinned. |
-| — | **H21-2: multi-geothermometer coherence** (**tested once; rejected by both proxy gates**) | GDR 1391 spring/well chemistry; ≥2 concordant quartz/chalcedony/cation estimators ≥ 120 °C, agreement-weighted 500 m kernels (67 eligible cells) | Concordant reservoir geothermometers may mark fault-controlled upflow conduits absent from the catalogue | First test of cross-indicator agreement; H20-4 used unselected thresholded thermal points | **Computed proxy result:** Dense/Sparse `0.03244 / 0.01388` vs reproduced H16-1 `0.21269 / 0.08554`; unselected thermal-point control `0.03857`, seeded random control `0.02901`, catalogue-proximity ceiling `0.04190`. Both gates failed; no retuning. See [`evidence/h21_2_geotherm_coherence_holdout.json`](evidence/h21_2_geotherm_coherence_holdout.json) and [`docs/research/preregistration_h21_2.md`](docs/research/preregistration_h21_2.md). |
-| — | **H21-1: multi-scale earthquake-intensity lineations** (tested once; rejected by both proxy gates) | Band 16 `ieq_n100a15`; fixed Hessian ridge transform at 200/400/800 m, ridge-NMS, 2.5% budget | Seismicity clusters could reflect active/re-activated structures, but broad/induced clusters confound the relationship | H16-5 uses scalar seismic intensity; this test isolated multi-scale line geometry | **Computed proxy result:** Dense/Sparse `0.06207 / 0.02511`; raw scalar control `0.07977 / 0.02849`. Both gates failed. No tuning or slot recommendation. |
+| Test | Binary proxy Dense / Sparse | Decision |
+|---|---|---|
+| H22-2 magnetic-low geometry | 0.06131 / 0.02222 | Rejected permanently; 0/4 Sparse wins, controls/practical/Holm fail |
+| H22-3 paired-marker displacement | 0.06215 / 0.02433 | Rejected permanently; loses zero-lag 0.06958 / 0.03186 |
+| H21-1 seismic ridges | 0.06207 / 0.02511 | Rejected |
+| H21-2 geothermometer coherence | 0.03244 / 0.01388 | Rejected |
+| H16-1 reproduced reference | 0.21269 / 0.08554 | Known-catalogue proxy, not hidden calibration |
 
-**Submission decision:** no candidate is recommended. Any next candidate needs a frozen protocol, exact input provenance, a spatially blocked comparison against the reproducible current best, and a passing preregistered gate. Even a proxy pass is not hidden-fault validation. The H21-1 report records the transform/input hashes and both failed comparisons at [`evidence/h21_seismic_ridge_holdout.json`](evidence/h21_seismic_ridge_holdout.json). **Cross-test observation (inference, not proof):** both preregistered single-mechanism tests lost to the H16-1 multi-feature ridge synthesis by wide margins, and pure catalogue proximity yields only ~`0.042` mean Dense on this protocol — weakening the family of sparse point/line co-occurrence hypotheses and favouring multi-feature composed surfaces.
+These are frozen binary screens on reused catalogue quadrants, not hidden-label validation or new official scores. The archived soft-confidence diagnostics are not true unthresholded DTI ([correction](evidence/h22_metric_schema_annotations.json)); no replacement scores or repeat tests were computed. Three ideas remain unimplemented: vent alignment (local extract, small sample), Landsat and drainage (free official products but footprint coverage/QA **not acquired**, not yet viable). Fixed family=5, pending p=1; Holm 0.05 is mandatory. Fourfold exact tests have minimum p=0.0625, so cannot confirm a win.
+
+See [`docs/research/scientific_audit.md`](docs/research/scientific_audit.md), [`evidence/calibration_status.json`](evidence/calibration_status.json) and the [literature review](docs/research/literature_notes.md). Actual nnPU utilities are tested; H16 PN and legacy H20 losses were not Kiryo nnPU. The vector-tail prior study is a scenario (pi=0.0124163671, KS bootstrap p=0.0025 rejects the primary tail fit), not identified hidden prevalence. Genuine hidden reliability/Brier and a new untouched final evidence set remain unavailable. **No slot recommended.**
 
 ### Official external data availability checked before proposals
 
@@ -70,11 +71,11 @@ Four untested, materially different ideas plus two completed preregistered singl
 
 ## Submission downloads and upload guide
 
-The static-site builder at [`docs/index.html`](docs/index.html) and [`docs/executive_summary.html`](docs/executive_summary.html) makes the existing H20 raster files easy to download, copies their unique filename and pasteable note, and runs client-side GeoTIFF pre-flight checks. It is a **packager/browser checker**, not a model trainer or a candidate recommender. Existing files pass the recorded format checks: one float32 band, EPSG:32611, 3292×3730 grid, template geotransform, finite values in `[0,1]` over the 5,167,373-cell footprint; the official outside-footprint convention is NaN/null. This does not prove a hidden-fault score or reproduce the server's historical range error.
+The static-site builder at [`docs/index.html`](docs/index.html) and [`docs/executive_summary.html`](docs/executive_summary.html) makes the existing H20 raster files easy to download, copies their unique filename and pasteable note, and runs client-side GeoTIFF pre-flight checks. It is a **format-only exporter/browser checker**, not a model trainer or a candidate recommender. Existing files pass the recorded format checks: one float32 band, EPSG:32611, 3292×3730 grid, template geotransform, finite values in `[0,1]` over the 5,167,373-cell footprint; the official outside-footprint convention is NaN/null. This does not prove a hidden-fault score or reproduce the server's historical range error.
 
 - Use the Executive Summary page for the step-by-step DrivenData upload flow.
-- The generated `-nan.tif` is the format-compliant artifact. The optional all-finite twin uses zeros outside the footprint and is **not** the official outside-footprint convention; do not prefer it unless a validator explicitly requires it.
-- The builder provides file names, notes and SHA-256 values. They are formatting metadata, not an endorsement to upload.
+- The published `-nan.tif` is the format-compliant artifact. The optional all-finite twin uses zeros outside the footprint and is **not** the official outside-footprint convention; do not prefer it unless a validator explicitly requires it.
+- The advanced browser exporter writes a uniquely named uncompressed single-band float32 TIFF with full template CRS/affine/NaN footprint and verifies its roundtrip. It preserves the same evaluated predictions: a new filename is an effective duplicate, not a new candidate. The builder provides file names, notes and SHA-256 values. They are formatting metadata, not an endorsement to upload.
 - Current official rules allow up to three submissions per rolling 7-day window; never spend a slot on an unvalidated or duplicate-effective file.
 
 ## Persistent project charter — re-read every turn
@@ -101,24 +102,19 @@ This charter summarizes the user's original project request and the corrections 
 
 **Next session's queue (in order):**
 
-1. **Preregister and run H22-2** (magnetic hydrothermal-destruction low lineaments on band 2 `rtp`). Data is local; the H21 evaluator pattern exists; this is the cheapest remaining mechanism-distinct test. Commit the preregistration first, push, run once, report regardless of outcome, reject without retuning on failure.
-2. **Re-run the full H16/H20 feature pipeline on an unrestricted machine** to clear flag F38: fetch the USGS 3DEP stack with `scripts/fetch_dem10.py`, then `scripts/prepare_data.py` and `scripts/run_spatial_holdout_and_build.py`, and byte-compare the three core rasters against a logged-in DrivenData download to upgrade bridge provenance to official-host provenance.
-3. **If any candidate ever passes both proxy gates**: separately reviewed packaging with `gems.forensics.gate_candidate` uniqueness proof, `gems.submission.check_variants`, unique filename + note, and an owner decision on slot spend (3 per rolling 7 days). Never two duplicate-effective files.
-4. **H22-1 vent alignment / H21-3 Landsat / H21-4 3DHP** remain proposed, in register order after H22-2; each requires its own preregistration and (for Landsat/3DHP) a footprint coverage/quality check via the CI workflow first.
-5. **Manually refresh the leaderboard snapshot** (no automation — DrivenData ToU) and record any new group scores with `scripts/record_score.py`.
+1. Read the scientific audit and consumed run ledgers. **Never rerun, retune, reset or package H22-2/H22-3/H21-1/H21-2.** Finish only unresolved QA; do not chase their failed controls.
+2. Obtain authorized independently adjudicated hidden-positive and representative background labels; preregister adequately powered spatial confirmation before accessing them. Existing catalogue, thinned components, H20 Vault and synthetic labels are not substitutes.
+3. Independently compare bridge bytes against authorized official downloads and, if external-data hypotheses remain worth the cost, actually acquire Landsat scenes/QA or 3DHP footprint coverage before declaring them viable.
+4. Audit catalogue selection bias, positive inaccuracies and prior identifiability. The current rejected length-tail scenario is not a calibrated training prior; corrected nnPU must remain a conditional research implementation until assumptions/data justify it.
+5. Any future candidate needs a materially distinct preregistration, multiplicity correction, same-rule baseline comparison, one independent final test, exact scored-pixel uniqueness and strict format validation. No proxy-only automatic slot authorization. Refresh leaderboard manually only; never pool accounts to bypass limits.
 
-**Standing limitations (workarounds noted):**
-
-- **No DrivenData login in the agent environment; no official-archive byte comparison yet** (hash-pinned GitHub bridge is the current provenance chain).
-- **No USGS/GDR egress from the dev sandbox** — external data enters through the GitHub Actions CI workflow (`scripts/ci_external_verify.py`) with recorded SHA-256s; the dev sandbox reaches GitHub only.
-- **No GPU in this sandbox** — heavy model training cannot run here; transform-based proxy tests (H21/H22 style) are fully runnable on CPU.
-- **Known-catalogue proxies only** — no measurement can predict hidden-fault leaderboard scores; two preregistered hypotheses already failed even the proxy. Leaderboard reality checks remain the owner's manual submissions.
-- **The `[0, 1]` server-rejection root cause is unproven** (F31): the historical rejected file is unavailable; current downloads pass every local check including the repo's `check_variants` gate.
+**Standing limitations:** no independent official-archive comparison; no hidden-label calibration or untouched final set; SCAR/positive-error rates and true prior unidentified; H20 historical metrics unreproduced. Four reused quadrant screens cannot deliver confirmatory Holm significance. Sandbox browser installation remains unavailable, but actual Chromium desktop/mobile pre-flight/export smoke checks now pass in GitHub Actions; this is not manual visual review or geological validation. Historical range-error cause remains unknown (F31). No hidden-score improvement is claimed.
 
 ## Reproduction and review commands
 
 ```bash
 # Use the repository virtual environment; large inputs remain outside Git.
+bash scripts/download_competition_data.sh
 .venv/bin/python scripts/prepare_data.py
 .venv/bin/python scripts/profile_features.py
 .venv/bin/python scripts/forensic_audit.py
@@ -143,7 +139,7 @@ This charter summarizes the user's original project request and the corrections 
 
 ## Trusted source and audit registry
 
-The machine-readable audit currently contains **60 sourced claims, 38 flags** (including resolved and mitigated items); counts are enforced against both registries in tests. `docs/audit.html` distinguishes source/computation status and highlights open issues.
+The machine-readable audit currently contains **69 sourced claims, 45 flags** (including resolved and mitigated items); counts are enforced against both registries in tests. `docs/audit.html` distinguishes source/computation status and highlights open issues.
 
 - [Source verification and irregularity ledger](docs/audit.html)
 - [`registry/sources.json`](registry/sources.json) — source, claim, method of verification and status
@@ -160,7 +156,19 @@ The machine-readable audit currently contains **60 sourced claims, 38 flags** (i
 3. Reproduce the relevant test/metric from a clean output path and keep proxy truth separated from independent ground truth.
 4. Update code, evidence, source registry and site copy together; rebuild pages only after correcting the generator.
 5. Run tests, `git diff --check`, a rendered-site audit, and a final claim-by-claim source review. Do not overwrite historical evidence without keeping an auditable copy.
-6. Work only on the session branch assigned by the platform (this session: `arena/01a0f564-20gemsdoe`; earlier text mistakenly named the previous session's branch — see flag F36); create a PR from that branch and never claim that a merge occurred unless GitHub confirms it.
+6. Work only on the session branch assigned by the platform (this session: `arena/01a0f59e-20gemsdoe`; earlier text mistakenly named the previous session's branch — see flag F36); create a PR from that branch and never claim that a merge occurred unless GitHub confirms it.
+
+## AI-use and authorship disclosure
+
+Generative-AI assistance was used for repository code, documentation, research synthesis and site review. Scientific claims remain bounded to the listed source/evidence scopes; human/domain validation is not implied. Record the extent and how this assistance was used in any required competition narrative (excluded from the word count) and code/documentation submission as required by the official [rules](https://docs.nlr.gov/docs/fy26osti/96647.pdf). Do not claim an AI agent is the eligible entrant or that numerical software tests establish geological truth.
+
+**Deadline safety flag (F45):** the homepage says Dec 3 23:59 UTC, while Appendix A.1 of the rules says 5 pm ET (22:00 UTC that day). Section 1.2 refers to the website; no organizer precedence ruling is established here. Project safety target: **before Dec 3 22:00 UTC**, not a claimed replacement deadline.
+
+## Delivery checkpoint
+
+Three implementation/review/final-audit passes are recorded in [`docs/research/session_review.md`](docs/research/session_review.md). Final data-enabled suite: **169 passed, 1 skipped** (legacy H18 chronology commit unavailable), one dependency deprecation warning. Site: **8 pages, 361 links, 0 errors**. Cold H16 cache rebuild reproduces all seven historical summaries. Actual Chromium desktop/mobile browser pre-flight, format-only export, Python roundtrip and local file-picker checks now pass in [GitHub Actions](https://github.com/buffedlizard55-lab/20GEMSDOE/actions/runs/36874200770).
+
+The prior publication attempt failed with GitHub HTTP 401 and unavailable push credentials. In the follow-up publication session, GitHub access works again and the restored file snapshot was reconciled with the already-pushed preregistration history on `arena/01a0f59e-20gemsdoe`. Fresh-clone validation after the heading regression test: **167 passed, 4 skipped** (three large-data tests and the unavailable legacy H18 chronology), with **8 pages, 361 links, 0 errors**. The prior data-enabled 169/1 result above remains a historical record, not a new full-data run. [PR #4](https://github.com/buffedlizard55-lab/20GEMSDOE/pull/4) is open and its test/browser jobs passed. [Publication validation](evidence/pr_publication_validation.json) records the checked commit/run; final merge and Pages status must be verified separately from CI. No experiment is rerun for publication.
 
 ## Original request (verbatim) — re-read at the start of every session
 

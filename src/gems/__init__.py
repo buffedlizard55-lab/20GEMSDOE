@@ -1,4 +1,4 @@
-"""19GEMSDOE — DOE GEMS Prize fault discovery, power-law population scaling, thermal/geochemical inversion, and 1 m DEM Openness/LRM package."""
+"""20GEMSDOE — auditable fault-mapping research, conditional PU utilities and GeoTIFF format tooling."""
 from __future__ import annotations
 
 __all__ = [
