@@ -23,7 +23,9 @@
     ],
     "lines_not_satisfied": [],
     "lines_satisfied_count": 4,
-    "disposition": "PROMOTED (Multi-Line Corroborated Unmapped Fault)"
+    "disposition": "Multi-layer model-generated corridor candidate for follow-up; no independent fault validation or submission recommendation.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "CAND-20-02",
@@ -49,7 +51,9 @@
     ],
     "lines_not_satisfied": [],
     "lines_satisfied_count": 4,
-    "disposition": "PROMOTED (Multi-Line Corroborated Unmapped Fault)"
+    "disposition": "Multi-layer model-generated corridor candidate for follow-up; no independent fault validation or submission recommendation.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "CAND-20-03",
@@ -75,7 +79,9 @@
     ],
     "lines_not_satisfied": [],
     "lines_satisfied_count": 4,
-    "disposition": "PROMOTED (Multi-Line Corroborated Unmapped Fault)"
+    "disposition": "Multi-layer model-generated corridor candidate for follow-up; no independent fault validation or submission recommendation.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "CAND-20-04",
@@ -101,7 +107,9 @@
     ],
     "lines_not_satisfied": [],
     "lines_satisfied_count": 4,
-    "disposition": "PROMOTED (Multi-Line Corroborated Unmapped Fault)"
+    "disposition": "Multi-layer model-generated corridor candidate for follow-up; no independent fault validation or submission recommendation.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "CAND-20-05",
@@ -127,7 +135,9 @@
     ],
     "lines_not_satisfied": [],
     "lines_satisfied_count": 4,
-    "disposition": "PROMOTED (Multi-Line Corroborated Unmapped Fault)"
+    "disposition": "Multi-layer model-generated corridor candidate for follow-up; no independent fault validation or submission recommendation.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "CAND-20-06",
@@ -153,7 +163,9 @@
     ],
     "lines_not_satisfied": [],
     "lines_satisfied_count": 4,
-    "disposition": "PROMOTED (Multi-Line Corroborated Unmapped Fault)"
+    "disposition": "Multi-layer model-generated corridor candidate for follow-up; no independent fault validation or submission recommendation.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "CAND-20-07",
@@ -179,7 +191,9 @@
     ],
     "lines_not_satisfied": [],
     "lines_satisfied_count": 4,
-    "disposition": "PROMOTED (Multi-Line Corroborated Unmapped Fault)"
+    "disposition": "Multi-layer model-generated corridor candidate for follow-up; no independent fault validation or submission recommendation.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "CAND-20-08",
@@ -205,7 +219,9 @@
     ],
     "lines_not_satisfied": [],
     "lines_satisfied_count": 4,
-    "disposition": "PROMOTED (Multi-Line Corroborated Unmapped Fault)"
+    "disposition": "Multi-layer model-generated corridor candidate for follow-up; no independent fault validation or submission recommendation.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "CAND-20-09",
@@ -231,7 +247,9 @@
     ],
     "lines_not_satisfied": [],
     "lines_satisfied_count": 4,
-    "disposition": "PROMOTED (Multi-Line Corroborated Unmapped Fault)"
+    "disposition": "Multi-layer model-generated corridor candidate for follow-up; no independent fault validation or submission recommendation.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "CAND-20-10",
@@ -257,7 +275,9 @@
     ],
     "lines_not_satisfied": [],
     "lines_satisfied_count": 4,
-    "disposition": "PROMOTED (Multi-Line Corroborated Unmapped Fault)"
+    "disposition": "Multi-layer model-generated corridor candidate for follow-up; no independent fault validation or submission recommendation.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "CAND-20-11",
@@ -283,7 +303,9 @@
     ],
     "lines_not_satisfied": [],
     "lines_satisfied_count": 4,
-    "disposition": "PROMOTED (Multi-Line Corroborated Unmapped Fault)"
+    "disposition": "Multi-layer model-generated corridor candidate for follow-up; no independent fault validation or submission recommendation.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "CAND-20-12",
@@ -309,7 +331,9 @@
     ],
     "lines_not_satisfied": [],
     "lines_satisfied_count": 4,
-    "disposition": "PROMOTED (Multi-Line Corroborated Unmapped Fault)"
+    "disposition": "Multi-layer model-generated corridor candidate for follow-up; no independent fault validation or submission recommendation.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "CAND-20-13",
@@ -335,7 +359,9 @@
     ],
     "lines_not_satisfied": [],
     "lines_satisfied_count": 4,
-    "disposition": "PROMOTED (Multi-Line Corroborated Unmapped Fault)"
+    "disposition": "Multi-layer model-generated corridor candidate for follow-up; no independent fault validation or submission recommendation.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "CAND-20-14",
@@ -361,7 +387,9 @@
     ],
     "lines_not_satisfied": [],
     "lines_satisfied_count": 4,
-    "disposition": "PROMOTED (Multi-Line Corroborated Unmapped Fault)"
+    "disposition": "Multi-layer model-generated corridor candidate for follow-up; no independent fault validation or submission recommendation.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "CAND-20-15",
@@ -387,7 +415,9 @@
     ],
     "lines_not_satisfied": [],
     "lines_satisfied_count": 4,
-    "disposition": "PROMOTED (Multi-Line Corroborated Unmapped Fault)"
+    "disposition": "Multi-layer model-generated corridor candidate for follow-up; no independent fault validation or submission recommendation.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "DISC-20-16",
@@ -414,7 +444,9 @@
       "L4_Geopotential_Basement"
     ],
     "lines_satisfied_count": 1,
-    "disposition": "DISCARDED (Single-Layer Pattern Match \u2014 Rejected by H20-1 Multi-Line Gate)"
+    "disposition": "Single-layer model-generated corridor candidate; not an observed or verified fault.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "DISC-20-17",
@@ -441,7 +473,9 @@
       "L4_Geopotential_Basement"
     ],
     "lines_satisfied_count": 1,
-    "disposition": "DISCARDED (Single-Layer Pattern Match \u2014 Rejected by H20-1 Multi-Line Gate)"
+    "disposition": "Single-layer model-generated corridor candidate; not an observed or verified fault.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "DISC-20-18",
@@ -468,7 +502,9 @@
       "L4_Geopotential_Basement"
     ],
     "lines_satisfied_count": 1,
-    "disposition": "DISCARDED (Single-Layer Pattern Match \u2014 Rejected by H20-1 Multi-Line Gate)"
+    "disposition": "Single-layer model-generated corridor candidate; not an observed or verified fault.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   },
   {
     "corridor_id": "DISC-20-19",
@@ -495,6 +531,8 @@
       "L4_Geopotential_Basement"
     ],
     "lines_satisfied_count": 1,
-    "disposition": "DISCARDED (Single-Layer Pattern Match \u2014 Rejected by H20-1 Multi-Line Gate)"
+    "disposition": "Single-layer model-generated corridor candidate; not an observed or verified fault.",
+    "status": "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT",
+    "submission_eligible": false
   }
 ]

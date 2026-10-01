@@ -1,6 +1,7 @@
-"""Unit and integration tests for 20GEMSDOE Positive-Unlabeled (SAR-nnPU) risk estimation,
-Murphy (1973) Brier-score decomposition & out-of-fold calibration, Holm-Bonferroni / BH
-multiple-comparisons correction, and single-shot Vault Holdout enforcement.
+"""Tests for PU-risk arithmetic, generic calibration helpers and historical H20 audit labels.
+
+The legacy spatial-slice guard is tested only as an in-process reuse counter; it is not
+independent validation and does not establish a blind holdout.
 """
 from __future__ import annotations
 
@@ -62,6 +63,10 @@ def test_murphy_1973_brier_decomposition_identity_and_calibration() -> None:
     assert lhs == pytest.approx(rhs, abs=1e-5)
     assert res["brier_score_exact"] == pytest.approx(lhs, abs=5e-3)
     assert 0.0 <= res["expected_calibration_error_ECE"] <= 1.0
+    assert "base_target_positive_rate" in res
+    assert "base_hit_rate_o_bar" not in res
+    assert "empirical_hidden_fault_hit_rate" not in res["stated_0_70_audit"]
+    assert all("target_positive_rate" in row for row in res["reliability_diagram_bins"])
 
 
 def test_out_of_fold_pu_calibrator_reduces_reliability_error() -> None:
@@ -81,7 +86,7 @@ def test_out_of_fold_pu_calibrator_reduces_reliability_error() -> None:
     assert after["expected_calibration_error_ECE"] < before["expected_calibration_error_ECE"] * 0.35
 
 
-def test_holm_bonferroni_and_vault_holdout_single_touch_gate() -> None:
+def test_holm_correction_and_legacy_spatial_slice_reuse_guard() -> None:
     tests = [
         {"id": "T1", "p_value_raw": 0.0004},
         {"id": "T2", "p_value_raw": 0.0003},
@@ -94,7 +99,7 @@ def test_holm_bonferroni_and_vault_holdout_single_touch_gate() -> None:
     assert by_id["T1"]["pass_holm_bonferroni_fwer_0_05"] is True
     assert by_id["T4"]["pass_holm_bonferroni_fwer_0_05"] is False
 
-    # Verify VaultHoldoutGate allows at most 1 touch per candidate and blocks repeated touches
+    # The legacy guard limits total calls and blocks a repeated candidate ID; it is not a blindness guarantee.
     gate = VaultHoldoutGate(max_allowed_touches=2)
     fp = np.ones((40, 40), dtype=bool)
     quad = np.zeros((40, 40), dtype=np.int8)
@@ -114,25 +119,32 @@ def test_holm_bonferroni_and_vault_holdout_single_touch_gate() -> None:
         gate.evaluate_once("cand_A", dummy_eval)
 
 
-def test_published_20gemsdoe_pu_brier_and_committee_reports() -> None:
+def test_historical_h20_reports_are_explicitly_labeled_as_proxy_evidence() -> None:
     pu = json.loads((EVIDENCE_DIR / "pu_prior_and_risk_report.json").read_text())
     assert 0.035 <= pu["global_power_law_prior"]["pi_total"] <= 0.039
     assert 0.30 <= pu["global_power_law_prior"]["labeling_frequency_c"] <= 0.34
 
     brier = json.loads((EVIDENCE_DIR / "calibration_brier_report.json").read_text())
+    assert brier["audit_status"] == "HISTORICAL_OOF_METRICS_AGAINST_SYNTHETIC_PROXY_TARGET_NOT_EMPIRICAL_CALIBRATION"
+    assert "synthetic" in brier["target_status"]
+    assert brier["reproduced_in_current_session"] is False
     raw_m = brier["models"]["Raw_MultiLine_Corroborated_PreCalibration"]
     cal_m = brier["models"]["OOF_PU_Isotonic_Calibrated_SAR_nnPU_H20_5"]
+    # These are descriptive metrics against the synthetic target, not observed hidden-fault calibration.
     assert cal_m["reliability_REL"] < raw_m["reliability_REL"] * 0.02
     assert cal_m["expected_calibration_error_ECE"] < 0.01
     b70 = cal_m["stated_0_70_audit"]
     assert b70["count"] > 10000
     assert 0.66 <= b70["mean_stated_probability"] <= 0.72
-    assert 0.64 <= b70["empirical_hidden_fault_hit_rate"] <= 0.72
+    assert 0.64 <= b70["synthetic_proxy_positive_rate"] <= 0.72
+    assert "empirical_hidden_fault_hit_rate" not in b70
 
     comm = json.loads((EVIDENCE_DIR / "dissertation_committee_audit.json").read_text())
-    mc = {r["id"]: r for r in comm["multiple_comparisons_table"]}
-    assert mc["H20-1_Primary_Dense_vs_H16-1"]["pass_holm_bonferroni_fwer_0_05"] is True
-    assert mc["H20-1_Primary_Sparse_vs_H16-1"]["pass_holm_bonferroni_fwer_0_05"] is True
-    v = comm["vault_holdout_gate"]["results"]
-    assert v["H20-1_SAR_nnPU_Primary"]["passed_vault"] is True
-    assert v["H20-5_Calibrated_Continuous_Secondary"]["passed_vault"] is True
+    assert comm["submission_recommendation"] is False
+    assert comm["preregistration_chronology_verified"] is False
+    assert comm["vault_holdout_gate"]["same_slice_reused_for_multiple_candidates"] is True
+    assert comm["vault_holdout_gate"]["independent_hidden_fault_validation"] is False
+    results = comm["vault_holdout_gate"]["results"]
+    assert set(results) == {"H20-1_SAR_nnPU_Primary", "H20-5_Calibrated_Continuous_Secondary"}
+    assert all("passed_vault" not in row for row in results.values())
+    assert all("recorded_proxy_rule_passed" in row for row in results.values())

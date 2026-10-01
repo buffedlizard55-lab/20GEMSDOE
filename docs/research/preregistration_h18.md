@@ -1,4 +1,6 @@
-# Pre-registration — H18 arms (committed BEFORE any H18 result was computed)
+# Historical protocol record — H18 arms (2026-09-30)
+
+> **Audit correction (2026-10-01):** This file preserves a historical protocol, but the available checkout history does not independently establish that these exact contents were committed before outcomes were inspected. The H18 holdout uses known-catalogue labels and is not hidden-fault truth. Read the chronology and “passed gate” language as unverified historical claims, not current submission authorization. See [F17 and F29](../audit.html#F17) and the current [H21 register](hypothesis_register.md).
 
 **Date:** 2026-09-30 (UTC). **Evaluator:** `src/gems/holdout.py` (verified to reproduce H16-1 exactly: 0.21272 dense / 0.08541 sparse, all four folds identical to the committed evidence).
 **Comparator ("current holdout best"):** H16-1, per-fold dense `[0.20774, 0.23898, 0.15464, 0.24951]`, sparse `[0.089, 0.07794, 0.06622, 0.10847]`.

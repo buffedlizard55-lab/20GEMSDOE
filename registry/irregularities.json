@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "reviewed_utc": "2026-09-30",
+  "reviewed_utc": "2026-10-01",
   "flags": [
     {
       "id": "F01",
@@ -80,11 +80,11 @@
       "id": "F07",
       "area": "Leaderboard",
       "severity": "info",
-      "status": "open",
-      "title": "The 0.3049 top score in the request was stale",
-      "evidence": "Snapshot (2026-09-30, re-read 02:27 UTC): rank 1 DARD 0.3168, rank 2 alexoktaba 0.3042. Scores and ranks move within hours; the snapshot is not a feed.",
-      "action": "Open the live leaderboard before decisions.",
-      "how_established": "verified",
+      "status": "resolved",
+      "title": "Starting leaderboard value 0.3049 is stale; DARD was 0.3168 on the 2026-10-01 manual snapshot",
+      "evidence": "The official leaderboard was manually fetched on 2026-10-01: DARD 0.3168, rank 1. The source prompt value 0.3049 no longer matches this dated page snapshot.",
+      "action": "README and docs/data/leaderboard.json now use the dated 0.3168 snapshot; ranks/score may change, and no automated monitoring is allowed.",
+      "how_established": "manual official-page fetch",
       "links": [
         "https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/"
       ]
@@ -160,10 +160,10 @@
       "area": "Submission error",
       "severity": "high",
       "status": "open",
-      "title": "'Predicted values must be in range [0, 1]' cannot be reproduced from any file in this repository",
-      "evidence": "Every file ever published on this site (including the ZIPs and the versions from PR #1) passes all check variants: float32, finite 0-1 on every footprint pixel, correct grid. The repositories behind scored group entries publish files in every encoding (LZW/deflate, predictor 1/3, striped/tiled, NaN or zero outside), so the container is unlikely to be the cause (assuming the published file is what was uploaded). The likeliest causes are NaN or out-of-range values in a file from elsewhere, or server behaviour we cannot see.",
-      "action": "Run the suspect file through the checker on the Submit page; if it passes but is rejected, email info@drivendata.org with the filename, SHA-256 and a screenshot.",
-      "how_established": "computed in this review",
+      "title": "The historical server-side \u201cPredicted values must be in range [0, 1]\u201d error has no established root cause",
+      "evidence": "The original rejected upload and validator implementation are unavailable. Current downloadable artifacts pass recorded local checks inside the template footprint; that does not identify the contents of the historical file or explain the server message. NaN handling, mask/grid mismatch, or out-of-range values are possibilities only.",
+      "action": "Describe the current files\u2019 local checks without claiming a root-cause fix. If the rejected file becomes available, preserve its exact bytes/hash and run the local checker; otherwise ask DrivenData about the specific historical file.",
+      "how_established": "current artifacts checked locally; historical file and server validator unavailable",
       "links": []
     },
     {
@@ -206,14 +206,15 @@
     {
       "id": "F17",
       "area": "Validation",
-      "severity": "medium",
+      "severity": "high",
       "status": "open",
-      "title": "The holdout measures known faults; the real task scores NEW faults",
-      "evidence": "Known faults are masked in the real scoring, so the dense proxy rewards something the evaluator ignores, and both proxies' hidden faults are Quaternary catalogue faults. Measured: across the group's 15 distinct scored files the dense known-fault DTI has Spearman rho +0.17 (p = 0.54) with the public score, and the SGMC-gap truth +0.52 (p = 0.048); neither is a dependable gate.",
-      "action": "Treat holdout numbers as weak evidence; use the first live A/B pair to recalibrate (decision rules in the register, section 6b).",
-      "how_established": "reasoned",
+      "title": "Spatial holdout truth is known catalogue geometry, not hidden contest ground truth",
+      "evidence": "The four-quadrant dense holdout withholds pieces/components of labels.tif; the sparse track is a synthetic 20%-of-components proxy. Official staff says all known-fault pixels are excluded from scoring using a pixel-exact mask. These evaluations can test spatial transfer to withheld catalogue faults but cannot validate hit rate or DTI on truly new faults.",
+      "action": "Label every such metric as a known-catalogue transfer proxy; do not call it hidden-fault performance or use it alone to recommend a weekly slot. Require a reproducible comparator and report the remaining hidden-label uncertainty.",
+      "how_established": "inspected src/gems/holdout.py, scripts/run_spatial_holdout_and_build.py and official DrivenData staff clarification",
       "links": [
-        "https://github.com/buffedlizard55-lab/16GEMSDOE/blob/main/evidence/proxy_calibration_vs_lb.json"
+        "https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516/4",
+        "https://community.drivendata.org/t/where-do-you-draw-the-line/11536/2"
       ]
     },
     {
@@ -232,12 +233,12 @@
       "area": "Forensics",
       "severity": "medium",
       "status": "open",
-      "title": "Four of 18 scored entries are effectively one submission",
-      "evidence": "GEMSDOE1, 5GEMSDOE and 8GEMSDOE are identical on every scored pixel (first two byte-identical); GEMSDOE2 is a 0.946-Jaccard near-duplicate (LB 0.1560). Three more repos (6GEMSDOE, 11GEMSDOE, GEMSDOE10-H16) independently tried near-catalogue predictions and all scored <= 0.046.",
-      "action": "Run the uniqueness gate on every candidate; do not upload anything with Jaccard >= 0.80 to a scored file.",
-      "how_established": "computed",
+      "title": "Four archived entries share one prediction on official scored pixels",
+      "evidence": "Across the current 27-entry archive, GEMSDOE1 and 5GEMSDOE are byte-identical; 8GEMSDOE and archived 17GEMSDOE differ as files but match those predictions on every scored pixel after the exact known-fault mask. The separately named 17GEMSDOE-F raster is different (reported score 0.0187). GEMSDOE2 is a near-duplicate (positive-mask Jaccard 0.9464), not identical.",
+      "action": "Compare each new candidate on the official scored-pixel mask and include filename, full hash and scored-surface identity; do not infer that an archive duplicate is the same as another named submission.",
+      "how_established": "recomputed scored-pixel comparisons in evidence/submission_similarity.json and docs/data/forensics.json",
       "links": [
-        "https://github.com/buffedlizard55-lab/16GEMSDOE/blob/main/evidence/submission_similarity.json"
+        "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/evidence/submission_similarity.json"
       ]
     },
     {
@@ -274,7 +275,7 @@
       "status": "needs-owner",
       "title": "Candidate #3 (SGMC geologic-map faults) repeats an idea the group already built: Jaccard 0.63 with an unregistered GEMSDOE3 file",
       "evidence": "The first real run of scripts/scan_group_repos.py (2026-09-30) cross-checked our three ready-to-upload candidates against the 42 published GeoTIFFs in the group repositories that are not in the registry. #1 (H18-3a) and #2 (H16-1) are clear of all of them (most similar: GEMSDOE2 gemsdoe2-extension-arm-ad5ba911.tif, Jaccard 0.07). #3 shares 46,198 of its 57,783 scored positive pixels with GEMSDOE3/docs/downloads/gapfinder-v2-sgmc-gap-20260925T045014Z-7251c22bb4.tif (61,664 positives): Jaccard 0.6307, below the 0.80 duplicate threshold but far above every other pair. GEMSDOE3's README describes SGMC-gap traces as an input to its Gapfinder and Coverline work ('Coverline v3 fusion ... + SGMC-gap traces') and says its current portfolio is unscored ('No upload has been made'). Whether the gapfinder file was ever uploaded is not known: it is not in the registry and no score is recorded for it. Earlier wording in the hypothesis register ('uses an independent official map', 'the most different candidate from every registered file') was true of the 21 registered files only; it has been corrected.",
-      "action": "Treat #3 and GEMSDOE3's gapfinder-v2-sgmc-gap file as one experiment and upload at most one of them, and only if you want to measure whether geologic-map faults are what the experts added (it cannot pass the holdout gate). Prefer uploads #1 and #2. From now on group-scan cross-checks every ready-to-upload candidate against newly published group files, and the result is shown on each candidate card.",
+      "action": "Treat the SGMC-gap raster and GEMSDOE3 gapfinder-v2 as one experiment. The repository currently makes no upload recommendation; any later slot requires the same spatial-holdout, uniqueness, format, and evidence gates as other candidates.",
       "how_established": "verified",
       "links": [
         "https://github.com/buffedlizard55-lab/GEMSDOE3/blob/main/docs/downloads/gapfinder-v2-sgmc-gap-20260925T045014Z-7251c22bb4.tif",
@@ -292,21 +293,151 @@
       "action": "Enforce the power-law hidden-fault prior budget (~2.40%-2.50% of footprint) and verify spatial distance profile (~20% <=300 m, ~50% >1.5 km) before promoting any candidate.",
       "how_established": "computed in 20GEMSDOE forensic audit",
       "links": [
-        "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f44f-20gemsdoe/docs/data/forensics.json"
+        "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/docs/data/forensics.json"
       ]
     },
     {
       "id": "F24",
       "area": "Statistical formulation",
       "severity": "high",
-      "status": "resolved",
-      "title": "All prior repos (GEMSDOE1-19GEMSDOE) used naive PN binary cross-entropy on PU-contaminated labels.tif",
-      "evidence": "In existing_faults.tif (labels.tif), s=1 (60,988 pixels, pi_P = 0.011803) is positive, but s=0 (5,106,385 pixels) is UNLABELED (containing ~126,599 hidden positive fault pixels, pi_hidden = 0.024500, total class prior pi = 0.036303, labeling frequency c = pi_P / pi = 0.3251; for short faults L in [300 m, 1,650 m), c(L) = 0.0678). Standard PN training treats s=0 as clean negative y=0, which penalizes the model whenever it predicts high probability on an unmapped fault in U and compresses raw probabilities downward (pre-calibration Murphy Brier Reliability error REL = 0.019674, ECE = 0.13277).",
-      "action": "Implemented Kiryo et al. (NeurIPS 2017) Non-Negative PU (SAR-nnPU) risk estimator in src/gems/pu_learning.py and Out-of-Fold PU-Isotonic calibration in src/gems/calibration.py, reducing Murphy Reliability error REL by 99.3% (0.019674 -> 0.000143) and ECE by 96.9% (0.13277 -> 0.00405) on held-out fault corridors.",
-      "how_established": "computed in 20GEMSDOE PU & Brier calibration audit",
+      "status": "open",
+      "title": "Claim that every prior repository used naive PN binary cross-entropy is not established",
+      "evidence": "The repository contains broad claims about GEMSDOE1\u201319GEMSDOE training objectives, but no complete line-by-line audit of each historical training script/model has been preserved here. The class-prior estimate pi=0.0363 is a power-law extrapolation from known trace geometry, not an independently observed hidden-pixel prevalence. The present H20 Brier target is synthetic (see F25).",
+      "action": "Do not state that all prior repos used naive PN or that pi=0.0363 is the true class prior until code/model provenance and sensitivity to plausible priors are independently checked. Describe PU as a reasonable formulation hypothesis conditional on incomplete labels and model assumptions.",
+      "how_established": "reviewed local repository evidence and source claims; historical model coverage incomplete",
       "links": [
-        "https://proceedings.neurips.cc/paper/2017/file/7cce53cf90577442771720a370c3c723-Paper.pdf",
-        "https://doi.org/10.1175/1520-0450(1973)012<0595:ANVPOT>2.0.CO;2"
+        "https://proceedings.neurips.cc/paper/2017/file/7cce53cf90577442771720a370c3c723-Paper.pdf"
+      ]
+    },
+    {
+      "id": "F25",
+      "area": "Calibration",
+      "severity": "high",
+      "status": "open",
+      "title": "H20 \u201chidden-fault calibration\u201d outcome is synthetic, not observed hidden ground truth",
+      "evidence": "scripts/evaluate_h19_and_build_submissions.py constructs s_hit from distance to known catalogue/SGMC traces, estimates p_hidden_u from a selected prior and model scores, then samples y_pu_hidden_truth = s_hit OR Bernoulli(p_hidden_u). The reported Brier REL/ECE and stated-0.70 bin therefore measure fit to a constructed proxy outcome, not independently recovered or observed hidden faults.",
+      "action": "Remove \u201cBrier verified\u201d, \u201cempirical hidden-fault hit rate\u201d, and true-probability claims from public copy. Keep the arithmetic report only as a synthetic-proxy simulation, or replace it with calibration against genuinely held-out observed labels and label that target correctly.",
+      "how_established": "historical H20 runner inspected before retirement; target construction and limitations are recorded in evidence/calibration_brier_report.json",
+      "links": [
+        "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/scripts/evaluate_h19_and_build_submissions.py"
+      ]
+    },
+    {
+      "id": "F26",
+      "area": "Statistical formulation",
+      "severity": "high",
+      "status": "open",
+      "title": "Power-law pi=0.0363 is a model-based sensitivity assumption, not a measured hidden-fault class prior",
+      "evidence": "The estimate extrapolates a trace-length distribution from the supplied catalogue below a selected completeness cutoff. It assumes a power-law tail, a cutoff and raster-to-trace conversion; none is independently calibrated against the unreleased new-fault labels. Several sections describe the resulting pixel count as if it were observed truth.",
+      "action": "Call pi=0.0363 a prior scenario, not ground truth. Pre-register a plausible prior-sensitivity range and show whether candidate rankings/gates change; do not use the extrapolated count as an independent target or calibration label.",
+      "how_established": "reviewed evidence/power_law_scaling_report.json, evidence/pu_prior_and_risk_report.json and scripts/evaluate_h19_and_build_submissions.py",
+      "links": [
+        "https://gdr.openei.org/submissions/1391"
+      ]
+    },
+    {
+      "id": "F27",
+      "area": "Validation",
+      "severity": "high",
+      "status": "open",
+      "title": "The stored H20 \u201cuntouched Vault\u201d was evaluated for two candidates and is not single-shot",
+      "evidence": "The evaluator constructs one fixed vault mask and calls VaultHoldoutGate with max_allowed_touches=2, then evaluates H20-1 and H20-5 against that same mask. The report records touches_used=2. This contradicts claims that the vault was tested exactly once overall or remains untouched.",
+      "action": "Do not describe this slice as an untouched/single-shot gate or treat it as unspent. Any future one-shot holdout needs a new, independently locked split, and its protocol must be committed before opening outcomes.",
+      "how_established": "scripts/evaluate_h19_and_build_submissions.py around VaultHoldoutGate and both evaluate_once calls; evidence/dissertation_committee_audit.json",
+      "links": [
+        "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/scripts/evaluate_h19_and_build_submissions.py"
+      ]
+    },
+    {
+      "id": "F28",
+      "area": "Reproducibility",
+      "severity": "high",
+      "status": "mitigated",
+      "title": "Historical H20 reports cannot be regenerated from this checkout; legacy runner is disabled",
+      "evidence": "The old evaluator required oof_probs_all_arms.npz, oof_probs_h16_1.npz, oof_probs_h19_arms.npz and oof_probs_h20_nnpu.npz; the H19/H20 caches are absent. On 2026-10-01 the compatibility runner was replaced with a no-side-effect retirement notice so it cannot restore stale recommendation copy or overwrite current downloads. Current H20 metrics remain historical and unreproduced.",
+      "action": "Keep H20 reports status-labeled and do not invoke the retired entry points as trainers. Any future reproduction needs rebuilt OOF stages, a corrected target protocol, a fresh output path and explicit proxy-only interpretation.",
+      "how_established": "historical runner and wrappers reviewed; current data/cache listing checked; retired stub verified to have no write path",
+      "links": [
+        "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/scripts/train_h20_nnpu_arms.py"
+      ]
+    },
+    {
+      "id": "F29",
+      "area": "Research integrity",
+      "severity": "medium",
+      "status": "open",
+      "title": "H18/H20 preregistration chronology is not independently demonstrated by this checkout",
+      "evidence": "Files named preregistration exist, but the local git history available in this workspace does not establish that their exact contents were committed before the corresponding outcome was inspected. File names and stated dates alone cannot prove blinding or chronology.",
+      "action": "Describe historic \u201cpre-registered\u201d status as unverified unless a commit/hash timestamp predating evaluation is available. For future work, record the preregistration hash before running and preserve a commit or signed timestamp before opening results.",
+      "how_established": "reviewed available checkout history and preregistration/evidence files",
+      "links": [
+        "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/docs/research/preregistration_h21.md"
+      ]
+    },
+    {
+      "id": "F30",
+      "area": "Data provenance",
+      "severity": "high",
+      "status": "open",
+      "title": "Competition rasters are hash-pinned bridge copies, not independently compared with the official login-gated archive",
+      "evidence": "The downloader fetches core rasters from a team-maintained GitHub bridge and verifies local SHA-256. This proves integrity relative to expected local hashes, not that the bridge copy is byte-identical to the official DrivenData data tab. The official training archive was not independently accessed in this review.",
+      "action": "State this provenance limitation wherever the inputs are described. If an authorized official copy is obtained, compare SHA-256 and metadata; do not imply direct official-host download from bridge verification alone.",
+      "how_established": "scripts/download_competition_data.sh, evidence/data_verification.json and current environment access limitations",
+      "links": [
+        "https://www.drivendata.org/competitions/306/competition-doe-gems/"
+      ]
+    },
+    {
+      "id": "F31",
+      "area": "Submission validation",
+      "severity": "medium",
+      "status": "open",
+      "title": "The earlier server-side \u201c[0, 1]\u201d error root cause cannot be reproduced or attributed from current files",
+      "evidence": "The current candidate rasters pass local footprint range/format checks. The original rejected upload is not present in this checkout, and the competition validator implementation is not public. Feature sentinels, mask choices or all-array NaN checks are possible failure modes, but none is proven to have caused the historical message.",
+      "action": "Do not call sentinel sanitization or an all-finite export a verified root-cause fix. Describe only the current artifact checks and preserve the official NaN/null outside convention; investigate the original rejected file if it becomes available.",
+      "how_established": "checked available submission artifacts, validation reports, source code and official file specification",
+      "links": [
+        "https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/"
+      ]
+    },
+    {
+      "id": "F32",
+      "area": "Site integrity",
+      "severity": "high",
+      "status": "resolved",
+      "title": "Generated site pages previously overstated calibration, pre-registration, holdout and submission recommendations",
+      "evidence": "The site generator contained statements that synthetic H20 calibration measured hidden-fault hit rates, the H20 vault was untouched, H20 hypotheses were pre-registered before testing, and H20 candidates had been cleared for upload. These statements exceed available evidence and some directly conflict with the evaluator implementation. Current audit rebuilt the static pages from the corrected generator; scripts/check_site.py checked 8 pages / 297 links with zero errors, and the full automated suite passed (76 passed, 4 skipped).",
+      "action": "Resolved in the current branch: keep generated copy synchronized with the synthetic-target, unreproduced-proxy, reused-slice and no-recommendation caveats; rerun the builder, link audit and tests after future edits.",
+      "how_established": "line-by-line review of scripts/build_site.py and evidence/evaluator files",
+      "links": [
+        "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/scripts/build_site.py"
+      ],
+      "reviewed_utc": "2026-10-01"
+    },
+    {
+      "id": "F33",
+      "area": "Validation",
+      "severity": "medium",
+      "status": "resolved",
+      "title": "H21-1 seismic ridge transform failed both preregistered known-catalogue proxy gates",
+      "evidence": "The one frozen run scored Dense 0.06207 / Sparse 0.02511; the raw scalar control scored 0.07977 / 0.02849. The reproduced H16-1 comparator is 0.21269 / 0.08554. H21-1 lost all four folds on both tracks and produced no submission artifact. Inputs and preregistration hash are in evidence/h21_seismic_ridge_holdout.json.",
+      "action": "Reject H21-1 for a submission slot. Do not tune against this result and present a retest as confirmatory; any different seismic transform requires a new preregistered hypothesis. This does not prove seismicity has no use for hidden faults.",
+      "how_established": "single frozen run of scripts/evaluate_h21_seismic_ridge.py; report includes exact input hashes and fold metrics",
+      "links": [
+        "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/evidence/h21_seismic_ridge_holdout.json"
+      ]
+    },
+    {
+      "id": "F34",
+      "area": "Validation",
+      "severity": "info",
+      "status": "resolved",
+      "title": "Current reproduced H16-1 baseline is distinct from the unreproduced stored H20 values",
+      "evidence": "The current spatial-holdout runner completed on 2026-10-01 with H16-1 Dense 0.21269 and Sparse 0.08554. H20-1/H20-5 remain historical unreproduced known-catalogue proxy reports and do not replace this reproduced comparator.",
+      "action": "Use the standalone H16 report as the current reproducible reference; preserve the H20 numbers only as historical thresholds and label their provenance. H21-1 was compared against both.",
+      "how_established": "completed scripts/run_spatial_holdout_and_build.py and evidence/spatial_holdout_h16_results.json",
+      "links": [
+        "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/evidence/spatial_holdout_h16_results.json"
       ]
     }
   ]

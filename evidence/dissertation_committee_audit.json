@@ -1,9 +1,10 @@
 {
   "generated_utc": "2026-09-30T23:59:08+00:00",
   "dissertation_committee_standards": {
-    "preregistration_enforced": true,
+    "preregistration_enforced": false,
     "multiple_comparisons_correction": "Holm-Bonferroni step-down FWER (alpha=0.05) and Benjamini-Hochberg step-up FDR (q=0.05)",
-    "vault_holdout_protocol": "20% of each geographic quadrant (the central 40%-60% interior strip, 1,033,474 footprint pixels) was locked in VaultHoldoutGate during all feature engineering, hyperparameter selection, and ablation testing on the 80% Dev-Holdout (16 spatial sub-blocks, 4,133,899 pixels). Each promoted submission candidate was evaluated on the Vault Holdout exactly once."
+    "vault_holdout_protocol": "Historical code partitions a shared central spatial slice from the known-catalogue footprint. That same slice was used for two H20 candidates, and it was derived from known-fault geography. It must not be described as untouched, independent, or hidden-fault validation.",
+    "preregistration_chronology_claim": "unverified from this checkout; see audit-correction banner in preregistration_h20.md"
   },
   "partition_metadata": {
     "footprint_pixels": 5167373,
@@ -137,7 +138,7 @@
       ],
       "physical_signature": "Instead of collapsing predictions to binary {0, 1}, emits calibrated continuous probabilities p(x) in [0, 1] along directional ridge-NMS skeletons: primary multi-line corroborated ridges (~2.15% of footprint) emit p(x) in [0.88, 1.0], while secondary corroborated splay/relay/tip ridges (~0.55% of footprint) emit their calibrated continuous posterior p_cal(x) in [0.38, 0.88], and off-ridge background is zeroed.",
       "why_unmapped_not_catalogued": "Because the competition metric is continuous Distance-Weighted Tversky Index with alpha=0.2 (low FP penalty) and beta=0.8 (4x higher FN penalty), any ridge pixel whose calibrated 300m-buffered hit probability exceeds the marginal Tversky break-even threshold p* = alpha * DTI / (1 - beta + beta * DTI) ~= 0.16 improves expected DTI when emitted with continuous calibrated probability rather than truncated to 0.",
-      "differs_from_prior_repos": "16GEMSDOE (0.1855) and 19GEMSDOE (0.1894) emitted strictly binary {0.0, 1.0} masks (only 2 unique values). H20-5 is the first ridge-thinned, Murphy-Brier-verified continuous probability submission (thousands of unique calibrated float32 values in [0, 1]) that remains strictly DISTINCT (Jaccard < 0.80) from all historic submissions.",
+      "differs_from_prior_repos": "16GEMSDOE (0.1855) and 19GEMSDOE (0.1894) emitted strictly binary {0.0, 1.0} masks (only 2 unique values). H20-5 is the first ridge-thinned, reported against a synthetic target continuous probability submission (thousands of unique calibrated float32 values in [0, 1]) that remains strictly DISTINCT (Jaccard < 0.80) from all historic submissions.",
       "lines_satisfied": [
         "L1_PopScaling_TipRelay",
         "L2_Backward_ThermalGeochem",
@@ -178,7 +179,8 @@
       "p_value_holm_bonferroni": 0.00222,
       "pass_holm_bonferroni_fwer_0_05": true,
       "q_value_benjamini_hochberg": 0.001332,
-      "pass_benjamini_hochberg_fdr_0_05": true
+      "pass_benjamini_hochberg_fdr_0_05": true,
+      "evidence_status": "historical stored computation; not reproduced in this review"
     },
     {
       "id": "H20-1_Primary_Sparse_vs_H16-1",
@@ -203,7 +205,8 @@
       "p_value_holm_bonferroni": 0.001926,
       "pass_holm_bonferroni_fwer_0_05": true,
       "q_value_benjamini_hochberg": 0.001332,
-      "pass_benjamini_hochberg_fdr_0_05": true
+      "pass_benjamini_hochberg_fdr_0_05": true,
+      "evidence_status": "historical stored computation; not reproduced in this review"
     },
     {
       "id": "H20-2_Tilt_TDX_AntiPiedmont_vs_H16-3",
@@ -228,7 +231,8 @@
       "p_value_holm_bonferroni": 1.0,
       "pass_holm_bonferroni_fwer_0_05": false,
       "q_value_benjamini_hochberg": 0.999754,
-      "pass_benjamini_hochberg_fdr_0_05": false
+      "pass_benjamini_hochberg_fdr_0_05": false,
+      "evidence_status": "historical stored computation; not reproduced in this review"
     },
     {
       "id": "H20-3_WingCrack_Transtension_vs_H16-5",
@@ -253,7 +257,8 @@
       "p_value_holm_bonferroni": 1.0,
       "pass_holm_bonferroni_fwer_0_05": false,
       "q_value_benjamini_hochberg": 0.999754,
-      "pass_benjamini_hochberg_fdr_0_05": false
+      "pass_benjamini_hochberg_fdr_0_05": false,
+      "evidence_status": "historical stored computation; not reproduced in this review"
     },
     {
       "id": "H20-4_UpDip_Hydraulic_Tilt_vs_H16-2",
@@ -278,7 +283,8 @@
       "p_value_holm_bonferroni": 1.0,
       "pass_holm_bonferroni_fwer_0_05": false,
       "q_value_benjamini_hochberg": 0.999754,
-      "pass_benjamini_hochberg_fdr_0_05": false
+      "pass_benjamini_hochberg_fdr_0_05": false,
+      "evidence_status": "historical stored computation; not reproduced in this review"
     },
     {
       "id": "H20-5_Calibrated_SoftTail_Sparse_vs_H16-1",
@@ -303,7 +309,8 @@
       "p_value_holm_bonferroni": 0.152004,
       "pass_holm_bonferroni_fwer_0_05": false,
       "q_value_benjamini_hochberg": 0.076002,
-      "pass_benjamini_hochberg_fdr_0_05": false
+      "pass_benjamini_hochberg_fdr_0_05": false,
+      "evidence_status": "historical stored computation; not reproduced in this review"
     }
   ],
   "vault_holdout_gate": {
@@ -313,16 +320,16 @@
       {
         "touch_number": 1,
         "candidate_id": "H20-1_SAR_nnPU_Primary",
-        "passed_vault": true,
         "vault_mean_dense_dti": 0.19179,
-        "vault_mean_sparse_dti": 0.06993
+        "vault_mean_sparse_dti": 0.06993,
+        "recorded_proxy_rule_passed": true
       },
       {
         "touch_number": 2,
         "candidate_id": "H20-5_Calibrated_Continuous_Secondary",
-        "passed_vault": true,
         "vault_mean_dense_dti": 0.19165,
-        "vault_mean_sparse_dti": 0.07032
+        "vault_mean_sparse_dti": 0.07032,
+        "recorded_proxy_rule_passed": true
       }
     ],
     "results": {
@@ -333,7 +340,6 @@
         "baseline_vault_mean_sparse_dti": 0.06907,
         "delta_vault_dense_dti": 0.00059,
         "delta_vault_sparse_dti": 0.00086,
-        "passed_vault": true,
         "per_quadrant_vault_strips": {
           "NW": {
             "vault_dense_dti": 0.22406,
@@ -363,7 +369,8 @@
             "base_sparse_dti": 0.09559,
             "emitted_px": 5781
           }
-        }
+        },
+        "recorded_proxy_rule_passed": true
       },
       "H20-5_Calibrated_Continuous_Secondary": {
         "vault_mean_dense_dti": 0.19165,
@@ -372,7 +379,6 @@
         "baseline_vault_mean_sparse_dti": 0.06907,
         "delta_vault_dense_dti": 0.00045,
         "delta_vault_sparse_dti": 0.00125,
-        "passed_vault": true,
         "per_quadrant_vault_strips": {
           "NW": {
             "vault_dense_dti": 0.22687,
@@ -402,8 +408,17 @@
             "base_sparse_dti": 0.09559,
             "emitted_px": 5666
           }
-        }
+        },
+        "recorded_proxy_rule_passed": true
       }
-    }
-  }
+    },
+    "status": "historical shared spatial-slice comparison; not an untouched holdout",
+    "same_slice_reused_for_multiple_candidates": true,
+    "independent_hidden_fault_validation": false
+  },
+  "audit_status": "HISTORICAL_UNREPRODUCED_KNOWN_CATALOGUE_TESTS_SHARED_SLICE_REUSED_NO_PROMOTION",
+  "audit_corrected_utc": "2026-10-01T01:46:45+00:00",
+  "preregistration_chronology_verified": false,
+  "submission_recommendation": false,
+  "interpretation": "All stored p-values, correction results and spatial-slice comparisons are historical, unreproduced known-catalogue proxy results. The same central spatial slice was evaluated for H20-1 and H20-5; it is not an untouched or independent holdout. These records do not authorize a submission."
 }

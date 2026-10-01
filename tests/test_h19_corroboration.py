@@ -1,6 +1,7 @@
-"""Verification tests for 20GEMSDOE hypotheses (H20-1..H20-5), 1m DEM Openness/LRM,
-power-law fault population scaling, backward thermal/geochemical inversion, and
-multi-line physical corroboration ledgers.
+"""Audit regressions for historical H20 hypotheses, reported metrics and local research artifacts.
+
+These tests preserve evidence labels and format checks; they do not independently validate
+hidden-fault performance or establish that the historical metrics are reproducible.
 """
 from __future__ import annotations
 
@@ -69,46 +70,35 @@ def test_dem1m_high_prior_openness_lrm_ci_artifacts() -> None:
         assert len(npz[k]) == 71974
 
 
-def test_holdout_and_corroboration_ledgers() -> None:
+def test_historical_holdout_and_corridor_ledgers_are_not_submission_evidence() -> None:
     res = json.loads((EVIDENCE_DIR / "spatial_holdout_results.json").read_text())
+    assert res["audit_status"] == "HISTORICAL_UNREPRODUCED_KNOWN_CATALOGUE_PROXY_NO_SUBMISSION_RECOMMENDATION"
+    assert res["submission_recommendation"] is False
+    assert "not hidden competition labels" in res["evaluation_scope"].lower()
     s = res["summary"]
-    b = s["H16_1_SeamFree_MultiScale_Synthesis"]
-    h20_1 = s["H20_1_SAR_nnPU_MultiLine_Corroborated"]
-    h20_5 = s["H20_5_Calibrated_Continuous_SoftTail_nnpu"]
-    single = s["H20_SingleLayer_PatternMatch_Ablation"]
-
-    assert h20_1["gate_vs_h16_1"]["passed"] is True
-    assert h20_1["gate_vs_h16_1"]["dense_fold_wins"] == 4
-    assert h20_1["gate_vs_h16_1"]["sparse_fold_wins"] == 4
-    assert h20_1["mean_dense_dti"] > b["mean_dense_dti"]
-    assert h20_1["mean_sparse_dti"] > b["mean_sparse_dti"]
-    assert h20_1["lines_satisfied_count"] == 4
-
-    assert h20_5["gate_vs_h16_1"]["passed"] is True
-    assert h20_5["gate_vs_h16_1"]["sparse_fold_wins"] == 4
-    assert single["mean_dense_dti"] < 0.05
-    assert "DISCARDED" in single["disposition"]
+    for key in ("H20_1_SAR_nnPU_MultiLine_Corroborated", "H20_5_Calibrated_Continuous_SoftTail_nnpu"):
+        assert s[key]["evidence_status"] == "historical, unreproduced known-catalogue proxy"
+        assert s[key]["submission_eligible"] is False
+        assert s[key]["submission_recommendation"] is False
 
     corridors = json.loads((EVIDENCE_DIR / "candidate_corroboration_ledger.json").read_text())
     assert len(corridors) >= 16
-    promoted = [c for c in corridors if c["disposition"].startswith("PROMOTED")]
-    discarded = [c for c in corridors if c["disposition"].startswith("DISCARDED")]
-    assert len(promoted) >= 12
-    assert len(discarded) >= 4
-    for c in promoted:
-        assert c["lines_satisfied_count"] >= 2
-    for c in discarded:
-        assert c["lines_satisfied_count"] <= 1
+    assert all(c["status"] == "MODEL_CANDIDATE_NOT_OBSERVED_OR_VERIFIED_FAULT" for c in corridors)
+    assert all(c["submission_eligible"] is False for c in corridors)
+    assert not any(c["disposition"].startswith("PROMOTED") for c in corridors)
 
 
-def test_promoted_submissions_strictly_valid_in_0_1() -> None:
+def test_research_artifact_files_pass_local_format_checks_without_promotion(real_data) -> None:
     manifest = json.loads((SITE_DATA_DIR / "submissions.json").read_text())
     by_key = {c["key"]: c for c in manifest["candidates"]}
     assert set(by_key.keys()) == {"h20-1", "h20-5"}
+    assert manifest["claims"]["score_predicted"] is False
 
     fp = load_footprint()
     for key in ("h20-1", "h20-5"):
         c = by_key[key]
+        assert c["gate_eligible"] is False
+        assert "not recommended" in c["title"].lower()
         tif_path = DOWNLOADS_DIR / c["files"]["tif"]["name"]
         fin_path = DOWNLOADS_DIR / c["files"]["tif_allfinite"]["name"]
         zip_path = DOWNLOADS_DIR / c["files"]["zip"]["name"]

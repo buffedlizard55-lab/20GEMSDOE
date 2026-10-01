@@ -1,5 +1,8 @@
-"""Dissertation-Committee Standard: Pre-Registration, Multiple-Comparisons Correction
-(Holm-Bonferroni FWER & Benjamini-Hochberg FDR), and Untouched Vault Holdout Gate.
+"""Statistical corrections and spatial sub-block utilities.
+
+Historical H20 reports used the shared spatial slice implemented here for two candidates;
+it is therefore not an untouched or independent validation set and cannot authorize a
+submission. The per-candidate touch counter is a software guard, not proof of blinding.
 
 References:
   - Holm, S. (1979). "A Simple Sequentially Rejective Multiple Test Procedure."
@@ -21,14 +24,17 @@ def make_dev_and_vault_subblocks(
     footprint_2d: np.ndarray,
     quad_2d: np.ndarray,
 ) -> tuple[np.ndarray, np.ndarray, dict[str, Any]]:
-    """Partition each of the 4 geographic quadrants into 4 Development sub-blocks (80%)
-    and 1 contiguous Untouched Vault Holdout strip (20%).
+    """Partition each geographic quadrant into development sub-blocks and a central spatial strip.
+
+    The return variable ``vault_mask_2d`` is retained for compatibility with historical
+    reports. The mask is derived from known-catalogue geography, was evaluated for two
+    H20 candidates, and is not an untouched hidden-fault validation set.
 
     Returns
     -------
     dev_block_2d : int8 array (H, W) with values 0..15 for the 16 Dev sub-blocks, -1 elsewhere
-    vault_mask_2d : bool array (H, W) True on the 20% untouched Vault Holdout slice
-    meta : summary dictionary of pixel and fault counts per partition
+    vault_mask_2d : bool array (H, W) for the historical reserved central spatial strip
+    meta : summary dictionary of pixel counts per partition
     """
     fp = np.asarray(footprint_2d, dtype=bool)
     H, W = fp.shape
@@ -38,9 +44,9 @@ def make_dev_and_vault_subblocks(
     for q_id in range(4):
         qm = (quad_2d == q_id) & fp
         yy, xx = np.nonzero(qm)
-        # Partition each quadrant along its primary latitudinal/longitudinal axis into 5 quantile bands (20% each)
-        # Band 2 (the central interior 40%-60% strip of the quadrant) is reserved as the Untouched Vault Holdout!
-        # Bands 0, 1, 3, 4 form the 4 Development spatial sub-blocks (80% of the quadrant).
+        # Partition each quadrant along its combined row/column coordinate into five quantile bands.
+        # Band 2 is the central 20% spatial proxy slice; the historical H20 workflow reused it across candidates.
+        # Bands 0, 1, 3, 4 form the four development spatial sub-blocks.
         score_coord = 0.6 * (yy - yy.min()) / max(1, yy.max() - yy.min()) + 0.4 * (xx - xx.min()) / max(
             1, xx.max() - xx.min()
         )
@@ -177,7 +183,12 @@ def paired_subblock_significance_test(
 
 
 class VaultHoldoutGate:
-    """Enforces that the reserved Vault Holdout slice is evaluated at most once per promoted candidate."""
+    """Legacy per-candidate touch counter for the spatial slice (not a blindness guarantee).
+
+    The same generated spatial slice may be evaluated for multiple candidate IDs. This
+    guard only prevents repeated evaluation of the same ID within one process; it does
+    not establish an untouched or independent holdout.
+    """
 
     def __init__(self, max_allowed_touches: int = 2):
         self.max_allowed_touches = int(max_allowed_touches)

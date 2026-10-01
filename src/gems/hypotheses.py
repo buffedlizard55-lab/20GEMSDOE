@@ -187,24 +187,22 @@ H20_HYPOTHESIS_SPECS: list[HypothesisSpec] = [
         rank=5,
         layers=[
             "Out-of-fold SAR-nnPU corroborated probability surface across all physical lines (H20-1 + H20-2 + H20-3 + H20-4 + 1m/10m Openness/LRM)",
-            "Out-of-fold IsotonicRegression + PU-prior calibrator fit on held-out hidden fault recovery",
+            "Out-of-fold IsotonicRegression + PU-prior calibrator fit against a synthetic catalogue/SGMC-derived target (not hidden-fault labels)",
         ],
         physical_signature=(
-            "Instead of collapsing predictions to binary {0, 1}, emits calibrated continuous probabilities p(x) in [0, 1] along "
-            "directional ridge-NMS skeletons: primary multi-line corroborated ridges (~2.15% of footprint) emit p(x) in [0.88, 1.0], "
-            "while secondary corroborated splay/relay/tip ridges (~0.55% of footprint) emit their calibrated continuous posterior "
-            "p_cal(x) in [0.38, 0.88], and off-ridge background is zeroed."
+            "Emits continuous-valued scores in [0, 1] along directional ridge-NMS skeletons rather than a binary mask. "
+            "The historical OOF probability mapping was fit/evaluated against a synthetic proxy target; it is not validated "
+            "as a calibrated posterior on observed or hidden faults."
         ),
         why_unmapped_not_catalogued=(
-            "Because the competition metric is continuous Distance-Weighted Tversky Index with alpha=0.2 (low FP penalty) and "
-            "beta=0.8 (4x higher FN penalty), any ridge pixel whose calibrated 300m-buffered hit probability exceeds the marginal "
-            "Tversky break-even threshold p* = alpha * DTI / (1 - beta + beta * DTI) ~= 0.16 improves expected DTI when emitted "
-            "with continuous calibrated probability rather than truncated to 0."
+            "The 0.2/0.8 weighted metric motivates evaluating continuous scores instead of only binary masks. Any expected-utility "
+            "argument would require a valid hit probability, but the H20-5 historical probability mapping was evaluated against a "
+            "synthetic target; its per-pixel probabilities and threshold rationale are therefore unvalidated for hidden faults."
         ),
         differs_from_prior_repos=(
-            "16GEMSDOE (0.1855) and 19GEMSDOE (0.1894) emitted strictly binary {0.0, 1.0} masks (only 2 unique values). "
-            "H20-5 is the first ridge-thinned, Murphy-Brier-verified continuous probability submission (thousands of unique "
-            "calibrated float32 values in [0, 1]) that remains strictly DISTINCT (Jaccard < 0.80) from all historic submissions."
+            "The stored H20-5 artifact is continuous-valued and its recorded positive-mask Jaccard differs from archived rasters. "
+            "Its OOF Brier/REL/ECE report used a synthetic catalogue/SGMC-derived target, so it is not empirically calibrated to hidden faults. "
+            "The historical comparison is unreproduced and does not establish a leaderboard gain or submission eligibility."
         ),
         lines_satisfied=[
             "L1_PopScaling_TipRelay",
@@ -213,13 +211,13 @@ H20_HYPOTHESIS_SPECS: list[HypothesisSpec] = [
             "L4_Geopotential_Basement",
         ],
         lines_not_satisfied=[],
-        expected_dti_gain="+0.0031 Dense DTI / +0.0021 Sparse DTI over H16-1 under exact continuous DTI evaluation",
+        expected_dti_gain="Historical preregistered estimate, unverified; stored H20 Dense/Sparse values are unreproduced known-catalogue proxies, not hidden-fault or leaderboard gain.",
         implementation_cost="Low (out-of-fold isotonic calibration + soft-tail ridge emission)",
         external_sources=[
             "https://doi.org/10.1175/1520-0450(1973)012<0595:ANVPOT>2.0.CO;2 (Murphy 1973)",
             "https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#mathematical-representation",
         ],
-        preregistered_prediction="Slashes Murphy Reliability error (REL) and ECE by >80% on held-out hidden faults (stated 0.70 ~= 70% hit rate) and improves continuous DTI.",
+        preregistered_prediction="The historical stated calibration prediction is not supported as written: its target was synthetic and no held-out hidden-fault labels were available.",
     ),
 ]
 

@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
-"""20GEMSDOE end-to-end PU risk, Brier calibration, Holm-Bonferroni / Vault holdout, and GeoTIFF submission builder."""
+"""Retired compatibility entry point; the historical H20 packager is disabled.
+
+It did not train the missing H20 OOF models and its calibration target was
+synthetic. The delegated compatibility stub exits without writing artifacts.
+"""
 from evaluate_h19_and_build_submissions import main
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

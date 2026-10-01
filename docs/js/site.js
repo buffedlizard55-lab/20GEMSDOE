@@ -76,16 +76,15 @@
       if (dlBtn) {
         dlBtn.setAttribute('href', f.href);
         dlBtn.setAttribute('download', f.name);
-        dlBtn.innerHTML = '\u2B07 Download Verified Submission (' + f.name + ' \u00b7 ' + mb + ')';
+        dlBtn.innerHTML = '\u2B07 Download format-checked research artifact (' + f.name + ' \u00b7 ' + mb + ')';
       }
       if (fnEl) fnEl.textContent = f.name;
       if (noteEl) noteEl.textContent = c.note;
       if (shaEl) shaEl.textContent = f.sha256;
       if (statsEl) {
-        statsEl.innerHTML = '<strong>Range [0, 1] Verified:</strong> <code>[0.0, 1.0]</code> on all <code>5,167,373</code> footprint pixels (0 px &lt; 0, 0 px &gt; 1, 0 NaN/Inf inside footprint) \u00b7 ' +
-          'Scored positive pixels: <code>' + c.scored_pixels_predicted.toLocaleString() + '</code> (<code>' + c.share_of_footprint_pct + '%</code> of footprint) \u00b7 ' +
-          'Holdout Dense DTI: <code>' + c.holdout.mean_dense_dti.toFixed(5) + '</code> \u00b7 Sparse DTI: <code>' + c.holdout.mean_sparse_dti.toFixed(5) + '</code> \u00b7 ' +
-          'Vault Holdout: <span class="res-ok">CLEARED (4/4 folds)</span>';
+        statsEl.innerHTML = '<strong>Recorded local format check:</strong> finite values in <code>[0.0, 1.0]</code> within the template footprint \u00b7 ' +
+          'In-footprint positive-valued cells: <code>' + c.scored_pixels_predicted.toLocaleString() + '</code> (<code>' + c.share_of_footprint_pct + '%</code>) \u00b7 ' +
+          '<strong>No upload recommendation.</strong> Stored holdout figures are unreproduced known-catalogue proxies; no hidden-fault score is established.';
       }
       if (verifyOut) verifyOut.innerHTML = '';
     }
@@ -102,7 +101,7 @@
         var c = cands[key] || cands['h20-1'];
         var f = c.files[fmt];
         if (!window.GemsTiff) {
-          verifyOut.innerHTML = '<p class="res-ok">\u2714 Pre-flight verified by Python CI: ' + f.name + ' (SHA-256 ' + f.sha256.slice(0, 16) + '\u2026) strictly in [0.0, 1.0] across 5,167,373 footprint pixels.</p>';
+          verifyOut.innerHTML = '<p class="res-info">The browser TIFF parser is unavailable. Recorded local checks list this file as format-checked (SHA-256 ' + f.sha256.slice(0, 16) + '\u2026); no live recheck or score validation was performed.</p>';
           return;
         }
         verifyOut.innerHTML = '<p class="small muted">Fetching &amp; parsing <code>' + f.name + '</code> in browser via <code>GemsTiff</code>\u2026</p>';
@@ -118,7 +117,7 @@
           return window.GemsTiff.checkFile(new Uint8Array(arrs[0]), arrs[1]);
         }).then(function (res) {
           if (res.ok) {
-            verifyOut.innerHTML = '<div class="alert ok" style="margin-top:.6rem"><strong>\u2714 LIVE BROWSER AUDIT PASSED:</strong> <code>' + f.name + '</code> \u2014 CRS <code>EPSG:32611</code>, shape <code>3292\u00d73730</code>, dtype <code>float32</code>, footprint finite pixels: <code>' + res.stats.footprintPixels.toLocaleString() + '</code>, positive (&gt;0) pixels: <code>' + res.stats.positives.toLocaleString() + '</code>, outside NaN: <code>' + res.stats.outNaN.toLocaleString() + '</code>. Zero range violations (fixes <em>"Predicted values must be in range [0, 1]"</em>).</div>';
+            verifyOut.innerHTML = '<div class="alert ok" style="margin-top:.6rem"><strong>Browser-side file check passed:</strong> <code>' + f.name + '</code> \u2014 CRS <code>EPSG:32611</code>, shape <code>3292\u00d73730</code>, dtype <code>float32</code>, footprint finite pixels: <code>' + res.stats.footprintPixels.toLocaleString() + '</code>, positive-valued pixels: <code>' + res.stats.positives.toLocaleString() + '</code>, outside NaN: <code>' + res.stats.outNaN.toLocaleString() + '</code>. This checks file format/range only; historical server-error cause and prediction quality remain unknown.</div>';
           } else {
             verifyOut.innerHTML = '<div class="alert bad" style="margin-top:.6rem">FAIL: ' + res.hardFailures.join(', ') + '</div>';
           }

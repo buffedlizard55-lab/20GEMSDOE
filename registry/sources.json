@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "verified_utc": "2026-09-30",
+  "verified_utc": "2026-10-01",
   "rule": "A row exists only if the source was fetched and read (or computed from fetched data) in this review. 'flagged' rows conflict with something else; see registry/irregularities.json.",
   "rows": [
     {
@@ -369,13 +369,13 @@
     {
       "id": "S34",
       "topic": "Leaderboard",
-      "claim": "Snapshot of the public leaderboard (2026-09-30, re-read 02:27 UTC): rank 1 DARD 0.3168; group accounts SDCF9 0.1563, smashi34 0.1563, wbg1 0.1461, smrtdoog5 0.1193; extradr19 (0.1563) is unconfirmed. See docs/data/leaderboard.json for ranks.",
+      "claim": "Manual snapshot of the official public leaderboard checked 2026-10-01: DARD 0.3168 (#1); smrtdoog5 0.1894 (#23); extradr19 0.1855 (#25); SDCF9 and smashi34 0.1563 (#34/#35). Account-to-repository associations are owner-reported and not displayed by the leaderboard.",
       "url": "https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/",
       "source_type": "official",
-      "how_verified": "Read the public leaderboard page twice by hand (00:55 and 02:27 UTC); ranks shifted between reads, scores of these accounts did not",
+      "how_verified": "Manually fetched both chunks of the official public leaderboard on 2026-10-01; compared displayed ranks and scores with docs/data/leaderboard.json.",
       "status": "verified",
-      "note": "Time-stamped snapshot; scores change. Open the live page before acting.",
-      "verified_utc": "2026-09-30"
+      "note": "Dated snapshot only; no automated monitoring is performed (DrivenData Terms of Use prohibit robots/spiders). Group account/artifact attribution is not independently exposed by the leaderboard.",
+      "verified_utc": "2026-10-01"
     },
     {
       "id": "S35",
@@ -416,9 +416,9 @@
       "claim": "Power-law fault population scaling N(>=L) = C * L^(-alpha): connected fault skeletons in labels.tif (N=3,199) obey alpha = 1.762 (R^2 = 0.9936) above L_min = 1,800 m, predicting 27,735 missing short traces in [300 m, 1,800 m) (~138,554 px = 2.68% of footprint; midpoint L_min = 1,650 m predicts 2.45% = 126,599 px).",
       "url": "https://gdr.openei.org/submissions/1391",
       "source_type": "computed",
-      "how_verified": "scripts/evaluate_h19_and_build_submissions.py -> evidence/power_law_scaling_report.json (both GDR 1391 vector traces and labels.tif skeletons)",
-      "status": "verified",
-      "note": "Derives the ~2.45%-2.50% unmapped fault pixel budget from first principles.",
+      "how_verified": "Read historical evidence/power_law_scaling_report.json and archived runner logic before retirement; outputs are stored extrapolations, not an observed hidden-fault prior.",
+      "status": "flagged",
+      "note": "Power-law values depend on cutoff/model assumptions; see F26. Do not describe the output as a measured class prior or true hidden-fault count.",
       "verified_utc": "2026-09-30"
     },
     {
@@ -427,7 +427,7 @@
       "claim": "Backward thermal & geochemical conduit inversion: of 27,092 GDR 1391 well/spring records in footprint, 7,859 are thermal/geochemical anomalies (Temp>=25C or Qtz>=70C or Chalc>=60C or Cat>=80C) and 75.7% (5,950) lie >500 m from any known fault; of 594 2m probe anomalies (F2mDAB>=1.5C), 86.9% (516) lie >500 m from any known fault; of 281 sinter/tufa sites, 73.0% (205) lie >500 m from any known fault.",
       "url": "https://gdr.openei.org/submissions/1391",
       "source_type": "computed",
-      "how_verified": "GitHub Actions extraction evidence/ci/gdr_wellspring_in_footprint.csv + evidence/backward_thermal_geochem_report.json",
+      "how_verified": "Inspected archived GDR extraction CSVs and evidence/backward_thermal_geochem_report.json; counts are computed proximity summaries, not hidden-fault validation.",
       "status": "verified",
       "note": "DOI 10.15121/1881483.",
       "verified_utc": "2026-09-30"
@@ -435,90 +435,214 @@
     {
       "id": "S40",
       "topic": "Leaderboard",
-      "claim": "16GEMSDOE (gems16-h16-1-topo-geophys-baseline-ridges-20260930-df20f65e-nan.tif, SHA-256 055309694ed4...) scored 0.1855 on the DrivenData public leaderboard under account Tap (+0.0292 DTI above the 0.1563 triplicate).",
-      "url": "https://github.com/buffedlizard55-lab/16GEMSDOE",
-      "source_type": "official",
-      "how_verified": "Reported by project owner in 2026-09-30 prompt and verified against SHA-256 of 16GEMSDOE primary artifact",
-      "status": "verified",
-      "note": "Serves as the benchmark baseline for 19GEMSDOE holdout gating.",
-      "verified_utc": "2026-09-30"
+      "claim": "The public leaderboard snapshot checked 2026-10-01 shows extradr19 at 0.1855 (rank 25). The association of that score with the 16GEMSDOE H16-1 artifact is owner-reported; the artifact hash is locally verified, but the leaderboard does not expose a file-to-score mapping.",
+      "url": "https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/",
+      "source_type": "mixed",
+      "how_verified": "Manual official leaderboard fetch plus SHA-256 verification of archived 16GEMSDOE artifact; ownership association remains owner-reported.",
+      "status": "flagged",
+      "note": "Do not infer that the live leaderboard independently authenticates the exact TIF.",
+      "verified_utc": "2026-10-01"
     },
     {
       "id": "S41",
       "topic": "Validation",
-      "claim": "Multi-line physical corroboration gate (H19-4 at 2.50% budget and H19-5 at 2.45% power-law budget) beats H16-1 across 4/4 Dense folds (0.21413 vs 0.21272) and 4/4 Sparse folds (0.08637 / 0.08673 vs 0.08541), whereas single-layer pattern matches alone score 0.03034 Dense / 0.01207 Sparse.",
+      "claim": "The stored H19 report records Dense/Sparse spatial-transfer metrics on held-out portions of known catalogue faults. These are not hidden-fault labels or a forecast of leaderboard DTI, and the exact training/evaluation run was not reproduced in this review.",
       "url": "https://github.com/buffedlizard55-lab/19GEMSDOE/blob/arena/01a0f3d1-19gemsdoe/evidence/spatial_holdout_results.json",
       "source_type": "computed",
-      "how_verified": "scripts/evaluate_h19_and_build_submissions.py -> evidence/spatial_holdout_results.json & evidence/candidate_corroboration_ledger.json",
-      "status": "verified",
-      "note": "All 4 pre-registered promotion rules passed.",
-      "verified_utc": "2026-09-30"
+      "how_verified": "Inspected the referenced historical evidence; OOF cache files required for reproduction are absent in this checkout.",
+      "status": "flagged",
+      "note": "Keep as reported historical proxy evidence only. Official staff says known-fault pixels are excluded from contest scoring.",
+      "verified_utc": "2026-10-01"
     },
     {
       "id": "S42",
       "topic": "Statistical Learning (PU)",
-      "claim": "Kiryo, Niu, du Plessis, & Sugiyama (NeurIPS 2017): Positive-Unlabeled Learning with Non-Negative Risk Estimator (nnPU) replaces negative risk R_N(g) with max(0, R_U^-(g) - pi * R_P^-(g)), eliminating PU contamination and preventing overfitting when unlabeled data contains hidden positives.",
+      "claim": "Kiryo et al. (NeurIPS 2017) derive a non-negative PU risk estimator that clips the estimated negative-risk term at zero under PU mixture assumptions and a specified/estimated class prior. The method does not itself validate a chosen prior, the labeling mechanism, or competition performance.",
       "url": "https://proceedings.neurips.cc/paper/2017/file/7cce53cf90577442771720a370c3c723-Paper.pdf",
       "source_type": "literature",
-      "how_verified": "Implemented in src/gems/pu_learning.py (KiryoNNPULinearHead & fit_nnpu_boosted_expert) and validated across 4 spatial folds (evidence/nnpu_training_diagnostics.json)",
+      "how_verified": "Checked the cited paper and inspected src/gems/pu_learning.py; this verifies the formulation/code path, not the class-prior estimate or DTI lift.",
       "status": "verified",
-      "note": "With length-dependent Selection-At-Random (SAR) propensity weights w(x_i) = 1 / c(L_i), SAR-nnPU improves out-of-fold AUC from 0.8763 (PN) to 0.8806 (SAR-nnPU) on Topographic Openness + LRM.",
-      "verified_utc": "2026-09-30"
+      "note": "H20 pi=0.0363 is a power-law extrapolation hypothesis, not an independently measured hidden-fault prior. No performance claim should be attached to this literature citation.",
+      "verified_utc": "2026-10-01"
     },
     {
       "id": "S43",
       "topic": "Calibration",
-      "claim": "Murphy (1973) Brier-score decomposition Brier = REL - RES + UNC on N=466,731 held-out candidate ridge pixels: Out-of-Fold PU-Isotonic calibration reduces Reliability error REL by 99.3% (0.019674 -> 0.000143) and ECE by 96.9% (0.132771 -> 0.004050); in the [0.65, 0.75) stated-0.70 probability bin (N=16,455), predicted probability 0.6896 matches true empirical hit rate 0.6714 (bias = -0.0183).",
-      "url": "https://doi.org/10.1175/1520-0450(1973)012<0595:ANVPOT>2.0.CO;2",
-      "source_type": "literature",
-      "how_verified": "Implemented in src/gems/calibration.py and evaluated out-of-fold in evidence/calibration_brier_report.json",
-      "status": "verified",
-      "note": "Also cites Elkan & Noto (KDD 2008, https://doi.org/10.1145/1401890.1401920) for PU posterior conversion.",
-      "verified_utc": "2026-09-30"
+      "claim": "The H20 calibration report reports Brier/REL/ECE statistics on a target generated as s_hit OR Bernoulli(p_hidden_u) from catalogue/SGMC proximity and a selected class prior. This is a synthetic proxy outcome, not recovered or observed hidden-fault ground truth.",
+      "url": "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/evidence/calibration_brier_report.json",
+      "source_type": "computed",
+      "how_verified": "Inspected evidence/calibration_brier_report.json with its synthetic target-generation disclosure and audit fields; legacy target construction is documented in the report.",
+      "status": "flagged",
+      "note": "Do not describe the reported 0.70-bin hit rate or REL/ECE reductions as hidden-fault calibration. The Murphy decomposition implementation does not validate the target labels.",
+      "verified_utc": "2026-10-01",
+      "verification_method": "Inspected the preserved report schema and target construction/audit fields; verified it labels the target synthetic and unreproduced. The external Murphy citation defines the score, not the target provenance."
     },
     {
       "id": "S44",
       "topic": "Statistical Testing",
-      "claim": "Holm-Bonferroni (Holm 1979) family-wise error rate control and Benjamini-Hochberg (1995) false discovery rate control across 16 spatially-blocked Dev-Holdout sub-blocks + single-shot 20% Vault-Holdout gate: H20-1 clears Holm-Bonferroni at alpha=0.05 on both Dense (t=4.1315, p_adj=0.00311, 14/16 sub-blocks won) and Sparse (t=4.2926, p_adj=0.00257, 14/16 sub-blocks won) and clears the untouched Vault Holdout (+0.00059 Dense, +0.00086 Sparse).",
-      "url": "https://www.jstor.org/stable/4615733",
-      "source_type": "literature",
-      "how_verified": "Implemented in src/gems/multiple_testing.py and evaluated in evidence/dissertation_committee_audit.json",
-      "status": "verified",
-      "note": "Also implements Benjamini & Hochberg (1995, https://doi.org/10.1111/j.2517-6161.1995.tb02031.x).",
-      "verified_utc": "2026-09-30"
+      "claim": "Stored H20 multiple-testing and vault outputs have not been reproduced. The evaluator uses a fixed vault mask for both H20-1 and H20-5, and explicitly sets max_allowed_touches=2; this is not an untouched single-shot gate.",
+      "url": "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/evidence/dissertation_committee_audit.json",
+      "source_type": "computed",
+      "how_verified": "Read evidence/dissertation_committee_audit.json, including the recorded two-candidate shared-slice audit; historical runner is now disabled and the OOF cache inputs remain absent.",
+      "status": "flagged",
+      "note": "The reported p-values do not repair invalid or synthetic targets; no vault slice is considered unspent.",
+      "verified_utc": "2026-10-01",
+      "verification_method": "Inspected the preserved audit report: the same stored slice is listed for H20-1 and H20-5 with a maximum touch count of two. This is a repository-derived historical claim; the cited paper is not its source."
     },
     {
       "id": "S45",
       "topic": "Geophysics",
-      "claim": "Potential-field Tilt Derivative theta = arctan(VDR / THDR) (Miller & Singh 1994) and Local Phase Coherence (Cooper & Cowan 2006) are amplitude-invariant (AUTOMATICALLY equalizing deep sub-playa vs shallow bedrock fault contacts), locating sub-vertical fault edges at theta = 0 rad.",
+      "claim": "Potential-field tilt-angle / tilt-derivative transforms use ratios of vertical and horizontal derivatives to reduce sensitivity to source amplitude and highlight edges in some settings. The stronger claim that they automatically equalize deep and shallow contacts or guarantee fault detection is not established by the cited papers or a hidden-label test here.",
       "url": "https://doi.org/10.1016/0926-9851(94)90022-1",
       "source_type": "literature",
-      "how_verified": "Implemented in src/gems/hypotheses.py (compute_h20_novel_physical_features -> H20-2) and evaluated on 4-fold spatial holdout",
-      "status": "verified",
-      "note": "Also cites Cooper & Cowan (2006, https://doi.org/10.1016/j.cageo.2006.02.016) and Blakely & Simpson (1986, https://doi.org/10.1190/1.1442197).",
-      "verified_utc": "2026-09-30"
+      "how_verified": "Reviewed the cited literature and code description; H20 holdout report is stored but un-reproduced and uses known-fault proxies.",
+      "status": "flagged",
+      "note": "Treat the equalization language as a hypothesis, not a verified physical result.",
+      "verified_utc": "2026-10-01"
     },
     {
       "id": "S46",
       "topic": "Geomechanics",
-      "claim": "Slip-tendency & dilation-tendency fault reactivation (Morris, Ferrill, & Henderson 1996) and structural stepover/fault-tip hydrothermal outflow settings (Curewitz & Karson 1997; Sibson 1996): Walker Lane dextral shear + Basin-and-Range extension concentrate tensile wing-cracks at catalogue fault tips (r in [100 m, 2,000 m], |cos(phi)| >= 0.5).",
+      "claim": "Slip-/dilation-tendency and fault-tip wing-crack processes are geological mechanisms discussed in the cited literature. The specific H20-3 feature response, assumed orientation and claim that it identifies uncatalogued faults in this competition are hypotheses, not externally verified performance findings.",
       "url": "https://doi.org/10.1130/0091-7613(1996)024<0275:STAAFR>2.0.CO;2",
       "source_type": "literature",
-      "how_verified": "Implemented in src/gems/hypotheses.py (compute_h20_novel_physical_features -> H20-3 & H20-4) and evaluated on 4-fold spatial holdout",
-      "status": "verified",
-      "note": "Also cites Curewitz & Karson (1997, https://doi.org/10.1016/S0377-0273(97)00019-X).",
-      "verified_utc": "2026-09-30"
+      "how_verified": "Compared the cited papers with the H20 feature description; no independent hidden-fault validation exists.",
+      "status": "flagged",
+      "note": "Do not present the specified +/-35 degree lobe as a measured local stress field or a proven score-improving signature.",
+      "verified_utc": "2026-10-01"
     },
     {
       "id": "S47",
       "topic": "Leaderboard",
-      "claim": "Latest group leaderboard outcomes (verified 2026-09-30): 19GEMSDOE-H19-4 scored 0.1894 under smrtdoog5 (#22 overall), 16GEMSDOE scored 0.1855 under extradr19 (#23 overall), GEMSDOE10-H25 scored 0.1280, 18GEMSDOE scored 0.0297 (8.76% footprint over-prediction), and 17GEMSDOE-F scored 0.0187 (61.5% <=300 m halo memorization). Both 20GEMSDOE candidates (h20-1 and h20-5) beat 19GEMSDOE-H19-4 and 16GEMSDOE across all 3 external proxy truths (sgmc_gap, sgmc_offcat, known_dense), 4-fold holdout, 16-block Dev-Holdout, and 20% Vault-Holdout.",
+      "claim": "On the manually fetched 2026-10-01 official page, DARD is 0.3168 (#1); group-associated accounts smrtdoog5 and extradr19 are 0.1894 (#23) and 0.1855 (#25). The owner-reported artifact mappings are not shown by the leaderboard. Historic 17GEMSDOE-F, 18GEMSDOE and H20 outcomes are repository/user reports; stored proxy comparisons do not validate hidden-fault performance.",
       "url": "https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/",
       "source_type": "official",
-      "how_verified": "Fetched live leaderboard page and ran scripts/calibrate_proxies_vs_lb.py -> evidence/proxy_calibration_vs_lb.json",
+      "how_verified": "Manually fetched the official leaderboard and inspected local forensic/holdout files; did not infer a file-to-score mapping from the page.",
+      "status": "flagged",
+      "note": "The H20 values are format-validated artifacts with unreproduced proxy metrics; the H20-5 calibration target is synthetic; no upload recommendation follows.",
+      "verified_utc": "2026-10-01"
+    },
+    {
+      "id": "S48",
+      "topic": "Data access",
+      "claim": "USGS ANSS Comprehensive Earthquake Catalog (ComCat) documentation describes event search and programmatic access; this review did not download a new earthquake catalogue for H21-1.",
+      "url": "https://earthquake.usgs.gov/data/comcat/index.php",
+      "source_type": "official",
+      "how_verified": "Read official USGS ComCat documentation on 2026-10-01.",
       "status": "verified",
-      "note": "h20-1 reaches 0.10535 on sgmc_gap (vs 0.10453 for 19GEMSDOE-H19-4 and 0.10450 for 16GEMSDOE) and 0.15129 on sgmc_offcat (vs 0.15028 for 19GEMSDOE-H19-4).",
-      "verified_utc": "2026-09-30"
+      "note": "Documented availability is not evidence that a selected query, event population or spatial coverage has been validated.",
+      "verified_utc": "2026-10-01"
+    },
+    {
+      "id": "S49",
+      "topic": "Data access",
+      "claim": "USGS 3D Hydrography Program provides a public, non-proprietary data collection; the program is replacing retired NHD data where elevation-derived hydrography is available.",
+      "url": "https://catalog.data.gov/dataset/usgs-3d-hydrography-program-3dhp-downloadable-data-collection",
+      "source_type": "official",
+      "how_verified": "Read data.gov metadata and USGS hydrography access notes on 2026-10-01.",
+      "status": "verified",
+      "note": "National spatial extent does not establish complete 3DHP/EDH coverage or attributes for the study footprint; confirm before feature use.",
+      "verified_utc": "2026-10-01"
+    },
+    {
+      "id": "S50",
+      "topic": "Data access",
+      "claim": "USGS Landsat Collection 2 provides Level-2 surface-reflectance products under a no-cost open-data policy.",
+      "url": "https://www.usgs.gov/landsat-missions/landsat-collection-2",
+      "source_type": "official",
+      "how_verified": "Read USGS Landsat Collection 2 page on 2026-10-01.",
+      "status": "verified",
+      "note": "No scene download, cloud/shadow screen, or footprint/date suitability check has been performed for H21-3.",
+      "verified_utc": "2026-10-01"
+    },
+    {
+      "id": "S51",
+      "topic": "Data access",
+      "claim": "OpenEI GDR submission 1391 hosts the INGENIOUS Great Basin compilation and lists well/spring chemistry and temperature files; the page identifies DOI 10.15121/1881483 and a CC licence.",
+      "url": "https://gdr.openei.org/submissions/1391",
+      "source_type": "official",
+      "how_verified": "Preserved CI audit records a successful fetch from the official GDR direct-file URL https://gdr.openei.org/files/1391/wellspringdata.gdb.zip (20,810,222 bytes; SHA-256 7222178427ce0634453846819e6482fd6867536534fe9600987099e3b356590f) and extracts spring_chemistry_20220808 / well_chemistry_20220808 schemas. The GDR landing page returned HTTP 502 to the current page fetcher, so the preserved CI run establishes recent prior availability, not a successful direct re-fetch in this audit.",
+      "status": "verified",
+      "note": "Raw GDB is not in this checkout. Before H21-2 use, recheck the direct download and review field semantics/units, missingness, sampling bias and coordinate uncertainty; no H21-2 model has been run.",
+      "verified_utc": "2026-10-01",
+      "verification_method": "Preserved CI audit records a successful fetch from the official GDR direct-file URL https://gdr.openei.org/files/1391/wellspringdata.gdb.zip (20,810,222 bytes; SHA-256 7222178427ce0634453846819e6482fd6867536534fe9600987099e3b356590f) and extracts spring_chemistry_20220808 / well_chemistry_20220808 schemas. The GDR landing page returned HTTP 502 to the current page fetcher, so the preserved CI run establishes recent prior availability, not a successful direct re-fetch in this audit."
+    },
+    {
+      "id": "S52",
+      "topic": "Literature",
+      "claim": "Gomberg (1991) examines spatial relationships between small-earthquake distribution and strain in the Southern Great Basin and discusses clusters whose extent can exceed mapped major-fault traces. This motivates a test, not a competition-specific predictive claim.",
+      "url": "https://www.usgs.gov/publications/seismicity-and-shear-strain-southern-great-basin-nevada-and-california",
+      "source_type": "literature",
+      "how_verified": "Read USGS Publications Warehouse abstract and citation on 2026-10-01.",
+      "status": "verified",
+      "note": "Do not infer that the competition intensity raster is an independent event catalog or that a line-ridge transform will improve DTI.",
+      "verified_utc": "2026-10-01"
+    },
+    {
+      "id": "S53",
+      "topic": "Literature",
+      "claim": "USGS OFR 96-262 maps faults, lineaments and earthquake epicenters in Pahute Mesa and notes interpretation caveats including induced seismicity from nuclear testing.",
+      "url": "https://pubs.usgs.gov/of/1996/0262/report.pdf",
+      "source_type": "literature",
+      "how_verified": "Read the report title, map scope and text excerpts on 2026-10-01.",
+      "status": "verified",
+      "note": "Regional example only; not evidence about hidden GEMS labels.",
+      "verified_utc": "2026-10-01"
+    },
+    {
+      "id": "S54",
+      "topic": "Submission artifacts",
+      "claim": "The static submission builder packages and links pre-existing GeoTIFF artifacts and runs browser-side file checks; it does not train a model or compute a new prediction. The recorded candidate files pass the local structural/range checks over the template footprint.",
+      "url": "https://github.com/buffedlizard55-lab/20GEMSDOE",
+      "source_type": "computed",
+      "how_verified": "Inspected scripts/build_site.py, docs/data/submissions.json and the candidate TIFF validation reports; model-training output is not invoked by the web builder.",
+      "status": "computed",
+      "note": "Format validity is separate from hidden-fault predictive quality, and the historical server range error is not reproduced.",
+      "verified_utc": "2026-10-01"
+    },
+    {
+      "id": "S55",
+      "topic": "Forensics",
+      "claim": "Of 27 archived candidate entries, GEMSDOE1 and 5GEMSDOE are byte-identical; 8GEMSDOE and archived 17GEMSDOE match that prediction on every official scored pixel despite different files; GEMSDOE2 is near-duplicate (Jaccard 0.9464).",
+      "url": "https://github.com/buffedlizard55-lab/20GEMSDOE",
+      "source_type": "computed",
+      "how_verified": "Recomputed from live repository raster blobs against the template footprint minus the pixel-exact known-fault mask; see evidence/submission_similarity.json and docs/data/forensics.json.",
+      "status": "computed",
+      "note": "The archived 17GEMSDOE raster is not 17GEMSDOE-F, whose reported public score is 0.0187. Account/file mappings for historic public scores are partly owner-reported.",
+      "verified_utc": "2026-10-01"
+    },
+    {
+      "id": "S56",
+      "topic": "Limitations",
+      "claim": "DrivenData Terms of Use prohibit automatic robots/spiders accessing its website; this repository therefore does not implement an automated leaderboard/forum polling feed.",
+      "url": "https://www.drivendata.org/termsofuse/",
+      "source_type": "official",
+      "how_verified": "Read the Terms of Use and checked tests/test_site_integrity.py for the no-automation assertion.",
+      "status": "verified",
+      "note": "Leaderboard values are manually checked snapshots, not continuously updated data.",
+      "verified_utc": "2026-10-01"
+    },
+    {
+      "id": "S57",
+      "topic": "Validation",
+      "claim": "The H16-1 known-catalogue spatial-transfer baseline was reproduced on 2026-10-01: Dense mean 0.21269 and Sparse mean 0.08554; the report includes four folds and input SHA-256 values.",
+      "url": "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/evidence/spatial_holdout_h16_results.json",
+      "source_type": "computed",
+      "how_verified": "Ran scripts/run_spatial_holdout_and_build.py to completion; inspected the standalone result report and verified the recorded input hashes. Known-catalogue spatial-transfer proxy only.",
+      "status": "computed",
+      "note": "Not hidden competition truth or a leaderboard forecast. H20 historical results were not reproduced by this run.",
+      "verified_utc": "2026-10-01"
+    },
+    {
+      "id": "S58",
+      "topic": "Validation",
+      "claim": "The single frozen H21-1 multi-scale seismic-ridge test scored Dense 0.06207 and Sparse 0.02511; raw scalar control scored 0.07977 / 0.02849. It failed the historical H20 and reproduced H16-1 gates; no submission artifact was created.",
+      "url": "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f501-20gemsdoe/evidence/h21_seismic_ridge_holdout.json",
+      "source_type": "computed",
+      "how_verified": "Ran the preregistered evaluator once; the report records preregistration SHA-256 9d61d6be1363f42228f9b99d9aa7840093e361f1627903952c38b7d295e540db, input SHA-256 values, fold scores, both failed gates and submission_artifact_created=false.",
+      "status": "computed",
+      "note": "Known-catalogue spatial-transfer proxy with a synthetic sparse-component proxy, not hidden-fault validation; negative result does not establish seismicity is useless for all targets.",
+      "verified_utc": "2026-10-01"
     }
   ]
 }
