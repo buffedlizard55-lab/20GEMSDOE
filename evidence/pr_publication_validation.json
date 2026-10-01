@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "verified_utc": "2026-10-01T14:12:55+00:00",
+  "PR": "https://github.com/buffedlizard55-lab/20GEMSDOE/pull/4",
+  "source_branch": "arena/01a0f59e-20gemsdoe",
+  "GitHub_authentication_and_push_restored": true,
+  "pr_created": true,
+  "validated_ci_run": {
+    "conclusion": "success",
+    "created_at": "2026-10-01T14:09:59Z",
+    "head_sha": "09479f5f22453edceb6dcbb51de2b673ad859d34",
+    "html_url": "https://github.com/buffedlizard55-lab/20GEMSDOE/actions/runs/36874200770",
+    "id": 36874200770,
+    "status": "completed",
+    "updated_at": "2026-10-01T14:11:16Z"
+  },
+  "validated_ci_jobs": [
+    {
+      "conclusion": "success",
+      "html_url": "https://github.com/buffedlizard55-lab/20GEMSDOE/actions/runs/36874200770/job/110409323245",
+      "id": 110409323245,
+      "name": "tests",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "html_url": "https://github.com/buffedlizard55-lab/20GEMSDOE/actions/runs/36874200770/job/110409323480",
+      "id": 110409323480,
+      "name": "browser",
+      "status": "completed"
+    }
+  ],
+  "local_fresh_clone_suite": {
+    "passed": 167,
+    "skipped": 4,
+    "warnings": 1,
+    "seconds": 47.39,
+    "skip_scope": "Three absent-large-data tests and missing legacy H18 preregistration commit"
+  },
+  "static_site": {
+    "pages": 8,
+    "links": 361,
+    "errors": 0
+  },
+  "actual_browser_scope": "Chromium via Playwright on GitHub Actions: desktop 1440x1000 and mobile 390x844; six page headings/layouts, preflight, format-only download, Python GeoTIFF roundtrip and local file-picker checks. No contest access/upload; no new predictions.",
+  "browser_fixes": "Embedded heading hierarchy, bounded native file controls, long upload-guide/evidence links; failure diagnostics preserved in CI.",
+  "prior_scientific_results_rerun": false,
+  "no_new_candidate_or_submission_slot": true,
+  "merge_and_deployment_scope": "CI success is verified; merge and Pages deployment must be separately confirmed through GitHub after the final documentation commit."
+}

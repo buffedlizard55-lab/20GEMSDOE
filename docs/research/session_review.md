@@ -56,3 +56,5 @@ Do not reset/rerun/retune/package rejected H21/H22 tests. Obtain legitimate inde
 ## Publication follow-up
 
 GitHub access is working again. The restored snapshot retained files but reset local history to the original checkout; the branch was non-destructively advanced to the already-pushed `4d728ba` to preserve both preregistrations before committing the remaining changes. Fresh-clone suite: 166 passed, 4 skipped (three absent-large-data tests and the unavailable H18 chronology), 43.93s; 8 pages/361 links/0 errors. No H21/H22 experiment was rerun. PR/browser/merge/Pages results await actual GitHub confirmation.
+
+**Verified browser follow-up:** https://github.com/buffedlizard55-lab/20GEMSDOE/actions/runs/36874200770 completed successfully for `09479f5f22453edceb6dcbb51de2b673ad859d34`; both tests and browser jobs passed. Real Chromium desktop/mobile smoke checks exposed and resolved the embedded duplicate H1 and mobile native-control/long-link overflow. Final fresh-clone suite: 167 passed/4 skipped; no frozen experiments rerun. PR: https://github.com/buffedlizard55-lab/20GEMSDOE/pull/4. Merge and Pages remain separate verification steps.

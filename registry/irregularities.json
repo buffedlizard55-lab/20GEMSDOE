@@ -562,13 +562,15 @@
       "id": "F44",
       "area": "Verification",
       "severity": "medium",
-      "status": "open",
-      "title": "Real browser validation not completed in sandbox",
-      "evidence": "Playwright Chromium download TLS ECONNRESET (5 attempts); apt Chromium install failed because package repository access failed. Node and Python roundtrips are not UI/mobile tests.",
-      "action": "Run the committed real-browser CI harness and inspect result before claiming desktop/mobile export validation.",
-      "how_established": "Current implementation/review; scope explicitly bounded",
+      "status": "resolved",
+      "title": "Real Chromium desktop/mobile format-export smoke tests passed in CI",
+      "evidence": "Sandbox browser installation failed, but the GitHub Actions Chromium job now passes on desktop/mobile. Checks cover six pages, browser pre-flight, format-only TIFF download, Python roundtrip and local file picker; heading/mobile overflow bugs found by CI were fixed.",
+      "action": "Retain real-browser CI and failure reports. This is automated UI/format validation, not manual visual review, hidden-fault model validation or server-acceptance proof.",
+      "how_established": "GitHub run 36874200770 and both tests/browser jobs completed with conclusion success for 09479f5f22453edceb6dcbb51de2b673ad859d34",
       "links": [
-        "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/main/docs/research/session_review.md"
+        "https://github.com/buffedlizard55-lab/20GEMSDOE/actions/runs/36874200770",
+        "https://github.com/buffedlizard55-lab/20GEMSDOE/pull/4",
+        "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/main/evidence/pr_publication_validation.json"
       ]
     },
     {
