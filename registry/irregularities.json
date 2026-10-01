@@ -450,7 +450,7 @@
    "action": "All downstream use must normalize case and whitespace; src/gems/geotherm.py does this and a unit test (tests/test_geotherm.py) pins the behaviour.",
    "how_established": "scripts/audit_h21_2_wellspring_data.py enumeration of raw variants",
    "links": [
-    "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f564-20gemsdoe/evidence/h21_2_wellspring_audit.json"
+    "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/main/evidence/h21_2_wellspring_audit.json"
    ]
   },
   {
@@ -474,7 +474,7 @@
    "action": "Preregistered sanitization in src/gems/geotherm.py (VALID_RANGE_C [0, 350] degC) invalidates them; count recorded in the H21-2 result metadata (records_with_geothermometers_invalidated_by_bounds = 29).",
    "how_established": "scripts/audit_h21_2_wellspring_data.py unit-plausibility counts",
    "links": [
-    "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f564-20gemsdoe/evidence/h21_2_wellspring_audit.json"
+    "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/main/evidence/h21_2_wellspring_audit.json"
    ]
   },
   {
@@ -487,7 +487,7 @@
    "action": "Treat the recorded H16-1 numbers as the reproducible reference only where the fold construction (deterministic from the footprint) is unchanged; re-run the full pipeline on an unrestricted machine before any future reliance. Core competition rasters were restored this session from the hash-pinned GitHub bridge (all SHA-256 matches); bridge provenance remains distinct from DrivenData-host byte comparison.",
    "how_established": "Attempted scripts/prepare_data.py in this sandbox (missing external input); verified scripts/download_competition_data.sh requires USGS egress",
    "links": [
-    "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/arena/01a0f564-20gemsdoe/evidence/spatial_holdout_h16_results.json"
+    "https://github.com/buffedlizard55-lab/20GEMSDOE/blob/main/evidence/spatial_holdout_h16_results.json"
    ]
   }
  ]

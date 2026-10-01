@@ -25,7 +25,7 @@ DATA = DOCS / "data"
 REG = ROOT / "registry"
 EVI = ROOT / "evidence"
 REPO_URL = "https://github.com/buffedlizard55-lab/20GEMSDOE"
-BLOB = REPO_URL + "/blob/arena/01a0f501-20gemsdoe/"
+BLOB = REPO_URL + "/blob/main/"  # durable post-merge target; session-branch links rot after merge
 COMP = "https://www.drivendata.org/competitions/306/competition-doe-gems/"
 DEADLINE_ISO = "2026-12-03T23:59:00Z"
 
