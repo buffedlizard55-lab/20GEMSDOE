@@ -194,3 +194,8 @@ def test_signal_attribution_is_reported_as_exploratory_with_no_corrected_signifi
     assert feats["lid1m_antislope"] > 0 and feats["depth_base_grad"] < 0
     reg = (DOCS_DIR / "research.html").read_text()
     assert "Nothing is significant after correction" in reg
+
+
+def test_generated_pages_have_one_page_level_heading():
+    for name in ("index.html","executive_summary.html","research.html","results.html","knowledge.html","audit.html"):
+        assert len(re.findall(r"<h1(?:\s|>)",(DOCS_DIR/name).read_text()))==1,name

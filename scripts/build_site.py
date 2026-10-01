@@ -371,6 +371,8 @@ def build_research() -> str:
     md = (DOCS / "research" / "hypothesis_register.md").read_text()
     md_html = markdown.markdown(md, extensions=["tables", "toc", "fenced_code", "sane_lists", "md_in_html"])
     md_html = md_html.replace("<table>",'<div class="tw"><table>').replace("</table>","</table></div>")
+    # Embedded register is a section, not a second page-level H1.
+    md_html = re.sub(r"(<\/?h)([1-6])(?=[\s>])", lambda m: m[1]+str(min(6,int(m[2])+1)), md_html)
     # The register is authored beside research/*.md, while this HTML page is one level up.
     md_html = md_html.replace('href="../../', 'href="../')
     md_html = md_html.replace('href="../audit.html', 'href="audit.html')
