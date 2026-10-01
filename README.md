@@ -97,6 +97,24 @@ The static-site builder at [`docs/index.html`](docs/index.html) and [`docs/execu
 
 This charter summarizes the user's original project request and the corrections discovered during review; the current actionable acceptance criteria are recorded here so stale starting values are not repeated.
 
+## Next steps and current limitations
+
+**Next session's queue (in order):**
+
+1. **Preregister and run H22-2** (magnetic hydrothermal-destruction low lineaments on band 2 `rtp`). Data is local; the H21 evaluator pattern exists; this is the cheapest remaining mechanism-distinct test. Commit the preregistration first, push, run once, report regardless of outcome, reject without retuning on failure.
+2. **Re-run the full H16/H20 feature pipeline on an unrestricted machine** to clear flag F38: fetch the USGS 3DEP stack with `scripts/fetch_dem10.py`, then `scripts/prepare_data.py` and `scripts/run_spatial_holdout_and_build.py`, and byte-compare the three core rasters against a logged-in DrivenData download to upgrade bridge provenance to official-host provenance.
+3. **If any candidate ever passes both proxy gates**: separately reviewed packaging with `gems.forensics.gate_candidate` uniqueness proof, `gems.submission.check_variants`, unique filename + note, and an owner decision on slot spend (3 per rolling 7 days). Never two duplicate-effective files.
+4. **H22-1 vent alignment / H21-3 Landsat / H21-4 3DHP** remain proposed, in register order after H22-2; each requires its own preregistration and (for Landsat/3DHP) a footprint coverage/quality check via the CI workflow first.
+5. **Manually refresh the leaderboard snapshot** (no automation — DrivenData ToU) and record any new group scores with `scripts/record_score.py`.
+
+**Standing limitations (workarounds noted):**
+
+- **No DrivenData login in the agent environment; no official-archive byte comparison yet** (hash-pinned GitHub bridge is the current provenance chain).
+- **No USGS/GDR egress from the dev sandbox** — external data enters through the GitHub Actions CI workflow (`scripts/ci_external_verify.py`) with recorded SHA-256s; the dev sandbox reaches GitHub only.
+- **No GPU in this sandbox** — heavy model training cannot run here; transform-based proxy tests (H21/H22 style) are fully runnable on CPU.
+- **Known-catalogue proxies only** — no measurement can predict hidden-fault leaderboard scores; two preregistered hypotheses already failed even the proxy. Leaderboard reality checks remain the owner's manual submissions.
+- **The `[0, 1]` server-rejection root cause is unproven** (F31): the historical rejected file is unavailable; current downloads pass every local check including the repo's `check_variants` gate.
+
 ## Reproduction and review commands
 
 ```bash
